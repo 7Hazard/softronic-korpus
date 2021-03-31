@@ -2,13 +2,19 @@
 
 Korpus (words, synonyms, linguistics) RESTful API
 
-Technology stack, frameworks, and libraries (could be more than listed)  
-Backend:
+## Backend
+Requirements:
 - Node.js
+- npm
+
+Tech stack:  
 - TypeScript
 - Express
 
-Frontend:
-- Angular
+API authentication with JSON Web Tokens (JWT)
 
-API is authenticated through JSON Web Tokens (JWT)
+## Frontend
+Tech stack:
+- Angular
+- TBD...
+
