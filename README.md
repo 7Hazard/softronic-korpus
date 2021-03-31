@@ -1,4 +1,4 @@
-# Korpus, a Softronic and KTH project
+# Korpus, a Softronic and KTH Royal Institute of Technology project
 
 A corpus (words, synonyms, linguistics) RESTful API
 
