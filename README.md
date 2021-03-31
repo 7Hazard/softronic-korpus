@@ -1,6 +1,6 @@
-# softronic-korpusapi
+# Korpus, a Softronic and KTH project
 
-Korpus (words, synonyms, linguistics) RESTful API
+A corpus (words, synonyms, linguistics) RESTful API
 
 ## Backend
 Requirements:
