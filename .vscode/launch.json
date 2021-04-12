@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "name": "Backend",
       "skipFiles": [
@@ -14,7 +14,21 @@
       "program": "${workspaceFolder}/backend/src/index.ts",
       "outFiles": [
         "${workspaceFolder}/backend/out/**/*.js"
-      ]
+      ],
+      "preLaunchTask": "Build backend"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Database",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/database/src/index.ts",
+      "outFiles": [
+        "${workspaceFolder}/database/out/**/*.js"
+      ],
+      "preLaunchTask": "Build database"
     }
   ]
 }
