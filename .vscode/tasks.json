@@ -2,6 +2,16 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"type": "shell",
+			"label": "Fetch backend dependendencies",
+			"command": "npm i",
+			"options": {
+				"cwd": "${workspaceFolder}/backend"
+			},
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
 			"type": "typescript",
 			"tsconfig": "backend/tsconfig.json",
 			"problemMatcher": [
