@@ -12,6 +12,16 @@
 			"problemMatcher": []
 		},
 		{
+			"type": "shell",
+			"label": "Run tests",
+			"command": "npm run tests",
+			"options": {
+				"cwd": "${workspaceFolder}/backend"
+			},
+			"group": "build",
+			"problemMatcher": [],
+		},
+		{
 			"type": "typescript",
 			"tsconfig": "backend/tsconfig.json",
 			"problemMatcher": [
