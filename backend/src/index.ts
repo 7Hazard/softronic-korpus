@@ -36,6 +36,19 @@ app.post('/words', async (req, res) => {
   res.status(200).json(word)
 })
 
+app.put('/words/:wordid', async (req, res) => {
+  let wordid = req.params.wordid
+  let text = req.body.text;
+
+  await db.get()
+  .createQueryBuilder()
+  .update(Word)
+  .set({ text: text})
+  .where("id = :id", { id: wordid })
+  .execute();
+  res.status(200).json()
+})
+
 app.delete('/words/:wordid', async (req, res) => {
   let wordid = req.params.wordid
 
@@ -48,6 +61,7 @@ app.delete('/words/:wordid', async (req, res) => {
 
   res.status(200).json()
 })
+
 
 
 
