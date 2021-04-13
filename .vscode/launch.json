@@ -16,19 +16,6 @@
         "${workspaceFolder}/backend/out/**/*.js"
       ],
       "preLaunchTask": "Build backend"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Database",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "program": "${workspaceFolder}/database/src/index.ts",
-      "outFiles": [
-        "${workspaceFolder}/database/out/**/*.js"
-      ],
-      "preLaunchTask": "Build database"
     }
   ]
 }

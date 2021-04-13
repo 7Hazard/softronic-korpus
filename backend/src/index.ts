@@ -10,7 +10,7 @@ const port = 2525;
 const connection = await typeorm.createConnection({
   type: "sqlite",
   database: "./database.db",
-  entities: ["./entities"],
+  entities: [`${__dirname}/entities`],
   logging: true,
 });
 console.log("SQLite initialized in file 'database.db'");
