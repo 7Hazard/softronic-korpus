@@ -16,6 +16,7 @@
       "outFiles": [
         "${workspaceFolder}/backend/out/**/*.js"
       ],
+      "console": "integratedTerminal",
       "preLaunchTask": "Build backend"
     }
   ]
