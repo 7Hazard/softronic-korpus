@@ -10,6 +10,7 @@ Requirements:
 Tech stack:  
 - TypeScript
 - Express
+- TypeORM
 
 How to use:  
 - `Ctrl+Shift+B -> Build backend` (or run `npx tsc` command in `backend` directory)
