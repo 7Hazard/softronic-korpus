@@ -1,52 +1,56 @@
 import express from "express";
 import "reflect-metadata";
-import typeorm, { getConnection } from "typeorm";
-import { Word } from "./entities/Word.js";
+import { Word, Words } from "./entities/Word";
+import bodyparser from "body-parser"
+import * as db from "./db"
 
 /// config
 const port = 2525;
 ///
 
 // setup database
-const connection = await typeorm.createConnection({
-  type: "sqlite",
-  database: "./database.db",
-  entities: [Word],
-  synchronize: true,
-  logging: true,
-});
+await db.start();
 console.log("SQLite initialized in file 'database.db'");
-const app = express();
 
-const queryRunner = connection.createQueryRunner();
+const queryRunner = db.get().createQueryRunner();
+
+const app = express();
+app.use(bodyparser.json({}))
 
 app.get('/words', async (req, res) => {
-  let getAll = await connection.manager.find(Word);
+  let getAll = await db.get().manager.find(Word);
   res.status(200).json(getAll)
 })
 app.get('/words/:wordid', async (req, res) => {
   let wordid = req.params.wordid
-  const wordsById = await connection.manager.findOne(Word,wordid); // find by id  
+  const wordsById = await db.get().manager.findOne(Word, wordid); // find by id  
 
   res.status(200).json(wordsById)
-  
+
+})
+
+app.post('/words', async (req, res) => {
+  let text = req.body.text;
+  let word = new Word(text);
+  word = await db.get().getRepository(Word).save(new Word(text));
+  res.status(200).json(word)
 })
 
 app.delete('/words/:wordid', async (req, res) => {
   let wordid = req.params.wordid
-  
-  await connection
+
+  await db.get()
     .createQueryBuilder()
     .delete()
     .from(Word)
     .where("id = :id", { id: wordid })
     .execute();
-    
-    res.status(200).json()
+
+  res.status(200).json()
 })
 
 
-    
+
 
 // let word = new Word;
 // word.text = "HEJ";
