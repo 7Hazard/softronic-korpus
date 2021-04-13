@@ -6,7 +6,7 @@ export class Word {
     @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column("varchar")
+    @Column({nullable: false,unique: true,type: "varchar"})
     text: string;
 
     // TODO synonyms
