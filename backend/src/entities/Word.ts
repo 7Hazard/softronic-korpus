@@ -1,4 +1,4 @@
-import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
 import * as db from "../db"
 
 @Entity()
@@ -13,6 +13,10 @@ export class Word {
 
     @Column("varchar")
     text: string;
+
+    @ManyToMany(()=>Word)
+    @JoinTable({name:"Synonym"})
+    synonyms: Word[];
 
     // TODO synonyms
 }
