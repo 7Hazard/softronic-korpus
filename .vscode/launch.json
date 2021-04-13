@@ -12,6 +12,7 @@
         "<node_internals>/**"
       ],
       "program": "${workspaceFolder}/backend/src/index.ts",
+      "runtimeArgs": ["--experimental-modules", "--es-module-specifier-resolution=node"],
       "outFiles": [
         "${workspaceFolder}/backend/out/**/*.js"
       ],
