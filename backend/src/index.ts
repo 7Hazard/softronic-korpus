@@ -1,6 +1,6 @@
 import express from "express";
 import "reflect-metadata";
-import typeorm from "typeorm";
+import typeorm, { getConnection } from "typeorm";
 import { Word } from "./entities/Word.js";
 
 /// config
@@ -24,12 +24,29 @@ app.get('/words', async (req, res) => {
   let getAll = await connection.manager.find(Word);
   res.status(200).json(getAll)
 })
-app.get('/words/:wordId', async (req, res) => {
-  let wordId = req.params.wordid
-  const wordsById = await connection.manager.findOne(Word,wordId); // find by id
+app.get('/words/:wordid', async (req, res) => {
+  let wordid = req.params.wordid
+  const wordsById = await connection.manager.findOne(Word,wordid); // find by id  
+
   res.status(200).json(wordsById)
+  
 })
 
+app.delete('/words/:wordid', async (req, res) => {
+  let wordid = req.params.wordid
+  
+  await connection
+    .createQueryBuilder()
+    .delete()
+    .from(Word)
+    .where("id = :id", { id: wordid })
+    .execute();
+    
+    res.status(200).json()
+})
+
+
+    
 
 // let word = new Word;
 // word.text = "HEJ";
