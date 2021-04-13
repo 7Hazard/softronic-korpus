@@ -1,12 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity()
-export class Entry {
+export class Word {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column()
+    @Column("varchar")
     text: string;
 
     // TODO synonyms
