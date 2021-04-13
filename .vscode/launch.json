@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "name": "Backend",
       "skipFiles": [
@@ -14,7 +14,8 @@
       "program": "${workspaceFolder}/backend/src/index.ts",
       "outFiles": [
         "${workspaceFolder}/backend/out/**/*.js"
-      ]
+      ],
+      "preLaunchTask": "Build backend"
     }
   ]
 }
