@@ -16,11 +16,13 @@ const connection = await typeorm.createConnection({
   logging: true,
 });
 console.log("SQLite initialized in file 'database.db'");
+const app = express();
 
 const queryRunner = connection.createQueryRunner();
 
-app.get('/words', (req, res) => {
-  res.status(200).json({message: "Hello Words"})
+app.get('/words', async (req, res) => {
+  let g = await connection.manager.find(Word);
+  res.status(200).json(g)
 })
 
 
@@ -29,7 +31,6 @@ app.get('/words', (req, res) => {
 // await connection.manager.save(word);
 //connection.getRepository(Word).insert(word);
 
-const app = express();
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World" });
