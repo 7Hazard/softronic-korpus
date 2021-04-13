@@ -21,8 +21,13 @@ const app = express();
 const queryRunner = connection.createQueryRunner();
 
 app.get('/words', async (req, res) => {
-  let g = await connection.manager.find(Word);
-  res.status(200).json(g)
+  let getAll = await connection.manager.find(Word);
+  res.status(200).json(getAll)
+})
+app.get('/words/:wordId', async (req, res) => {
+  let wordId = req.params.wordid
+  const wordsById = await connection.manager.findOne(Word,wordId); // find by id
+  res.status(200).json(wordsById)
 })
 
 
