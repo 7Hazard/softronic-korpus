@@ -1,7 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column } from "typeorm";
+import * as database from "../database"
 
 @Entity()
 export class Word {
+
+    constructor(text:string) {
+        this.text = text;
+    }
 
     @PrimaryGeneratedColumn("increment")
     id: number;
@@ -10,4 +15,11 @@ export class Word {
     text: string;
 
     // TODO synonyms
+}
+
+@EntityRepository(Word)
+export class Words extends Repository<Word> {
+    // public static add(word: Word) {
+    //     return db.get().getRepository(Word).insert(word);
+    // }
 }
