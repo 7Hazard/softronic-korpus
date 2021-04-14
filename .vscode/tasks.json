@@ -20,13 +20,14 @@
 		},
 		{
 			"type": "shell",
-			"label": "Run tests",
+			"label": "Run tests for backend",
 			"command": "npm run tests",
 			"options": {
 				"cwd": "${workspaceFolder}/backend"
 			},
 			"group": "build",
 			"problemMatcher": [],
+			"dependsOn":["Build backend"]
 		},
 		{
 			"type": "typescript",
