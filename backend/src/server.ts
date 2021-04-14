@@ -72,26 +72,24 @@ export async function start({
     })
 
     app.delete('/words', async (req, res) => {
-        let wordid = req.body.id;
 
         let validation = new Validator(req.body, {
             //reqirement
-            ids: 'array',
+            ids: 'array|required',
             'ids.*': 'integer'
         });
 
         if (validation.fails()) {
             res.status(400).json(validation.errors);
         } else if (validation.passes()) {
-        
-        try {
-            const wordsById = await db.manager.findOne(Word, wordid); // find by id
-            wordid = await db.getRepository(Word).remove(wordsById);
-            res.status(200).json(wordid);
-        } catch (error) {
+
+            try {
+                await db.manager.delete(Word, req.body.ids); // find by id
+                res.status(200).json();
+            } catch (error) {
                 res.status(500).json();
             }
-    }
+        }
 
         // await db
         //     .createQueryBuilder()
@@ -101,7 +99,7 @@ export async function start({
         //     .execute();
 
         // res.status(200).json()
-})
+    })
 
 
     app.get("/", (req, res) => {
