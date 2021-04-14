@@ -1,12 +1,19 @@
-import { createConnection } from "typeorm";
+import { Connection, createConnection } from "typeorm";
 import { Word } from "./entities/Word";
 
+let database: Connection;
 export async function start(logging: boolean, path = "database.db") {
-  return await createConnection({
+
+  database = await createConnection({
     type: "sqlite",
     database: path,
     entities: [Word],
     synchronize: true,
     logging: logging,
   });
+  return database;
+}
+
+export function get(){
+  return database;
 }
