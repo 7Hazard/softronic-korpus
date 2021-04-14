@@ -1,0 +1,23 @@
+{
+  "name": "softronic-korpus",
+  "version": "1.0.0",
+  "description": "A corpus (words, synonyms, linguistics) RESTful API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/7Hazard/softronic-korpus.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/7Hazard/softronic-korpus/issues"
+  },
+  "homepage": "https://github.com/7Hazard/softronic-korpus#readme",
+  "devDependencies": {
+    "@types/jest": "^26.0.22"
+  },
+  "dependencies": {}
+}

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "module": "ESNext",
-    "moduleResolution": "Node",
     "target": "ES2017",
+    "moduleResolution": "Node",
     "outDir": "out",
     "esModuleInterop": true,
     "sourceMap": true,

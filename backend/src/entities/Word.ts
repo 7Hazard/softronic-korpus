@@ -1,5 +1,5 @@
 import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column } from "typeorm";
-import * as db from "../db"
+import * as database from "../database"
 
 @Entity()
 export class Word {

@@ -3,12 +3,19 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"label": "Fetch backend dependendencies",
+			"label": "Fetch backend dependencies",
 			"command": "npm i",
 			"options": {
 				"cwd": "${workspaceFolder}/backend"
 			},
 			"group": "build",
+			"problemMatcher": [],
+			"dependsOn": ["Fetch global dependencies"]
+		},
+		{
+			"type": "shell",
+			"label": "Fetch global dependencies",
+			"command": "npm i",
 			"problemMatcher": []
 		},
 		{
