@@ -1,4 +1,4 @@
-import korpusapi from "express";
+import express from "express";
 import "reflect-metadata";
 import { Word, Words } from "./entities/Word";
 import bodyparser from "body-parser";
@@ -20,7 +20,7 @@ export async function start({
 
     const queryRunner = db.createQueryRunner();
 
-    const app = korpusapi();
+    const app = express();
     app.use(bodyparser.json({}));
 
     app.get("/words", async (req, res) => {
