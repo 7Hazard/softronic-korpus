@@ -20,6 +20,13 @@
 		},
 		{
 			"type": "shell",
+			"label": "Clean",
+			"command": "node scripts/clean",
+			"problemMatcher": [],
+			"group": "build",
+		},
+		{
+			"type": "shell",
 			"label": "Run tests for backend",
 			"command": "npm run tests",
 			"options": {
