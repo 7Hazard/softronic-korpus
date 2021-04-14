@@ -25,7 +25,8 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: |
+    - name: Install and run tests
+      run: |
         npm i
         npm run testsci
       working-directory: "backend"
