@@ -62,6 +62,6 @@ it("add bad words", async () => {
   await api.post("/words").send({text:"with space"}).expect(400)
   await api.post("/words").send({text:"345345"}).expect(400)
   await api.post("/words").send({text:"@£$!?=)(/&[]{}%"}).expect(400)
-  await api.post("/words").send({text:"longtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtext"})
-    .expect(400)
+  await api.post("/words").send({text:"longtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtext"}).expect(400)
+  await api.post("/words").send({text:""}).expect(400)
 });

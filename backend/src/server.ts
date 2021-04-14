@@ -4,6 +4,9 @@ import { Word, Words } from "./entities/Word";
 import bodyparser from "body-parser";
 import * as database from "./database";
 import { Server } from "http";
+// ES6
+import Validator from 'validatorjs';
+import { QueryFailedError } from "typeorm";
 
 export async function start({
     port = 2525,
@@ -34,8 +37,26 @@ export async function start({
     app.post("/words", async (req, res) => {
         let text = req.body.text;
         let word = new Word(text);
-        word = await db.getRepository(Word).save(new Word(text));
-        res.status(200).json(word);
+
+        let validation = new Validator(req.body, {
+              //reqirement
+            text: 'alpha|min:1|max:100|required'
+          });
+
+          if(validation.fails()){
+            res.status(400).json(validation.errors);
+          }else if(validation.passes()){
+            try {
+                word = await db.getRepository(Word).save(new Word(text));
+                res.status(200).json(word);
+            } catch (error) {
+                if(error instanceof QueryFailedError)
+                {
+                    res.status(401).json();
+                }
+            }
+
+          }
     });
 
     app.put('/words/:wordid', async (req, res) => {
