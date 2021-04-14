@@ -19,16 +19,41 @@ afterAll((done)=>{
   })
 })
 
+let hellobody = {
+  text: "hello",
+};
+
 it("add", async () => {
-  let body = {
-    text: "hello",
-  };
+  
   let resp = await api.post("/words")
-    .send(body)
+    .send(hellobody)
     .expect(200)
     .expect({
-      text: body.text,
+      text: hellobody.text,
       id: 1
     })
-    // .end();
+});
+
+it("get", async () => {
+  let resp = await api.get("/words")
+    .expect(200)
+    .expect([{
+      text: "hello",
+      id: 1
+    }])
+});
+
+it("get specific", async () => {
+  let resp = await api.get("/words/1")
+    .expect(200)
+    .expect({
+      text: "hello",
+      id: 1
+    })
+});
+
+it("add duplicate", async () => {
+  let resp = await api.post("/words")
+    .send(hellobody)
+    .expect(401)
 });
