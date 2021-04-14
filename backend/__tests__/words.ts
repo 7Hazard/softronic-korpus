@@ -63,3 +63,13 @@ it("add bad words", async () => {
   await api.post("/words").send({text:""}).expect(400)
 });
 
+test("Delete existing",async ()=>{
+  await api.delete("/words").send({id:1}).expect(200)
+});
+
+test("Delete none existing",async ()=>{
+  await api.delete("/words").send({id:1}).expect(404)
+});
+
+
+
