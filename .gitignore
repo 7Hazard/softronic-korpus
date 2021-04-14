@@ -106,3 +106,5 @@ dist
 backend/out/
 
 database.db
+
+.DS_Store
