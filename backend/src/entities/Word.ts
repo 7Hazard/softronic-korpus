@@ -18,12 +18,17 @@ export class Word {
     @JoinTable({name:"Synonym"})
     synonyms: Word[];
 
-    // TODO synonyms
 }
 
 @EntityRepository(Word)
 export class Words extends Repository<Word> {
-    // public static add(word: Word) {
-    //     return db.get().getRepository(Word).insert(word);
-    // }
+     public static add(word: Word) {
+         return db.get().getRepository(Word).save(word);
+     }
+
+     public static get(word?: number){
+         if(word != null){
+             return db.get().manager.findOne(Word,word);
+         } else return db.get().manager.find(Word);
+     }
 }

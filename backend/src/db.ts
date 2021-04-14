@@ -9,7 +9,7 @@ export async function start()
     type: "sqlite",
     database: "./database.db",
     entities: [Word],
-    synchronize: true,
+    synchronize: false,
     logging: true,
   });
 }

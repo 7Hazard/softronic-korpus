@@ -18,13 +18,14 @@ const app = express();
 app.use(bodyparser.json({}))
 
 app.get('/words', async (req, res) => {
-  let getAll = await db.get().manager.find(Word);
+  //let getAll = await db.get().manager.find(Word);
+  let getAll = await Words.get();
   res.status(200).json(getAll)
 })
 app.get('/words/:wordid', async (req, res) => {
-  let wordid = req.params.wordid
-  const wordsById = await db.get().manager.findOne(Word, wordid); // find by id  
-
+  let wordid = parseInt(req.params.wordid)
+  //const wordsById = await db.get().manager.findOne(Word, wordid); // find by id  
+  const wordsById = await Words.get(wordid);
   res.status(200).json(wordsById)
 
 })
@@ -32,7 +33,8 @@ app.get('/words/:wordid', async (req, res) => {
 app.post('/words', async (req, res) => {
   let text = req.body.text;
   let word = new Word(text);
-  word = await db.get().getRepository(Word).save(new Word(text));
+  word = await Words.add(word);
+  //Words.add(word);
   res.status(200).json(word)
 })
 
