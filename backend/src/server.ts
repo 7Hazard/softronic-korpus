@@ -102,10 +102,6 @@ export async function start({
         // res.status(200).json()
 })
 
-    // let word = new Word;
-    // word.text = "HEJ";
-    // await connection.manager.save(word);
-    //connection.getRepository(Word).insert(word);
 
     app.get("/", (req, res) => {
         res.status(200).json({ message: "Hello World" });

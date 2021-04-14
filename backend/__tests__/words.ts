@@ -52,7 +52,7 @@ it("get specific", async () => {
 it("add duplicate", async () => {
   let resp = await api.post("/words")
     .send({text: "hello"})
-    .expect(401)
+    .expect(409)
 });
 
 it("add bad words", async () => {
