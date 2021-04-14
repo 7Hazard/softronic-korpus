@@ -1,5 +1,5 @@
 import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column } from "typeorm";
-import * as db from "../db"
+import * as database from "../database"
 
 @Entity()
 export class Word {
@@ -11,7 +11,7 @@ export class Word {
     @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column("varchar")
+    @Column({nullable: false,unique: true,type: "varchar"})
     text: string;
 
     // TODO synonyms
