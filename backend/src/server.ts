@@ -6,7 +6,7 @@ import * as database from "./database";
 import { Server } from "http";
 // ES6
 import Validator from 'validatorjs';
-import { QueryFailedError } from "typeorm";
+import { DeleteQueryBuilder, EntityNotFoundError, FindRelationsNotFoundError, QueryFailedError, SelectQueryBuilder } from "typeorm";
 
 export async function start({
     port = 2525,
@@ -39,24 +39,23 @@ export async function start({
         let word = new Word(text);
 
         let validation = new Validator(req.body, {
-              //reqirement
+            //reqirement
             text: 'alpha|min:1|max:100|required'
-          });
+        });
 
-          if(validation.fails()){
+        if (validation.fails()) {
             res.status(400).json(validation.errors);
-          }else if(validation.passes()){
+        } else if (validation.passes()) {
             try {
                 word = await db.getRepository(Word).save(new Word(text));
                 res.status(200).json(word);
             } catch (error) {
-                if(error instanceof QueryFailedError)
-                {
-                    res.status(401).json();
+                if (error instanceof QueryFailedError) {
+                    res.status(409).json();
                 }
             }
 
-          }
+        }
     });
 
     app.put('/words/:wordid', async (req, res) => {
@@ -72,23 +71,36 @@ export async function start({
         res.status(200).json()
     })
 
-    app.delete('/words/:wordid', async (req, res) => {
-        let wordid = req.params.wordid
+    app.delete('/words', async (req, res) => {
 
-        await db
-            .createQueryBuilder()
-            .delete()
-            .from(Word)
-            .where("id = :id", { id: wordid })
-            .execute();
+        let validation = new Validator(req.body, {
+            //reqirement
+            ids: 'array|required',
+            'ids.*': 'integer'
+        });
 
-        res.status(200).json()
+        if (validation.fails()) {
+            res.status(400).json(validation.errors);
+        } else if (validation.passes()) {
+
+            try {
+                await db.manager.delete(Word, req.body.ids); // find by id
+                res.status(200).json();
+            } catch (error) {
+                res.status(500).json();
+            }
+        }
+
+        // await db
+        //     .createQueryBuilder()
+        //     .delete()
+        //     .from(Word)
+        //     .where("id = :id", { id: wordid })
+        //     .execute();
+
+        // res.status(200).json()
     })
 
-    // let word = new Word;
-    // word.text = "HEJ";
-    // await connection.manager.save(word);
-    //connection.getRepository(Word).insert(word);
 
     app.get("/", (req, res) => {
         res.status(200).json({ message: "Hello World" });
