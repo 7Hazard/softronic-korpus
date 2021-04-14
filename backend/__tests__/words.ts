@@ -19,17 +19,14 @@ afterAll((done)=>{
   })
 })
 
-let hellobody = {
-  text: "hello",
-};
 
 it("add", async () => {
   
   let resp = await api.post("/words")
-    .send(hellobody)
+    .send({text: "hello",})
     .expect(200)
     .expect({
-      text: hellobody.text,
+      text: "hello",
       id: 1
     })
 });
@@ -54,7 +51,7 @@ it("get specific", async () => {
 
 it("add duplicate", async () => {
   let resp = await api.post("/words")
-    .send(hellobody)
+    .send({text: "hello"})
     .expect(401)
 });
 
@@ -65,3 +62,14 @@ it("add bad words", async () => {
   await api.post("/words").send({text:"longtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtextlongtext"}).expect(400)
   await api.post("/words").send({text:""}).expect(400)
 });
+
+test("Delete existing",async ()=>{
+  await api.delete("/words").send({id:1}).expect(200)
+});
+
+test("Delete none existing",async ()=>{
+  await api.delete("/words").send({id:1}).expect(404)
+});
+
+
+
