@@ -76,7 +76,8 @@ export async function start({
 
         let validation = new Validator(req.body, {
             //reqirement
-            text: 'alpha_num'
+            ids: 'array',
+            'ids.*': 'integer'
         });
 
         if (validation.fails()) {
