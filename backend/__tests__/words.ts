@@ -7,7 +7,7 @@ import * as http from 'http';
 
 let db, server: http.Server, api: request.SuperTest<request.Test>;
 beforeAll(async () => {
-  let stuff = (await korpusapi.start({ dbpath: ":memory:", port: 2525, logging: false }));
+  let stuff = (await korpusapi.start({ dbpath: ":memory:", port: 25257, logging: false }));
   api = request(stuff.app);
   server = stuff.server
   db = stuff.db
