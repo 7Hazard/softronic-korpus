@@ -63,7 +63,7 @@ test("add bad words", async () => {
 });
 
 test("delete one existing", async () => {
-  await api.delete("/words").send({ id: 1 }).expect(200).expect({deletedCount: 1})
+  await api.delete("/words").send({ ids: [1] }).expect(200).expect({deletedCount: 1})
 });
 
 test("delete multiple", async () => {
@@ -81,15 +81,12 @@ test("delete multiple", async () => {
 
 test("delete none existing", async () => {
   await api.delete("/words")
-    .send({ id: 1 })
+    .send({ ids: [1] })
     .expect(200)
     .expect({ deletedCount: 0 })
 });
 
 test("delete with bad input", async () => {
-  await expectErrors(api.delete("/words"), { id: {} }, 400)
-  await expectErrors(api.delete("/words"), { id: [] }, 400)
-  await expectErrors(api.delete("/words"), { id: "" }, 400)
   await expectErrors(api.delete("/words"), { ids: "" }, 400)
   await expectErrors(api.delete("/words"), { ids: {} }, 400)
 });
