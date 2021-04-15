@@ -28,7 +28,7 @@ export class Words extends Repository<Word> {
 
     public static get(word?: number) {
         if (word != null) {
-            return database.get().manager.findOne(Word, word);
+            return database.get().manager.findOne(Word, word, {relations : ['synonyms']});
         }
         else return database.get().manager.find(Word, {relations: ['synonyms']} );
         
