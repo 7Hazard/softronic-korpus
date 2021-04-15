@@ -8,6 +8,7 @@ import { Server } from "http";
 import Validator from 'validatorjs';
 import { DeleteQueryBuilder, EntityNotFoundError, FindRelationsNotFoundError, QueryFailedError, SelectQueryBuilder } from "typeorm";
 
+
 export async function start({
     port = 2525,
     logging = true,
@@ -91,14 +92,6 @@ export async function start({
             }
         }
 
-        // await db
-        //     .createQueryBuilder()
-        //     .delete()
-        //     .from(Word)
-        //     .where("id = :id", { id: wordid })
-        //     .execute();
-
-        // res.status(200).json()
     })
 
 
@@ -114,9 +107,13 @@ export async function start({
         });
     });
 
+
+
+
     return {
         db,
         app,
         server,
     };
+
 }
