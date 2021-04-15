@@ -35,6 +35,16 @@ export async function start({
         res.status(200).json(wordsById);
     });
 
+    app.get("/synonyms", async (req,res) =>{
+        let getAllSynonyms = await Words.getSynonyms();
+        res.status(200).json(getAllSynonyms);
+    })
+
+    app.get("/synonyms/:wordid", async (req, res) =>{
+        let getSpecificSynonym = await Words.getSynonyms(parseInt(req.params.wordid));
+        res.status(200).json(getSpecificSynonym);
+    })
+
     app.post("/words", async (req, res) => {
         let text = req.body.text;
         let word = new Word(text);
