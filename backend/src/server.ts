@@ -24,12 +24,12 @@ export async function start({
     app.use(bodyparser.json({}));
 
     app.get("/words", async (req, res) => {
-        let getAll = await db.manager.find(Word);
+        let getAll = await Words.get();
         res.status(200).json(getAll);
     });
     app.get("/words/:wordid", async (req, res) => {
-        let wordid = req.params.wordid;
-        const wordsById = await db.manager.findOne(Word, wordid); // find by id
+        let wordid = parseInt(req.params.wordid);
+        const wordsById = await Words.get(wordid); // find by id
 
         res.status(200).json(wordsById);
     });
