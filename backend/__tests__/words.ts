@@ -52,11 +52,11 @@ test("getAllSynonyms", async() =>{
 test("getSpecificSynonym", async()=>{
     let resp = await api.get("/synonyms/1")
       .expect(200)
-      .expect([{
+      .expect({
         text: "hello",
         id: 1,
         synonyms: []
-      }])
+      })
 });
 
 test("get specific", async () => {
