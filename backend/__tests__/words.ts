@@ -62,6 +62,10 @@ test("add bad words", async () => {
   await api.post("/words").send({ text: "" }).expect(400)
 });
 
+test("update", async () => {
+  await api.put("/words/1").send({text:"bye"}).expect(200)
+})
+
 test("delete one existing", async () => {
   await api.delete("/words").send({ ids: [1] }).expect(200)//.expect({deletedCount: 1})
 });
