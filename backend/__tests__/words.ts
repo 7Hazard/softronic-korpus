@@ -35,9 +35,28 @@ test("get", async () => {
     .expect(200)
     .expect([{
       text: "hello",
+      id: 1
+    }])
+});
+
+test("getAllSynonyms", async() =>{
+  let resp = await api.get("/synonyms")
+    .expect(200)
+    .expect([{
+      text: "hello",
       id: 1,
       synonyms: []
     }])
+});
+
+test("getSpecificSynonym", async()=>{
+    let resp = await api.get("/synonyms/1")
+      .expect(200)
+      .expect([{
+        text: "hello",
+        id: 1,
+        synonyms: []
+      }])
 });
 
 test("get specific", async () => {
@@ -45,8 +64,7 @@ test("get specific", async () => {
     .expect(200)
     .expect({
       text: "hello",
-      id: 1,
-      synonyms: []
+      id: 1
     })
 });
 
