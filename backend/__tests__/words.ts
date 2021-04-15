@@ -35,7 +35,8 @@ test("get", async () => {
     .expect(200)
     .expect([{
       text: "hello",
-      id: 1
+      id: 1,
+      synonyms: []
     }])
 });
 
@@ -44,7 +45,8 @@ test("get specific", async () => {
     .expect(200)
     .expect({
       text: "hello",
-      id: 1
+      id: 1,
+      synonyms: []
     })
 });
 
