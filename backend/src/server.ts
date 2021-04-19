@@ -51,7 +51,12 @@ export async function start({
 
         let validation = new Validator(req.body, {
             //reqirement
-            text: 'alpha|min:1|max:100|required'
+            //private static final String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+
+            text: ['required','min:1','max:100', 'regex:/^[A-z0-9%&/-]+$/']
+            // '^[a-z0-9&%-/]'
+
+            //text: 'alpha|min:1|max:100|required'
         });
 
         if (validation.fails()) {
@@ -118,7 +123,7 @@ export async function start({
     });
 
 
-
+// /^[+ 0-9]{5}$/;  numbers from            ('^[a-z0-9.&%-/]')
 
     return {
         db,
