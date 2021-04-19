@@ -117,7 +117,6 @@ export async function start({
         });
     });
 
-
     return {
         db,
         app,
