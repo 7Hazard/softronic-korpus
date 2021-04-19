@@ -51,7 +51,7 @@ export async function start({
 
         let validation = new Validator(req.body, {
             //reqirement
-            text: 'alpha|min:1|max:100|required'
+            text: ['required','min:1','max:100', 'regex:/^[A-z0-9%&/-]+$/']
         });
 
         if (validation.fails()) {
