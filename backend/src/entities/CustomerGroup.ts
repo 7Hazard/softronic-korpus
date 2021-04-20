@@ -1,4 +1,4 @@
-import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
+import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, PrimaryColumn } from "typeorm";
 import * as database from "../database"
 
 @Entity()
@@ -8,9 +8,9 @@ export class CustomerGroup {
         this.text = text;
     }
 
-    @PrimaryGeneratedColumn("increment")
+    @PrimaryColumn()
     id: number;
 
-    @Column({ nullable: false, unique: true, type: "varchar" })
+    @Column({type: "varchar" })
     text: string;
 }

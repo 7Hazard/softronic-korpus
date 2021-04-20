@@ -1,5 +1,6 @@
-import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
+import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, OneToMany,JoinTable, PrimaryColumn, ManyToOne } from "typeorm";
 import * as database from "../database"
+import { Synonym } from "./Synonym";
 
 @Entity()
 export class Word {
@@ -8,15 +9,14 @@ export class Word {
         this.text = text;
     }
 
-    @PrimaryGeneratedColumn("increment")
+    @PrimaryColumn()
     id: number;
 
     @Column({ nullable: false, unique: true, type: "varchar" })
     text: string;
 
-    @ManyToMany(() => Word)
-    @JoinTable({ name: "Synonym" })
-    synonyms: Word[];
+    @OneToMany(() => Synonym, synonym => {synonym.wordId_1,synonym.wordId_2})
+    synonyms: Synonym[];
 
 }
 
