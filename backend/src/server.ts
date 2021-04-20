@@ -52,7 +52,7 @@ export async function start({
             console.log("The result: " + result);
             try {
                 const word = await database.get().manager.findOne(Word,id1);
-                const synonym = new Synonym(id1,id2);
+                //const synonym = new Synonym(id1,id2);
                 await db
                 .createQueryBuilder()
                 .insert()

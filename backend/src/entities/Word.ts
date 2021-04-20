@@ -15,8 +15,9 @@ export class Word {
     @Column({ nullable: false, unique: true, type: "varchar" })
     text: string;
 
-    @OneToMany(() => Synonym, synonym => {synonym.id},{cascade: true})
-    synonyms: Synonym[];
+    @OneToMany(() => Synonym, synonym => synonym.wordId_1)
+    @JoinColumn()
+    synonyms: Word[];
 
 }
 
@@ -36,6 +37,7 @@ export class Words extends Repository<Word> {
         if (word != null) {
             let wordresult;
             try {
+                return database.get().manager.findOne(Word, word, {relations : ['synonyms']});
                 wordresult = await database.get().manager.findOne(Word,word);
             wordresult.synonyms = await database.get().createQueryBuilder()
             .relation(Word,"synonyms")
