@@ -8,7 +8,7 @@ export class CustomerGroup {
         this.text = text;
     }
 
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn("increment")
     id: number;
 
     @Column({type: "varchar" })
