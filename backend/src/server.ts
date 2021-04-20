@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import "reflect-metadata";
 import { Word, Words } from "./entities/Word";
 import bodyparser from "body-parser";
@@ -6,7 +6,10 @@ import * as database from "./database";
 import { Server } from "http";
 // ES6
 import Validator from 'validatorjs';
-import { DeleteQueryBuilder, EntityNotFoundError, FindRelationsNotFoundError, QueryFailedError, SelectQueryBuilder } from "typeorm";
+import { DeleteQueryBuilder, EntityNotFoundError, FindRelationsNotFoundError, QueryFailedError, SelectQueryBuilder, UsingJoinTableIsNotAllowedError } from "typeorm";
+import { argon2id, argon2Verify } from "hash-wasm";
+import { User, Users } from "./entities/User";
+import jwt from "jsonwebtoken";
 
 
 export async function start({
@@ -35,12 +38,12 @@ export async function start({
         res.status(200).json(wordsById);
     });
 
-    app.get("/synonyms", async (req,res) =>{
+    app.get("/synonyms", async (req, res) => {
         let getAllSynonyms = await Words.getSynonyms();
         res.status(200).json(getAllSynonyms);
     })
 
-    app.get("/synonyms/:wordid", async (req, res) =>{
+    app.get("/synonyms/:wordid", async (req, res) => {
         let getSpecificSynonym = await Words.getSynonyms(parseInt(req.params.wordid));
         res.status(200).json(getSpecificSynonym);
     })
@@ -118,6 +121,43 @@ export async function start({
     });
 
 
+    app.post("/signin", async (req, res) => {
+        let name = req.body.name;
+        let passwordInput = req.body.password;
+
+        let user = await Users.getOne(name);
+
+        let namePrimary = req.params.namePrimary;
+
+        const isValid = await argon2Verify({
+            password: passwordInput,
+            hash: user.hashedPassword,
+        });
+        if (isValid)
+        {
+            let token = jwt.sign({name: user.name},'shhhhh');
+            jwt.sign({data: 'foobar'}, 'secret', { expiresIn: '24h' });
+
+            await db
+            .createQueryBuilder()
+            .update(User)
+            .set({ token: token })
+            .where("name = :name", { name: user.name })
+            .execute();
+
+              
+
+            res.status(200).json({token});
+
+        }
+        else res.status(401).json()
+    })
+
+    app.get("/signin", (req, res) => {
+        res.status(200).json({ name: "Emre" });
+    });
+
+
 
 
     return {
@@ -126,4 +166,7 @@ export async function start({
         server,
     };
 
-}
+};
+
+
+
