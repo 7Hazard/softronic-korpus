@@ -19,8 +19,8 @@ export default Router()
         let word = new Word(text)
 
         let validation = new Validator(req.body, {
-            text: ["required", "min:1", "max:100", "regex:/^[A-z0-9%&/-]+$/"],
-        })
+            text: ['required', 'min:1', 'max:100', 'regex:/^[A-z0-9% &/-]+$/']
+        });
 
         if (validation.fails()) {
             res.status(400).json(validation.errors)
