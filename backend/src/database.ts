@@ -8,8 +8,8 @@ export async function start(logging: boolean, path = "database.db") {
   database = await createConnection({
     type: "sqlite",
     database: path,
-    entities: [Word,User],
-    entities: [Word,CustomerGroup],
+    //entities: [Word,User],
+    entities: [Word,CustomerGroup,User],
     synchronize: true,
     logging: logging,
   });

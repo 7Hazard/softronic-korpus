@@ -1,4 +1,4 @@
-import express, { json } from "express";
+//import express, { json } from "express";
 import "reflect-metadata";
 import express from "express";
 import bodyparser from "body-parser";
@@ -11,6 +11,7 @@ import { argon2id, argon2Verify } from "hash-wasm";
 import { User, Users } from "./entities/User";
 import jwt from "jsonwebtoken";
 import routers from "./routes/all"
+import { Word, Words } from "./entities/Word";
 
 export const app = express();
 app.use(bodyparser.json({}));
@@ -20,7 +21,7 @@ export async function start({
     logging = true,
     dbpath = "database.db",
 }) {
-    // setup database
+    // setup database  
     let db = await database.start(logging, dbpath);
     if (logging)
         console.log("SQLite initialized in file 'database.db'");
