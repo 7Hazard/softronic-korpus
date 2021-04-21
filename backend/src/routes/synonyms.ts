@@ -8,5 +8,11 @@ export default Router()
     })
     .get("/synonyms/:wordid", async (req, res) => {
         let getSpecificSynonym = await Words.getSynonyms(parseInt(req.params.wordid));
+        if (!getSpecificSynonym) {
+            res.status(404).json({
+                "error": "Synonym not found"
+            })
+            return
+        }
         res.status(200).json(getSpecificSynonym);
     })

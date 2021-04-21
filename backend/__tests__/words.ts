@@ -3,22 +3,65 @@ import { addWord } from "../__testhelpers__/helpers";
 import { api } from "../__testhelpers__/server";
 
 test("add", async () => {
-  let resp = await api.post("/words")
+  // add word 1
+  await api.post("/words")
     .send({ text: "hello" })
     .expect(200)
     .expect({
       text: "hello",
       id: 1
     })
+
+  // add word 2
+  await api.post("/words")
+    .send({ text: "hell o" })
+    .expect(200)
+    .expect({
+      text: "hell o",
+      id: 2
+    })
 });
 
 test("get", async () => {
   let resp = await api.get("/words")
     .expect(200)
-    .expect([{
+    .expect([
+      {
+        text: "hello",
+        id: 1
+      },
+      {
+        text: "hell o",
+        id: 2
+      }
+    ])
+});
+
+test("getAllSynonyms", async () => {
+  let resp = await api.get("/synonyms")
+    .expect(200)
+    .expect([
+      {
       text: "hello",
-      id: 1
-    }])
+      id: 1,
+      synonyms: []
+    },
+    {
+      text: "hell o",
+      id: 2,
+      synonyms: []
+    }
+  ])
+});
+
+test("getSpecificSynonym", async () => {
+  let resp = await api.get("/synonyms/1")
+    .expect(200)
+    .expect({
+      text: "hello",
+      id: 1,
+      synonyms: []
+    })
 });
 
 test("get specific", async () => {
@@ -43,7 +86,7 @@ test("add bad words", async () => {
 });
 
 test("update", async () => {
-  await api.put("/words/1").send({text:"bye"}).expect(200)
+  await api.put("/words/1").send({ text: "bye" }).expect(200)
 })
 
 test("delete one existing", async () => {
@@ -60,14 +103,14 @@ test("delete multiple", async () => {
   await api.delete("/words")
     .send({ ids: [word1, word2, word3] })
     .expect(200)
-    //.expect({ deletedCount: 3 })
+  //.expect({ deletedCount: 3 })
 })
 
 test("delete none existing", async () => {
   await api.delete("/words")
     .send({ ids: [1] })
     .expect(200)
-    //.expect({ deletedCount: 0 })
+  //.expect({ deletedCount: 0 })
 });
 
 test("delete with bad input", async () => {
