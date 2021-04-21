@@ -6,6 +6,7 @@ import Validator from "validatorjs";
 import { QueryFailedError } from "typeorm";
 
 export default Router()
+
     .get("/customerGroup", async (req, res) => {
         let getAll = await CustomerGroups.get();
         res.status(200).json(getAll);
@@ -27,12 +28,22 @@ export default Router()
         let id = parseInt(req.params.id);
         let text = req.body.text;
         const group = await CustomerGroups.get(id);
+
+
         if (!group) {
             res.status(404).json({
-                "error": "Group not found"
+                "error": "invalid id"
             })
             return
         }
+        let validation = new Validator(req.body, {
+            text: ['required', 'min:1', 'max:100', 'regex:/^[A-z0-9% &/-]+$/']
+        });
+
+        if (validation.fails()) {
+            res.status(400).json(validation.errors);
+            return
+        } else if (validation.passes())
 
         await getDb()
             .createQueryBuilder()

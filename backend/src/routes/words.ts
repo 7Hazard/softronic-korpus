@@ -12,6 +12,12 @@ export default Router()
     .get("/words/:wordid", async (req, res) => {
         let wordid = parseInt(req.params.wordid)
         const wordsById = await Words.get(wordid)
+        if(!wordsById){
+            res.status(404).json({
+                "error": "Word not found"
+            })
+            return
+        }
         res.status(200).json(wordsById)
     })
     .post("/words", async (req, res) => {
@@ -38,6 +44,15 @@ export default Router()
     .put("/words/:wordid", async (req, res) => {
         let wordid = req.params.wordid
         let text = req.body.text
+
+        let validation = new Validator(req.body, {
+            text: ['required', 'min:1', 'max:100', 'regex:/^[A-z0-9% &/-]+$/']
+        });
+
+        if (validation.fails()) {
+            res.status(400).json(validation.errors);
+            return
+        } else if (validation.passes())
 
         await getDb()
             .createQueryBuilder()
