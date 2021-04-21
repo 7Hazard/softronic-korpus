@@ -16,7 +16,7 @@ export class Word {
     text: string;
 
     @OneToMany(() => Synonym, synonym => synonym.wordId_1)
-    @JoinColumn()
+    //@JoinColumn()
     synonyms: Word[];
 
 }
@@ -33,39 +33,4 @@ export class Words extends Repository<Word> {
         } else return database.get().manager.find(Word);
     }
 
-    public static async getSynonyms(word?: number) {
-        if (word != null) {
-            let wordresult;
-            try {
-                return database.get().manager.findOne(Word, word, {relations : ['synonyms']});
-                wordresult = await database.get().manager.findOne(Word,word);
-            wordresult.synonyms = await database.get().createQueryBuilder()
-            .relation(Word,"synonyms")
-            .of(wordresult)
-            .loadMany();
-            } catch (error) {
-                console.log(error);
-            }
-            // try {
-            //     return database.get().manager.findOne(Word, word, {relations : ['synonyms']});
-            // } catch (error) {
-            //     console.log(error);
-            //     throw error;
-            // }
-            
-            return wordresult;
-        }
-        else {
-            try {
-                console.log("getting synonyms")
-                return database.get().manager.find(Word,{relations: ['synonyms']})
-            } catch (error) {
-                console.log(error);
-                throw error;
-            }
-            
-            
-        }
-        
-    }
 }

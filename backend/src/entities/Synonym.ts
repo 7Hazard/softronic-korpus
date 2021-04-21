@@ -14,6 +14,7 @@ export class Synonym{
 
     @PrimaryGeneratedColumn("increment")
     id: number;
+
     
     @ManyToOne(() => Word)
     @JoinColumn({name: "wordId_1"})
@@ -22,7 +23,46 @@ export class Synonym{
     @ManyToOne(() => Word, word => word.synonyms)
     @JoinColumn({name: "wordId_2"})
     wordId_2: number;
-    
+        
+}
 
-    
+@EntityRepository(Synonym)
+export class Synonyms extends Repository<Synonym>{
+    public static async getSynonyms(word?: number) {
+        if (word != null) {
+            try {
+                return database.get().manager.findOne(Word, word, {relations : ['synonyms']});
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }    
+        }
+        else {
+            try {
+                console.log("getting synonyms")
+                return database.get().manager.find(Word,{relations: ['synonyms']})
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+            
+            
+        }
+    }
+
+    public static async validate(word1Id: number, word2Id: number){
+
+        let oppositeExists = await database.get().getRepository(Synonym).
+            createQueryBuilder("synonym").
+            where("synonym.wordId_1 = :word1Id", {word1Id: word2Id}).
+            andWhere("synonym.wordId_2 = :word2Id", {word2Id: word1Id}).
+            getOne();
+        
+        let circularExists = await database.get().getRepository(Synonym)
+        .createQueryBuilder("synonym")
+        .where("synonym.wordId_2 = :word1Id", {word1Id: word1Id})
+        .getOne();
+
+        return oppositeExists || circularExists;
+    }
 }

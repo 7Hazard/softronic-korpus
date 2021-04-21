@@ -7,7 +7,7 @@ import { Server } from "http";
 // ES6
 import Validator from 'validatorjs';
 import { DeleteQueryBuilder, EntityNotFoundError, FindRelationsNotFoundError, QueryFailedError, SelectQueryBuilder } from "typeorm";
-import { Synonym } from "./entities/Synonym";
+import { Synonym, Synonyms } from "./entities/Synonym";
 
 
 export async function start({
@@ -41,15 +41,8 @@ export async function start({
         let id1 = req.body.id1;
         let id2 = req.body.id2;
 
-        let result = await database.get().getRepository(Synonym).
-            createQueryBuilder("synonym").
-            where("synonym.wordId_1 = :word1Id", {word1Id: id2}).
-            andWhere("synonym.wordId_2 = :word2Id", {word2Id: id1}).
-            getOne();
-
-            console.log(result);
-        if(!result){
-            console.log("The result: " + result);
+        
+        if(!Synonyms.validate(id1,id2)){
             try {
                 const word = await database.get().manager.findOne(Word,id1);
                 //const synonym = new Synonym(id1,id2);
@@ -60,22 +53,29 @@ export async function start({
                 .values([{ wordId_1: id1, wordId_2:id2}])
                 .execute();
 
-                //word.synonyms.push(synonym);
-                
                 res.status(200).json();
             } catch (error) {
                 console.log(error);
                 res.status(400).json();
             }
-        } else res.status(400).json("The inverse already exists");
+        } else res.status(400).json("No inverse or circular dependencies allowed");
 
        
+    })
+
+    app.put("/synonyms", async(req,res)=>{
+
+        let newId1 = req.body.id1;
+        let newId2 = req.body.id2;
+
+        
+
     })
 
     app.get("/synonyms", async (req,res) =>{
         console.log("Trying to get synonyms")
         try {
-            let getAllSynonyms = await Words.getSynonyms();
+            let getAllSynonyms = await Synonyms.getSynonyms();
             console.log(getAllSynonyms)
             res.status(200).json(getAllSynonyms);
         } catch (error) {
@@ -87,7 +87,7 @@ export async function start({
 
     app.get("/synonyms/:wordid", async (req, res) =>{
         try {
-            let getSpecificSynonym = await Words.getSynonyms(parseInt(req.params.wordid));
+            let getSpecificSynonym = await Synonyms.getSynonyms(parseInt(req.params.wordid));
             res.status(200).json(getSpecificSynonym);
         } catch (error) {
             console.log(error);
@@ -116,7 +116,6 @@ export async function start({
                     res.status(409).json();
                 }
             }
-
         }
     });
 
