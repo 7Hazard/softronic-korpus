@@ -33,7 +33,6 @@ export default Router()
 
         console.log(result);
         if (!result) {
-            console.log("The result: " + result);
             try {
                 const word = await db.manager.findOne(Word, id1);
                 //const synonym = new Synonym(id1,id2);
@@ -48,19 +47,17 @@ export default Router()
 
                 res.status(200).json();
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 res.status(400).json();
             }
         } else res.status(400).json("The inverse already exists");
     })
     .get("/synonyms", async (req, res) => {
-        console.log("Trying to get synonyms")
         try {
             let getAllSynonyms = await Words.getSynonyms();
-            console.log(getAllSynonyms)
             res.status(200).json(getAllSynonyms);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(400).json();
         }
     })
@@ -69,7 +66,7 @@ export default Router()
             let getSpecificSynonym = await Words.getSynonyms(parseInt(req.params.wordid));
             res.status(200).json(getSpecificSynonym);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(400).json();
         }
     })
