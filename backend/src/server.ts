@@ -2,7 +2,6 @@ import "reflect-metadata"
 import express from "express"
 import bodyparser from "body-parser"
 import * as database from "./database"
-import { Server } from "http"
 import routers from "./routes/all"
 import * as http from "http"
 
@@ -20,7 +19,7 @@ export async function start({
     let db = await database.start(logging, dbpath)
     if (logging) console.log("SQLite initialized in file 'database.db'")
 
-    const queryRunner = db.createQueryRunner()
+    db.createQueryRunner()
 
     app.use(routers)
 

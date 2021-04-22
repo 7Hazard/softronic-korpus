@@ -6,6 +6,6 @@ import customerGroup from "./customerGroup";
 export default [
     words,
     synonyms,
-    customerGroup
+    customerGroup,
     auth
 ]
