@@ -1,6 +1,7 @@
 import { Connection, createConnection } from "typeorm";
 import { User } from "./entities/User";
 import { CustomerGroup } from "./entities/CustomerGroup";
+import { Synonym } from "./entities/Synonym";
 import { Word } from "./entities/Word";
 
 let database: Connection;
@@ -8,8 +9,7 @@ export async function start(logging: boolean, path = "database.db") {
   database = await createConnection({
     type: "sqlite",
     database: path,
-    //entities: [Word,User],
-    entities: [Word,CustomerGroup,User],
+    entities: [Word, CustomerGroup, Synonym, User],
     synchronize: true,
     logging: logging,
   });

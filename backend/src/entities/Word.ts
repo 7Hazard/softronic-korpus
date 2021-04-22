@@ -1,5 +1,6 @@
-import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
+import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, OneToMany, JoinTable, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm";
 import * as database from "../database"
+import { Synonym } from "./Synonym";
 
 @Entity()
 export class Word {
@@ -14,8 +15,8 @@ export class Word {
     @Column({ nullable: false, unique: true, type: "varchar" })
     text: string;
 
-    @ManyToMany(() => Word)
-    @JoinTable({ name: "Synonym" })
+    @OneToMany(() => Synonym, synonym => synonym.wordId_1)
+    @JoinColumn()
     synonyms: Word[];
 
 }
@@ -26,17 +27,44 @@ export class Words extends Repository<Word> {
         return database.get().getRepository(Word).save(word);
     }
 
-    public static get(word?:number){
-        if(word != null){
-            return database.get().manager.findOne(Word,word);
+    public static get(word?: number) {
+        if (word != null) {
+            return database.get().manager.findOne(Word, word);
         } else return database.get().manager.find(Word);
     }
 
-    public static getSynonyms(word?: number) {
+    public static async getSynonyms(word?: number) {
         if (word != null) {
-            return database.get().manager.findOne(Word, word, {relations : ['synonyms']});
+            let wordresult;
+            try {
+                return database.get().manager.findOne(Word, word, { relations: ['synonyms'] });
+                // wordresult = await database.get().manager.findOne(Word, word);
+                // wordresult.synonyms = await database.get().createQueryBuilder()
+                //     .relation(Word, "synonyms")
+                //     .of(wordresult)
+                //     .loadMany();
+            } catch (error) {
+                console.error(error);
+            }
+            // try {
+            //     return database.get().manager.findOne(Word, word, {relations : ['synonyms']});
+            // } catch (error) {
+            //     console.log(error);
+            //     throw error;
+            // }
+
+            return wordresult;
         }
-        else return database.get().manager.find(Word, {relations: ['synonyms']} );
-        
+        else {
+            try {
+                return database.get().manager.find(Word, { relations: ['synonyms'] })
+            } catch (error) {
+                console.error(error);
+                throw error;
+            }
+
+
+        }
+
     }
 }

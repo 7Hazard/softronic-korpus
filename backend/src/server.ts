@@ -48,6 +48,10 @@ export async function start({
     }
 }
 
-export function stop() {
-    if (server) server.close()
+export async function stop() {
+    await new Promise((resolve, reject)=>{
+        server.close((err)=>{
+            resolve(null)
+        })
+    })
 }

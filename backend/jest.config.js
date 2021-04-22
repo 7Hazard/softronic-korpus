@@ -58,11 +58,13 @@ export default {
 
   // A path to a module which exports an async function that is triggered once after all test suites
   // globalTeardown: undefined,
-
+  
+  extensionsToTreatAsEsm: ['.ts'],
   // A set of global variables that need to be available in all test environments
   globals: {
     "ts-jest": {
-      "tsconfig": "tsconfig.test.json"
+      useESM: true,
+      "tsconfig": "__tests__/tsconfig.json"
     }
   },
 
