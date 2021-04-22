@@ -31,11 +31,13 @@ export async function start({
         for (const router of routers) {
             for (const layer of router.stack) {
                 let methods = []
-                for (const prop in layer.route.methods) {
-                    if (layer.route.methods[prop])
-                        methods.push(prop.toUpperCase())
+                if(layer.route) {
+                    for (const prop in layer.route.methods) {
+                        if (layer.route.methods[prop])
+                            methods.push(prop.toUpperCase())
+                    }
+                    console.log(`${methods}\t${layer.route.path}`)
                 }
-                console.log(`${methods}\t${layer.route.path}`)
             }
         }
         console.log(`Listening at http://localhost:${port}`)

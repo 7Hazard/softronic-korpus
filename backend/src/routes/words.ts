@@ -4,11 +4,19 @@ import Validator from 'validatorjs';
 import { get as getDb } from "../database";
 import { Router } from "express";
 
+import pkg, { JsonWebTokenError } from 'jsonwebtoken';
+import { nextTick } from "node:process";
+import { User, Users } from "../entities/User";
+import { authenticateToken } from "../middlewares/auth";
+
 export default Router()
+    .use(authenticateToken)
+    
     .get("/words", async (req, res) => {
         let getAll = await Words.get();
         res.status(200).json(getAll);
     })
+
     .get("/words/:wordid", async (req, res) => {
         let wordid = parseInt(req.params.wordid);
         const wordsById = await Words.get(wordid);
@@ -33,9 +41,9 @@ export default Router()
                     res.status(409).json();
                 }
             }
-
         }
     })
+    
     .put('/words/:wordid', async (req, res) => {
         let wordid = req.params.wordid
         let text = req.body.text;
@@ -67,5 +75,4 @@ export default Router()
                 res.status(500).json();
             }
         }
-
     })

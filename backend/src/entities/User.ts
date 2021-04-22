@@ -38,8 +38,8 @@ export class Users extends Repository<User> {
         return database.get().manager.find(User);
     }
 
-    public static getOne(name?:string){
-        return database.get().manager.findOne(User,name);
+    public static async getOne(name?:string){
+        return await database.get().manager.findOne(User,name);
     }
     
 } 
