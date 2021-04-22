@@ -1,3 +1,4 @@
+import { error } from "node:console";
 import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, Unique, ManyToOne, Index, PrimaryColumn, BeforeInsert, JoinColumn } from "typeorm";
 import * as database from "../database"
 import { Word } from "./Word";
@@ -28,7 +29,7 @@ export class Synonym{
 
 @EntityRepository(Synonym)
 export class Synonyms extends Repository<Synonym>{
-    public static async getSynonyms(word?: number) {
+    public static getSynonyms(word?: number) {
         if (word != null) {
             try {
                 return database.get().manager.findOne(Word, word, {relations : ['synonyms']});
@@ -50,19 +51,50 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
-    public static async validate(word1Id: number, word2Id: number){
+    public static async isValidInput(word1Id: number, word2Id: number, oldId2?: number){
 
-        let oppositeExists = await database.get().getRepository(Synonym).
+        try {
+
+            if(oldId2){
+                let synonymExists = await database.get().getRepository(Synonym)
+                .createQueryBuilder("synonym")
+                .where("synonym.wordId_1 = :word1Id", {word1Id: word1Id})
+                .andWhere("synonym.wordId_2 = :word2Id", {word2Id: oldId2})
+                .getOne();
+
+                console.log("Synonym exists? = " + synonymExists)
+
+                if(synonymExists == undefined){
+                    return false;
+                }
+            }
+            
+
+            let oppositeExists =  await database.get().getRepository(Synonym).
             createQueryBuilder("synonym").
             where("synonym.wordId_1 = :word1Id", {word1Id: word2Id}).
             andWhere("synonym.wordId_2 = :word2Id", {word2Id: word1Id}).
             getOne();
         
-        let circularExists = await database.get().getRepository(Synonym)
-        .createQueryBuilder("synonym")
-        .where("synonym.wordId_2 = :word1Id", {word1Id: word1Id})
-        .getOne();
+            let circularExists =  await database.get().getRepository(Synonym)
+            .createQueryBuilder("synonym")
+            .where("synonym.wordId_2 = :word1Id", {word1Id: word1Id})
+            .getOne();
 
-        return oppositeExists || circularExists;
+            console.log(oppositeExists)
+            console.log(circularExists)
+
+            
+
+            if(oppositeExists == undefined || circularExists == undefined){
+                return true;
+            } else return false;
+
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+        
+
     }
 }
