@@ -1,19 +1,14 @@
 
 import * as korpusapi from "../src/server";
-import * as http from 'http';
 import request from "supertest";
 
-export let db
-export let server: http.Server
-export let api: request.SuperTest<request.Test>;
+let stuff = await korpusapi.start({ dbpath: ":memory:", port: null, logging: false });
 
-beforeAll(async () => {
-  let stuff = (await korpusapi.start({ dbpath: ":memory:", port: null, logging: false }));
-  api = request(stuff.app);
-  server = stuff.server
-  db = stuff.db
-});
+export const db = stuff.db
+export const server = stuff.server
+export const app = stuff.app
+export const api = request(app)
 
-afterAll(() => {
-  korpusapi.stop()
+afterAll(async () => {
+  await korpusapi.stop()
 })
