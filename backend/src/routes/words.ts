@@ -1,26 +1,20 @@
 import { QueryFailedError } from "typeorm"
 import { Word, Words } from "../entities/Word"
 import Validator from "validatorjs"
-import { get as getDb } from "../database"
+import { getDb } from "../database"
 import { Router } from "express"
-
-import pkg, { JsonWebTokenError } from 'jsonwebtoken';
-import { nextTick } from "node:process";
-import { User, Users } from "../entities/User";
-import { authenticateToken } from "../middlewares/auth";
+import { authToken } from "../middlewares/auth";
 
 export default Router()
-    .use(authenticateToken)
-    
+    .use("/words", authToken)
     .get("/words", async (req, res) => {
         let getAll = await Words.get()
         res.status(200).json(getAll)
     })
-
     .get("/words/:wordid", async (req, res) => {
         let wordid = parseInt(req.params.wordid)
         const wordsById = await Words.get(wordid)
-        if(!wordsById){
+        if (!wordsById) {
             res.status(404).json({
                 "error": "Word not found"
             })
@@ -62,12 +56,12 @@ export default Router()
             return
         } else if (validation.passes())
 
-        await getDb()
-            .createQueryBuilder()
-            .update(Word)
-            .set({ text: text })
-            .where("id = :id", { id: wordid })
-            .execute()
+            await getDb()
+                .createQueryBuilder()
+                .update(Word)
+                .set({ text: text })
+                .where("id = :id", { id: wordid })
+                .execute()
         res.status(200).json()
     })
     .delete("/words", async (req, res) => {

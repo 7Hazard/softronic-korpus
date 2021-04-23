@@ -2,21 +2,16 @@ import { Router } from "express"
 import { argon2Verify } from "hash-wasm";
 import { User, Users } from "../entities/User";
 import jwt from "jsonwebtoken";
-import { get as getDb } from "../database";
-import { authenticateToken } from "../middlewares/auth";
+import { getDb as getDb } from "../database";
 
 export default Router()
-
-    .use(authenticateToken)
-
     .post("/signin", async (req, res) => {
 
+        // TODO validate body
         let name = req.body.name;
         let passwordInput = req.body.password;
 
         let user = await Users.getOne(name);
-
-        let namePrimary = req.params.namePrimary;
 
         const isValid = await argon2Verify({
             password: passwordInput,
@@ -24,8 +19,10 @@ export default Router()
         });
         if (isValid) {
 
-            let token = jwt.sign({ name: user.name }, 'shhhhh');
-            jwt.sign({ data: 'foobar' }, 'secret', { expiresIn: '24h' });
+            let token = jwt.sign({
+                name: user.name,
+                created: Date.now()
+            }, 'shhhhh');
 
             await getDb()
                 .createQueryBuilder()
@@ -35,8 +32,6 @@ export default Router()
                 .execute();
 
             res.status(200).json({ token });
-
         }
         else res.status(401).json()
     })
-

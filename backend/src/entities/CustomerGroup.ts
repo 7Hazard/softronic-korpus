@@ -17,12 +17,12 @@ export class CustomerGroup {
 @EntityRepository(CustomerGroup)
 export class CustomerGroups extends Repository<CustomerGroup> {
     public static add(customerGroup: CustomerGroup) {
-        return database.get().getRepository(CustomerGroup).save(customerGroup);
+        return database.getDb().getRepository(CustomerGroup).save(customerGroup);
     }
     public static get(customer?: number) {
         if (customer != null) {
-            return database.get().manager.findOne(CustomerGroup, customer);
+            return database.getDb().manager.findOne(CustomerGroup, customer);
         }
-        else return database.get().manager.find(CustomerGroup);
+        else return database.getDb().manager.find(CustomerGroup);
     }
 }

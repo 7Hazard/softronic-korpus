@@ -1,9 +1,10 @@
-import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, PrimaryColumn } from "typeorm";
+import { argon2id } from "hash-wasm";
+import { randomBytes } from "crypto";
+import { Entity, EntityRepository, Repository, Column, PrimaryColumn } from "typeorm";
 import * as database from "../database"
 
 @Entity()
 export class User {
-
     constructor(name: string, password: string, token: string) {
         this.name = name;
         this.hashedPassword = password;
@@ -27,19 +28,35 @@ export class User {
 
 @EntityRepository(User)
 export class Users extends Repository<User> {
-   /* public static add(User: User) {
-        return database.get().getRepository(User).save(User);
-    } */
-
-    
-
+    /**
+     * Adds new user to the database
+     * @param name username
+     * @param password password in raw format
+     * @returns the new user
+     */
+    public static async create(name: string, password: string) {
+        const hashedPassword = await argon2id({
+            password: password,
+            parallelism: 4,
+            memorySize: 64,
+            iterations: 4,
+            hashLength: 32,
+            salt: randomBytes(16).toString("hex"),
+            outputType: "encoded"
+        })
+        return await database.getDb().getRepository(User).save(new User(
+            name,
+            hashedPassword,
+            null
+        ));
+    }
     
     public static get(name?:string){
-        return database.get().manager.find(User);
+        return database.getDb().manager.find(User);
     }
 
     public static async getOne(name?:string){
-        return await database.get().manager.findOne(User,name);
+        return await database.getDb().manager.findOne(User,name);
     }
     
 } 

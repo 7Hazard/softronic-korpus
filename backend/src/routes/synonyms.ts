@@ -1,34 +1,30 @@
 import { Router } from "express";
-import { authenticateToken } from "../middlewares/auth";
-
-const db = database.get();
+import { getDb } from "../database";
+import { Synonym } from "../entities/Synonym";
+import { Words } from "../entities/Word";
+import { authToken } from "../middlewares/auth";
 
 export default Router()
-    .use(authenticateToken)
+    .use("/synonyms", authToken)
     .post("/synonyms", async (req, res) => {
 
         let id1 = req.body.id1;
         let id2 = req.body.id2;
 
-        let result = await db.getRepository(Synonym).
+        let result = await getDb().getRepository(Synonym).
             createQueryBuilder("synonym").
             where("synonym.wordId_1 = :word1Id", { word1Id: id2 }).
             andWhere("synonym.wordId_2 = :word2Id", { word2Id: id1 }).
             getOne();
 
-        console.log(result);
         if (!result) {
             try {
-                const word = await db.manager.findOne(Word, id1);
-                //const synonym = new Synonym(id1,id2);
-                await db
+                await getDb()
                     .createQueryBuilder()
                     .insert()
                     .into(Synonym)
                     .values([{ wordId_1: id1, wordId_2: id2 }])
                     .execute();
-
-                //word.synonyms.push(synonym);
 
                 res.status(200).json();
             } catch (error) {
@@ -55,4 +51,3 @@ export default Router()
             res.status(400).json();
         }
     })
-    

@@ -24,20 +24,20 @@ export class Word {
 @EntityRepository(Word)
 export class Words extends Repository<Word> {
     public static add(word: Word) {
-        return database.get().getRepository(Word).save(word);
+        return database.getDb().getRepository(Word).save(word);
     }
 
     public static get(word?: number) {
         if (word != null) {
-            return database.get().manager.findOne(Word, word);
-        } else return database.get().manager.find(Word);
+            return database.getDb().manager.findOne(Word, word);
+        } else return database.getDb().manager.find(Word);
     }
 
     public static async getSynonyms(word?: number) {
         if (word != null) {
             let wordresult;
             try {
-                return database.get().manager.findOne(Word, word, { relations: ['synonyms'] });
+                return database.getDb().manager.findOne(Word, word, { relations: ['synonyms'] });
                 // wordresult = await database.get().manager.findOne(Word, word);
                 // wordresult.synonyms = await database.get().createQueryBuilder()
                 //     .relation(Word, "synonyms")
@@ -57,7 +57,7 @@ export class Words extends Repository<Word> {
         }
         else {
             try {
-                return database.get().manager.find(Word, { relations: ['synonyms'] })
+                return database.getDb().manager.find(Word, { relations: ['synonyms'] })
             } catch (error) {
                 console.error(error);
                 throw error;

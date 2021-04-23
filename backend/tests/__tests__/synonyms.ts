@@ -1,11 +1,10 @@
-import { api } from "../__testhelpers__/server"
-import { addWord } from "../__testhelpers__/helpers";
+import { addWord, api } from "../helpers";
 
 let hello = await addWord("hello")
 let hi = await addWord("hi")
 
 test("add synonym", async () => {
-  await api.post("/synonyms")
+  await api.post("/synonyms").authenticate()
     .send({
       phrase: hello, // the id of the phrase to equalize
       equivalent: hi // the id to the equivalent phrase
@@ -19,7 +18,7 @@ test("add synonym", async () => {
 })
 
 test("get all synonyms", async () => {
-  let resp = await api.get("/synonyms")
+  let resp = await api.get("/synonyms").authenticate()
     .expect(200)
     .expect([
       {
@@ -42,7 +41,7 @@ test("get all synonyms", async () => {
 });
 
 test("get specific synonym", async () => {
-  let resp = await api.get(`/synonyms/${hi}`)
+  let resp = await api.get(`/synonyms/${hi}`).authenticate()
     .expect(200)
     .expect({
       text: "hi",
@@ -50,4 +49,3 @@ test("get specific synonym", async () => {
       synonyms: []
     })
 });
-

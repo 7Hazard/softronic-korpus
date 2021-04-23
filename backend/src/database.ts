@@ -13,6 +13,6 @@ export async function start(logging: boolean, path = "database.db") {
   return database;
 }
 
-export function get(){
+export function getDb(){
   return database;
 }

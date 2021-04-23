@@ -24,13 +24,13 @@ export async function start({
     app.use(routers)
 
     server = http.createServer(app)
-    if(port != null) server.listen(port)
+    if (port != null) server.listen(port)
     if (logging) {
         // log available routes
         for (const router of routers) {
             for (const layer of router.stack) {
                 let methods = []
-                if(layer.route) {
+                if (layer.route) {
                     for (const prop in layer.route.methods) {
                         if (layer.route.methods[prop])
                             methods.push(prop.toUpperCase())
@@ -50,8 +50,8 @@ export async function start({
 }
 
 export async function stop() {
-    await new Promise((resolve, reject)=>{
-        server.close((err)=>{
+    await new Promise((resolve, reject) => {
+        server.close((err) => {
             resolve(null)
         })
     })
