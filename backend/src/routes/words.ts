@@ -7,6 +7,9 @@ import { authToken } from "../middlewares/auth";
 
 export default Router()
     .use("/words", authToken)
+
+
+
     .get("/words", async (req, res) => {
         let getAll = await Words.get()
         res.status(200).json(getAll)
@@ -64,6 +67,7 @@ export default Router()
                 .execute()
         res.status(200).json()
     })
+    
     .delete("/words", async (req, res) => {
         let validation = new Validator(req.body, {
             //reqirement

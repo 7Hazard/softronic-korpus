@@ -16,7 +16,7 @@ export class Word {
     text: string;
 
     @OneToMany(() => Synonym, synonym => synonym.wordId_1)
-    @JoinColumn()
+    //@JoinColumn()
     synonyms: Word[];
 
 }
