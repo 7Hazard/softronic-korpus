@@ -30,7 +30,7 @@ Test.prototype.authenticate = function (token = authToken) {
 
 const name = "testUser"
 const password = "test123"
-await Users.create(name, password)
+let user = await Users.create(name, password)
 const authToken = await signin(name, password)
 
 export async function signin(name: string, password: string) {
@@ -79,7 +79,7 @@ export async function testAuth(options: {
   let r2 = await retry("b4d t0ken", options.data).expect(401)
 
   // add user
-  let name = `${options.path}AuthTest`
+  let name = `${options.path.replace(/\//g, "")}AuthTest`
   let password = "p4ssw0rd"
   await Users.create(name, password)
 

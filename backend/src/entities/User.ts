@@ -40,7 +40,7 @@ export class Users extends Repository<User> {
             outputType: "encoded"
         })
         return await database.getDb().getRepository(User).save(new User(
-            name,
+            name.toLowerCase(),
             hashedPassword,
             null
         ));
