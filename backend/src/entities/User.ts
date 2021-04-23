@@ -19,11 +19,6 @@ export class User {
 
     @Column({ nullable: true, unique: false, type: "varchar" })
     token: string;
-
-    //@ManyToMany(() => User)
-    //@JoinTable({ name: "Synonym" })
-    //synonyms: User[];
-
 }
 
 @EntityRepository(User)

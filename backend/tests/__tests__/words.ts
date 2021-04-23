@@ -86,7 +86,7 @@ test("delete multiple", async () => {
 
   // delete all
   await api.delete("/words").authenticate()
-    .send({ ids: [word1, word2, word3] })
+    .send({ ids: [word1.id, word2.id, word3.id] })
     .expect(200)
   //.expect({ deletedCount: 3 })
 })

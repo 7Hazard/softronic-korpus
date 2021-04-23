@@ -15,7 +15,8 @@ export class Word {
     @Column({ nullable: false, unique: true, type: "varchar" })
     text: string;
 
-    @OneToMany(() => Synonym, synonym => synonym.wordId_1)
+    // TODO redundant, remove
+    @OneToMany(() => Synonym, synonym => synonym.phrase)
     //@JoinColumn()
     synonyms: Word[];
 
@@ -31,6 +32,10 @@ export class Words extends Repository<Word> {
         if (word != null) {
             return database.getDb().manager.findOne(Word, word);
         } else return database.getDb().manager.find(Word);
+    }
+
+    public static getOneById(id: number) {
+        return database.getDb().manager.findOne(Word, id);
     }
 
     public static async getSynonyms(word?: number) {

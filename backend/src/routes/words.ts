@@ -3,12 +3,10 @@ import { Word, Words } from "../entities/Word"
 import Validator from "validatorjs"
 import { getDb } from "../database"
 import { Router } from "express"
-import { authToken } from "../middlewares/auth";
+import { authToken } from "../middlewares/auth"
 
 export default Router()
     .use("/words", authToken)
-
-
 
     .get("/words", async (req, res) => {
         let getAll = await Words.get()
@@ -19,7 +17,7 @@ export default Router()
         const wordsById = await Words.get(wordid)
         if (!wordsById) {
             res.status(404).json({
-                "error": "Word not found"
+                error: "Word not found",
             })
             return
         }
@@ -30,8 +28,8 @@ export default Router()
         let word = new Word(text)
 
         let validation = new Validator(req.body, {
-            text: ['required', 'min:1', 'max:100', 'regex:/^[A-z0-9% &/-]+$/']
-        });
+            text: ["required", "min:1", "max:100", "regex:/^[A-z0-9% &/-]+$/"],
+        })
 
         if (validation.fails()) {
             res.status(400).json(validation.errors)
@@ -51,14 +49,13 @@ export default Router()
         let text = req.body.text
 
         let validation = new Validator(req.body, {
-            text: ['required', 'min:1', 'max:100', 'regex:/^[A-z0-9% &/-]+$/']
-        });
+            text: ["required", "min:1", "max:100", "regex:/^[A-z0-9% &/-]+$/"],
+        })
 
         if (validation.fails()) {
-            res.status(400).json(validation.errors);
+            res.status(400).json(validation.errors)
             return
         } else if (validation.passes())
-
             await getDb()
                 .createQueryBuilder()
                 .update(Word)
@@ -67,7 +64,7 @@ export default Router()
                 .execute()
         res.status(200).json()
     })
-    
+
     .delete("/words", async (req, res) => {
         let validation = new Validator(req.body, {
             //reqirement

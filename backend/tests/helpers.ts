@@ -2,6 +2,7 @@
 import * as korpusapi from "../src/server";
 import supertest, { Test } from "supertest";
 import { Users } from "../src/entities/User" // second
+import { Word } from "../src/entities/Word";
 
 let stuff = await korpusapi.start({ dbpath: ":memory:", port: null, logging: false });
 
@@ -104,9 +105,9 @@ export async function testAuth(options: {
  * @param text 
  * @returns 
  */
-export async function addWord(text: string): Promise<number> {
+export async function addWord(text: string) {
   let response = await api.post("/words").authenticate().send({ text: text })
-  return response.body.id
+  return response.body as Word
 }
 
 export async function addGroup(text: string): Promise<number> {
