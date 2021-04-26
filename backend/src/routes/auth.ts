@@ -17,7 +17,6 @@ export default Router()
             res.status(400).json(validation.errors)
             return
         } else if (validation.passes()) {
-            // TODO validate body
             let name = req.body.name as string;
             name = name.toLowerCase();
             let passwordInput = req.body.password;

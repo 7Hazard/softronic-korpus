@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { getDb } from "../database"
 import { Synonym, Synonyms } from "../entities/Synonym"
-import { Words } from "../entities/Word"
+import { Words } from "../entities/Phrase"
 import { authToken } from "../middlewares/auth"
 
 export default Router()
@@ -43,11 +43,11 @@ export default Router()
             res.status(500).json()
         }
     })
-    .get("/synonyms/:wordid", async (req, res) => {
+    .get("/synonyms/:phraseid", async (req, res) => {
         // TODO validate
-        let wordid = parseInt(req.params["wordid"])
+        let phraseid = parseInt(req.params["phraseid"])
         try {
-            let synonym = await Synonyms.getByWord(wordid)
+            let synonym = await Synonyms.getByPhrase(phraseid)
             res.status(200).json(synonym)
         } catch (error) {
             console.error(error)

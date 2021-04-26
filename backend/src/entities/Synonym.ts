@@ -1,6 +1,6 @@
-import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, Unique, ManyToOne, Index, PrimaryColumn, BeforeInsert, JoinColumn } from "typeorm";
+import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, ManyToOne, Index, JoinColumn } from "typeorm";
 import * as database from "../database"
-import { Word, Words } from "./Word";
+import { Phrase } from "./Phrase";
 
 @Entity()
 @Index("Unique_Syn", ["phrase", "meaning"], { unique: true })
@@ -10,11 +10,11 @@ export class Synonym {
     @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @ManyToOne(() => Word)
+    @ManyToOne(() => Phrase)
     @JoinColumn({ name: "phrase" })
     phrase: number;
 
-    @ManyToOne(() => Word, word => word.synonyms)
+    @ManyToOne(() => Phrase, phrase => phrase.synonyms)
     @JoinColumn({ name: "meaning" })
     meaning: number;
 }
@@ -25,14 +25,14 @@ export class Synonyms extends Repository<Synonym>{
         return database.getDb().manager.find(Synonym, { relations: ['phrase', 'meaning'] });
     }
 
-    static async getByWord(wordid: number) {
-        return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: wordid }, {meaning: wordid}], relations: ["phrase", "meaning"] })
+    static async getByPhrase(phraseid: number) {
+        return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: phraseid }, {meaning: phraseid}], relations: ["phrase", "meaning"] })
     }
 
-    public static getSynonyms(word?: number) {
-        if (word != null) {
+    public static getSynonyms(phrase?: number) {
+        if (phrase != null) {
             try {
-                return database.getDb().manager.findOne(Word, word, { relations: ['synonyms'] });
+                return database.getDb().manager.findOne(Phrase, phrase, { relations: ['synonyms'] });
             } catch (error) {
                 console.log(error);
                 throw error;
@@ -40,7 +40,7 @@ export class Synonyms extends Repository<Synonym>{
         }
         else {
             try {
-                return database.getDb().manager.find(Word, { relations: ['synonyms'] })
+                return database.getDb().manager.find(Phrase, { relations: ['synonyms'] })
             } catch (error) {
                 console.error(error);
                 throw error;
