@@ -33,9 +33,9 @@ const password = "test123"
 let user = await Users.create(name, password)
 const authToken = await signin(name, password)
 
-export async function signin(name: string, password: string) {
+export async function signin(username: string, password: string) {
   let resp = await api.post("/signin").send({
-    name,
+    username,
     password
   }).expect(200)
   let token = resp.body.token as string
@@ -70,16 +70,17 @@ export async function testAuth(options: {
   // test directly
   let r1 = await testByMethod(options.method, options.path).send(options.data).expect(401)
 
-  function retry(token, data) {
+  function retry(token, data, expectedCode) {
     return testByMethod(options.method, options.path)
       .send(data)
       .authenticate(token)
+      .expect(expectedCode)
   }
   // test with bad token
-  let r2 = await retry("b4d t0ken", options.data).expect(401)
+  let r2 = await retry("b4d t0ken", options.data, 401)
 
   // add user
-  let name = `${options.path.replace(/\//g, "")}AuthTest`
+  let name = `${options.method}${options.path.replace(/\//g, "")}AuthTest`
   let password = "p4ssw0rd"
   await Users.create(name, password)
 
@@ -87,17 +88,16 @@ export async function testAuth(options: {
   let firstToken = await signin(name, password)
 
   // test with valid token
-  let r3 = await retry(firstToken, options.data).expect(200)
+  let r3 = await retry(firstToken, options.data, 200)
 
   // replace token by signing in again
   let secondToken = await signin(name, password)
 
   // test with first old token
-  let r4 = await retry(firstToken, options.secondData).expect(401)
+  let r4 = await retry(firstToken, options.secondData, 401)
 
   // test with second token
-  let r5 = await retry(secondToken, options.secondData)
-    .expect(options.secondExpectedCode)
+  let r5 = await retry(secondToken, options.secondData, options.secondExpectedCode)
 }
 
 /**
@@ -106,7 +106,7 @@ export async function testAuth(options: {
  * @returns 
  */
 export async function addWord(text: string) {
-  let response = await api.post("/words").authenticate().send({ text: text })
+  let response = await api.post("/phrases").authenticate().send({ text: text })
   return response.body as Phrase
 }
 

@@ -4,7 +4,7 @@ import bodyparser from "body-parser"
 import * as database from "./database"
 import routers from "./routes/all"
 import * as http from "http"
-import { Users } from "./entities/User"
+import { User, Users } from "./entities/User"
 
 export const app = express()
 app.use(bodyparser.json({}))
@@ -42,6 +42,7 @@ export async function start({
         }
         console.log(`Listening at http://localhost:${port}`)
     }
+    //Users.create("Mohamed","password123");
 
     return {
         db,
