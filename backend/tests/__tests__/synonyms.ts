@@ -3,9 +3,6 @@ import { addWord, api } from "../helpers";
 let hello = await addWord("hello")
 let hi = await addWord("hi")
 
-console.log(hello)
-console.log(hi)
-
 test("add synonym", async () => {
   await api.post("/synonyms").authenticate()
     .send({

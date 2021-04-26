@@ -16,7 +16,7 @@ export async function authToken(req, res, next) {
         return;
     }
 
-    var username = decode["name"];
+    var username = decode["username"];
     let user = await Users.getOne(username);
 
     if (!user) {

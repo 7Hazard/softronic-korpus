@@ -1,20 +1,14 @@
 import { addWord, expectErrors, testAuth } from "../helpers";
 import { api } from "../helpers";
 
-test("auth", async () => {
+
+test("add", async () => {
   await testAuth({
     method: "post",
     path: "/phrases",
     data: { text: "hi" },
     secondExpectedCode: 409
   })
-  await testAuth({ method: "get", path: "/phrases" })
-  await testAuth({ method: "get", path: "/phrases/1" })
-  await testAuth({ method: "put", path: "/phrases/1", data: { text: "bye bye" } })
-  await testAuth({ method: "delete", path: "/phrases", data: { ids: [1] } })
-})
-
-test("add", async () => {
   // add phrase 1
   await api.post("/phrases").authenticate()
     .send({ text: "hello" })
@@ -35,9 +29,15 @@ test("add", async () => {
 });
 
 test("get", async () => {
+  await testAuth({ method: "get", path: "/phrases" })
   let resp = await api.get("/phrases").authenticate()
     .expect(200)
     .expect([
+      {
+        text: "hi",
+        id: 1,
+        synonym: null
+      },
       {
         text: "hello",
         id: 2,
@@ -52,6 +52,7 @@ test("get", async () => {
 });
 
 test("get specific", async () => {
+  await testAuth({ method: "get", path: "/phrases/1" })
   let resp = await api.get("/phrases/2").authenticate()
     .expect(200)
     .expect({
@@ -73,10 +74,12 @@ test("add bad phrases", async () => {
 });
 
 test("update", async () => {
+  await testAuth({ method: "put", path: "/phrases/1", data: { text: "bye bye" } })
   await api.put("/phrases/1").authenticate().send({ text: "bye" }).expect(200)
 })
 
 test("delete one existing", async () => {
+  await testAuth({ method: "delete", path: "/phrases", data: { ids: [1] } })
   await api.delete("/phrases").authenticate().send({ ids: [1] }).expect(200)//.expect({deletedCount: 1})
 });
 
