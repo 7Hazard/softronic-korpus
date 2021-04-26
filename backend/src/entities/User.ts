@@ -14,7 +14,7 @@ export class User {
     @PrimaryColumn({unique:true})
     username: string;
 
-    @Column({ username: "password", nullable: false, unique: false, type: "varchar" })
+    @Column({nullable: false, unique: false, type: "varchar" })
     hashedPassword: string;
 
     @Column({ nullable: true, unique: false, type: "varchar" })
