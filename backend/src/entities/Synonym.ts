@@ -1,4 +1,5 @@
-import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, ManyToOne, Index, JoinColumn } from "typeorm";
+import { join } from "node:path";
+import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, Unique, ManyToOne, Index, PrimaryColumn, BeforeInsert, JoinColumn } from "typeorm";
 import * as database from "../database"
 import { Phrase } from "./Phrase";
 
@@ -29,8 +30,12 @@ export class Synonyms extends Repository<Synonym>{
         return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: phraseid }, {meaning: phraseid}], relations: ["phrase", "meaning"] })
     }
 
-    public static getSynonyms(phrase?: number) {
-        if (phrase != null) {
+    static async getBySynonymId(synonymId: number){
+        return await database.getDb().manager.getRepository(Synonym).find({where: {id: synonymId},relations: ["phrase","meaning"]})
+    }
+
+    public static getSynonyms(word?: number) {
+        if (word != null) {
             try {
                 return database.getDb().manager.findOne(Phrase, phrase, { relations: ['synonyms'] });
             } catch (error) {
