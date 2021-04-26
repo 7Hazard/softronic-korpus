@@ -1,6 +1,7 @@
-import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, OneToMany, RelationId, OneToOne } from "typeorm";
 import * as database from "../database"
 import { Synonym } from "./Synonym";
+import { Word } from "./Word";
 
 @Entity()
 export class Phrase {
@@ -16,9 +17,12 @@ export class Phrase {
     text: string;
 
     // TODO redundant, remove
-    @OneToMany(() => Synonym, synonym => synonym.phrase)
+    @OneToOne(() => Synonym, synonym => synonym.phrase)
     //@JoinColumn()
-    synonyms: Phrase[];
+    synonym: Phrase;
+
+    // @RelationId((phrase: Phrase) => phrase.synonyms)
+    // synonymId: number
 
 }
 
@@ -31,7 +35,7 @@ export class Words extends Repository<Phrase> {
     public static get(phrase?: number) {
         if (phrase != null) {
             return database.getDb().manager.findOne(Phrase, phrase);
-        } else return database.getDb().manager.find(Phrase);
+        } else return database.getDb().manager.find(Phrase,{relations: ['synonym','synonym.meaning']});
     }
 
     public static getOneById(id: number) {

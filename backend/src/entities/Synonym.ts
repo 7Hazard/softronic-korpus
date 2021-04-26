@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, Unique, ManyToOne, Index, PrimaryColumn, BeforeInsert, JoinColumn } from "typeorm";
+import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, Unique, ManyToOne, Index, PrimaryColumn, BeforeInsert, JoinColumn, RelationId, OneToOne } from "typeorm";
 import * as database from "../database"
 import { Phrase } from "./Phrase";
 
@@ -7,17 +7,19 @@ import { Phrase } from "./Phrase";
 @Index("Unique_Syn", ["phrase", "meaning"], { unique: true })
 export class Synonym {
 
-    // TODO remove, make both other columns together unique
-    @PrimaryGeneratedColumn("increment")
-    id: number;
+    // // TODO remove, make both other columns together unique
+    // @PrimaryGeneratedColumn("increment")
+    // SynonymId: number;
 
-    @ManyToOne(() => Phrase)
+    @PrimaryColumn()
+    @OneToOne(() => Phrase)
     @JoinColumn({ name: "phrase" })
     phrase: number;
 
-    @ManyToOne(() => Phrase, phrase => phrase.synonyms)
+    @ManyToOne(() => Phrase, phrase => phrase.synonym)
     @JoinColumn({ name: "meaning" })
     meaning: number;
+
 }
 
 @EntityRepository(Synonym)
@@ -37,7 +39,7 @@ export class Synonyms extends Repository<Synonym>{
     public static getSynonyms(word?: number) {
         if (word != null) {
             try {
-                return database.getDb().manager.findOne(Phrase, phrase, { relations: ['synonyms'] });
+                return database.getDb().manager.findOne(Phrase, word, { relations: ['synonyms'] });
             } catch (error) {
                 console.log(error);
                 throw error;

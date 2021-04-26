@@ -19,9 +19,11 @@ export default Router()
             return
         }
 
-        if (await Synonyms.isValidInput(phrase, meaning)) {
+        let isValidInput = await Synonyms.isValidInput(phrase, meaning)
+        let result;
+        if (isValidInput) {
             try {
-                let result = await getDb()
+                result = await getDb()
                     .createQueryBuilder()
                     .insert()
                     .into(Synonym)
@@ -35,7 +37,7 @@ export default Router()
                 })
             } catch (error) {
                 console.log(error)
-                res.status(500).json()
+                res.status(500).json(error)
             }
         } else
             res.status(400).json(
@@ -101,7 +103,7 @@ export default Router()
             } else res.status(500).json()
         } catch (error) {
             console.error(error)
-            res.status(500).json()
+            res.status(500).json(error)
             return
         }
     })

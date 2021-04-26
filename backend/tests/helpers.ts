@@ -106,7 +106,7 @@ export async function testAuth(options: {
  * @returns 
  */
 export async function addWord(text: string) {
-  let response = await api.post("/words").authenticate().send({ text: text })
+  let response = await api.post("/phrases").authenticate().send({ text: text })
   return response.body as Phrase
 }
 
