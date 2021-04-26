@@ -3,46 +3,59 @@ import { getDb } from "../database"
 import { Synonym, Synonyms } from "../entities/Synonym"
 import { Words } from "../entities/Phrase"
 import { authToken } from "../middlewares/auth"
+import Validator from "validatorjs"
 
 export default Router()
     .use("/synonyms", authToken)
     .post("/synonyms", async (req, res) => {
-        // TODO validate
         let phrase = req.body.phrase
         let meaning = req.body.meaning
 
-        if (
-            (await Words.get(phrase)) == undefined ||
-            (await Words.get(meaning)) == undefined
-        ) {
-            res.status(500).json({ error: "One of the IDs do not exist" })
+        let validation = new Validator(req.body, {
+            phrase: ["required", "integer"],
+            meaning: ["required", "integer"]
+        })
+
+        if (validation.fails()) {
+            res.status(400).json(validation.errors)
             return
-        }
+        } else if (validation.passes()) {
 
-        let isValidInput = await Synonyms.isValidInput(phrase, meaning)
-        let result;
-        if (isValidInput) {
-            try {
-                result = await getDb()
-                    .createQueryBuilder()
-                    .insert()
-                    .into(Synonym)
-                    .values([{ phrase, meaning }])
-                    .execute()
-
-                res.status(200).json({
-                    id: result.identifiers[0].id,
-                    phrase,
-                    meaning
-                })
-            } catch (error) {
-                console.log(error)
-                res.status(500).json(error)
+            if ((await Words.get(phrase)) == undefined || (await Words.get(meaning)) == undefined) {
+                res.status(400).json({ error: "One of the IDs do not exist" })
+                return
             }
-        } else
-            res.status(400).json(
-                "No circular or transitive dependencies allowed"
-            )
+
+            // if you put same id on phrase and meaning
+            if (phrase == meaning) {
+                res.status(400).json({error: "phrase cannot be same as meaning"})
+                return;
+            }
+
+            if (await Synonyms.isValidInput(phrase, meaning)) {
+                try {
+
+                    let result = await getDb()
+                        .createQueryBuilder()
+                        .insert()
+                        .into(Synonym)
+                        .values([{ phrase, meaning }])
+                        .execute()
+
+                    res.status(200).json({
+                        id: result.identifiers[0].id,
+                        phrase,
+                        meaning
+                    })
+                } catch (error) {
+                    console.log(error)
+                    res.status(500).json()
+                }
+            } else{
+                res.status(400).json({error: "No circular or transitive dependencies allowed"})
+                return;
+            }
+        }
     })
     .get("/synonyms", async (req, res) => {
         try {

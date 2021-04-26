@@ -19,7 +19,7 @@ test("add synonym", async () => {
     .send({
       phrase: 45,
       meaning: 123
-    }).expect(500)
+    }).expect(40)
     .expect({ error: "One of the IDs do not exist" })
 
     await api.post("/synonyms").authenticate()
@@ -27,7 +27,7 @@ test("add synonym", async () => {
       phrase: hi.id,
       meaning: hello.id
     }).expect(400)
-    .expect('"No circular or transitive dependencies allowed"')
+    .expect({error: "No circular or transitive dependencies allowed"})
 
 })
 

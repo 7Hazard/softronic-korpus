@@ -23,7 +23,6 @@ export async function start({
     db.createQueryRunner()
 
     app.use(routers)
-
     server = http.createServer(app)
     if (port != null) server.listen(port)
     if (logging) {
