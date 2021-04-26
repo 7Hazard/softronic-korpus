@@ -40,11 +40,13 @@ test("get", async () => {
     .expect([
       {
         text: "hello",
-        id: 2
+        id: 2,
+        synonym: null
       },
       {
         text: "hell o",
-        id: 3
+        id: 3,
+        synonym: null
       }
     ])
 });

@@ -11,9 +11,19 @@ export default Router()
         let phrase = req.body.phrase
         let meaning = req.body.meaning
 
-        if (await Synonyms.isValidInput(phrase, meaning)) {
+        if (
+            (await Words.get(phrase)) == undefined ||
+            (await Words.get(meaning)) == undefined
+        ) {
+            res.status(500).json({ error: "One of the IDs do not exist" })
+            return
+        }
+
+        let isValidInput = await Synonyms.isValidInput(phrase, meaning)
+        let result;
+        if (isValidInput) {
             try {
-                let result = await getDb()
+                result = await getDb()
                     .createQueryBuilder()
                     .insert()
                     .into(Synonym)
@@ -27,7 +37,7 @@ export default Router()
                 })
             } catch (error) {
                 console.log(error)
-                res.status(500).json()
+                res.status(500).json(error)
             }
         } else
             res.status(400).json(
@@ -51,6 +61,16 @@ export default Router()
             res.status(200).json(synonym)
         } catch (error) {
             console.error(error)
+            res.status(500).json()
+        }
+    })
+    .get("/synonymsById/:synonymID", async (req,res) =>{
+        let synonymId = parseInt(req.params["synonymID"])
+        try {
+            let synonym = await Synonyms.getBySynonymId(synonymId)
+            res.status(200).json(synonym)
+        } catch (error) {
+            console.log(error)
             res.status(500).json()
         }
     })
@@ -83,7 +103,7 @@ export default Router()
             } else res.status(500).json()
         } catch (error) {
             console.error(error)
-            res.status(500).json()
+            res.status(500).json(error)
             return
         }
     })
