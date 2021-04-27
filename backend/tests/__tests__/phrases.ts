@@ -26,6 +26,30 @@ test("add", async () => {
       text: "hell o",
       id: 3
     })
+    await api.post("/phrases").authenticate()
+    .send({ text: "phrase" })
+    .expect(200)
+    .expect({
+      text: "phrase",
+      id: 4
+    })
+    await api.post("/phrases").authenticate()
+    .send({ text: "meaning" })
+    .expect(200)
+    .expect({
+      text: "meaning",
+      id: 5
+    })
+    await api.post("/synonyms").authenticate()
+    .send(  {
+      phrase:4,
+      meaning:5
+   })
+    .expect(200)
+    .expect({
+      phrase: 4,
+      meaning: 5
+    })
 });
 
 test("get", async () => {
@@ -46,6 +70,22 @@ test("get", async () => {
       {
         text: "hell o",
         id: 3,
+        synonym: null
+      },
+      {
+        text: "phrase",
+        id: 4,
+        synonym: {
+          phrase: 4,
+          meaning: {
+            text: "meaning",
+            id: 5
+          }
+        }
+      },
+      {
+        text: "meaning",
+        id: 5,
         synonym: null
       }
     ])

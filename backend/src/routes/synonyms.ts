@@ -37,7 +37,7 @@ export default Router()
                 })
             } catch (error) {
                 console.log(error)
-                res.status(500).json(error)
+                res.status(500).json()
             }
         } else
             res.status(400).json(
