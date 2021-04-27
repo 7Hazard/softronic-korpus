@@ -107,3 +107,23 @@ export default Router()
             return
         }
     })
+    .delete("/synonyms", async (req,res) =>{
+        let phraseId = req.body.phrase;
+        let meaningId = req.body.meaning;
+
+        if (
+            (await Words.get(phraseId)) == undefined ||
+            (await Words.get(meaningId)) == undefined
+        ) {
+            res.status(400).json({ error: "One of the IDs do not exist" })
+            return
+        }
+
+        try {
+            await Synonyms.deleteSynonym(phraseId,meaningId)
+            res.status(200).json();
+        } catch (error) {
+            res.status(500).json();
+        }
+
+    })

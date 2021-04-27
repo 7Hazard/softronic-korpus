@@ -55,6 +55,20 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
+    public static async deleteSynonym(phraseId: number, meaningId: number){
+
+        try {
+            await database.getDb().getRepository(Synonym).
+            createQueryBuilder().delete()
+            .where("phrase = :phraseId", {phraseId: phraseId})
+            .andWhere("meaning = :meaningId", {meaningId: meaningId})
+            .execute()
+        } catch (error) {
+            console.log(error)
+            throw error;
+        }
+    }
+
     public static async isValidInput(phrase: number, meaning: number, oldMeaning?: number) {
         try {
             if (oldMeaning) {
@@ -81,8 +95,8 @@ export class Synonyms extends Repository<Synonym>{
                 .getOne();
 
             if (oppositeExists == undefined || circularExists == undefined) {
-                return true;
-            } else return false;
+                return false;
+            } else return true;
         } catch (error) {
             console.error(error);
             throw error;
