@@ -20,17 +20,19 @@ export default Router()
             res.status(400).json(validation.errors)
             return
         } else if (validation.passes()) {
-
-            if ((await Words.get(phrase)) == undefined || (await Words.get(meaning)) == undefined) {
-                res.status(400).json({ error: "One of the IDs do not exist" })
-                return
-            }
-
             // if you put same id on phrase and meaning
             if (phrase == meaning) {
                 res.status(400).json({error: "phrase cannot be same as meaning"})
                 return;
             }
+            
+            if ((await Words.get(phrase)) == undefined || (await Words.get(meaning)) == undefined) {
+                res.status(409).json({ error: "One of the IDs do not exist" })
+                return
+            }
+
+            
+
 
             if (await Synonyms.isValidInput(phrase, meaning)) {
                 try {

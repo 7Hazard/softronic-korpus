@@ -80,7 +80,7 @@ export class Synonyms extends Repository<Synonym>{
                 .where("synonym.meaning = :phrase", { phrase: phrase })
                 .getOne();
 
-            if (oppositeExists == undefined || circularExists == undefined) {
+            if (oppositeExists == undefined && circularExists == undefined) {
                 return true;
             } else return false;
         } catch (error) {
