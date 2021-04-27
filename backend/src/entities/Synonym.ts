@@ -69,18 +69,13 @@ export class Synonyms extends Repository<Synonym>{
                 }
             }
 
-            let oppositeExists = await database.getDb().getRepository(Synonym).
-                createQueryBuilder("synonym").
-                where("synonym.phrase = :phrase", { phrase: meaning }).
-                andWhere("synonym.meaning = :meaning", { meaning: phrase }).
-                getOne();
-
             let circularExists = await database.getDb().getRepository(Synonym)
                 .createQueryBuilder("synonym")
-                .where("synonym.meaning = :phrase", { phrase: phrase })
+                .where(`synonym.meaning = ${phrase}`)
+                .orWhere(`synonym.phrase = ${meaning}`)
                 .getOne();
 
-            if (oppositeExists == undefined && circularExists == undefined) {
+            if (circularExists == undefined) {
                 return true;
             } else return false;
         } catch (error) {

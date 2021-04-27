@@ -4,6 +4,7 @@ import { Synonym, Synonyms } from "../entities/Synonym"
 import { Words } from "../entities/Phrase"
 import { authToken } from "../middlewares/auth"
 import Validator from "validatorjs"
+import {QueryFailedError} from "typeorm"
 
 export default Router()
     .use("/synonyms", authToken)
@@ -32,9 +33,9 @@ export default Router()
             }
 
             
+            let isValidInput = await Synonyms.isValidInput(phrase,meaning)
 
-
-            if (await Synonyms.isValidInput(phrase, meaning)) {
+            if (isValidInput) {
                 try {
 
                     let result = await getDb()
@@ -51,6 +52,9 @@ export default Router()
                     })
                 } catch (error) {
                     console.log(error)
+                    if(error.errno == 19){
+                        res.status(400).json({error: error.toString()})
+                    }
                     res.status(500).json()
                 }
             } else{
