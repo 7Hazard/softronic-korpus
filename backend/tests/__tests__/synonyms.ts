@@ -5,6 +5,7 @@ let hello = await addWord("hello")
 let hi = await addWord("hi")
 let hey = await addWord("hey")
 
+
 test("add synonym", async () => {
   await api.post("/synonyms").authenticate()
     .send({
@@ -39,7 +40,6 @@ test("add synonym", async () => {
     }).expect(400)
     .expect({error: "No circular or transitive dependencies allowed"})
   
-
 })
 
 test("get all synonyms", async () => {
