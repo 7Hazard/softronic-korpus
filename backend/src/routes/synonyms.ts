@@ -106,23 +106,53 @@ export default Router()
             res.status(400).json({ error: "One of the IDs do not exist" })
             return
         }
+        if((await Synonyms.getSynonym(phrase,meaning)) == undefined){
+            res.status(400).json({error: "The synonym does not exist!"})
+            return
+        }
 
         try {
             if (await Synonyms.isValidInput(phrase, newMeaning, meaning)) {
-                await getDb()
+                let result = await getDb()
                     .getRepository(Synonym)
                     .createQueryBuilder("synonym")
                     .update()
-                    .set({ phrase: newMeaning })
+                    .set({ meaning: newMeaning })
                     .where("phrase = :phrase", { phrase })
                     .andWhere("meaning = :meaning", { meaning })
                     .execute()
 
-                res.status(200).json()
-            } else res.status(500).json()
+                res.status(200).json({phrase,
+                newMeaning})
+            } else res.status(400).json({error: "No circular or transitive dependencies allowed"})
         } catch (error) {
             console.error(error)
-            res.status(500).json(error)
+            res.status(400).json(error.toString)
             return
         }
+    })
+    .delete("/synonyms", async (req,res) =>{
+        let phraseId = req.body.phrase;
+        let meaningId = req.body.meaning;
+
+        if (
+            (await Words.get(phraseId)) == undefined ||
+            (await Words.get(meaningId)) == undefined
+        ) {
+            res.status(400).json({ error: "One of the IDs do not exist" })
+            return
+        }
+
+        if((await Synonyms.getSynonym(phraseId,meaningId)) == undefined){
+            res.status(400).json({error: "The synonym does not exist!"})
+            return;
+        }
+
+        try {
+            let synDel = await Synonyms.deleteSynonym(phraseId,meaningId)
+            res.status(200).json(synDel);
+        } catch (error) {
+            res.status(500).json(error.toString);
+        }
+
     })

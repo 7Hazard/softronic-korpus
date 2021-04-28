@@ -32,6 +32,13 @@ export class Synonyms extends Repository<Synonym>{
         return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: phraseid }, {meaning: phraseid}], relations: ["phrase", "meaning"] })
     }
 
+    static async getSynonym(phraseId: number, meaningId: number){
+        return await database.getDb().manager.getRepository(Synonym).createQueryBuilder()
+        .where("phrase = :phraseId",{phraseId: phraseId})
+        .andWhere("meaning = :meaningId", {meaningId: meaningId})
+        .getOne()
+    }
+
     static async getBySynonymId(synonymId: number){
         return await database.getDb().manager.getRepository(Synonym).find({where: {id: synonymId},relations: ["phrase","meaning"]})
     }
@@ -55,16 +62,26 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
+    public static async deleteSynonym(phraseId: number, meaningId: number){
+
+        try {
+            await database.getDb().getRepository(Synonym).
+            createQueryBuilder().delete()
+            .where("phrase = :phraseId", {phraseId: phraseId})
+            .andWhere("meaning = :meaningId", {meaningId: meaningId})
+            .execute()
+        } catch (error) {
+            console.log(error)
+            throw error;
+        }
+    }
+
     public static async isValidInput(phrase: number, meaning: number, oldMeaning?: number) {
         try {
             if (oldMeaning) {
-                let synonymExists = await database.getDb().getRepository(Synonym)
-                    .createQueryBuilder("synonym")
-                    .where("synonym.phrase = :phrase", { phrase: phrase })
-                    .andWhere("synonym.meaning = :meaning", { meaning: oldMeaning })
-                    .getOne();
+                let synonymExists = await Synonyms.getSynonym(phrase,oldMeaning);
 
-                if (synonymExists == undefined) {
+                if (synonymExists == undefined || (phrase == meaning)) {
                     return false;
                 }
             }
