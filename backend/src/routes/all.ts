@@ -1,9 +1,11 @@
+import auth from "./auth";
 import synonyms from "./synonyms";
-import words from "./words";
+import phrases from "./phrases";
 import customerGroup from "./customerGroup";
 
 export default [
-    words,
+    phrases,
     synonyms,
-    customerGroup
+    customerGroup,
+    auth
 ]

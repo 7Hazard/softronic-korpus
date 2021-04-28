@@ -18,6 +18,29 @@
       ],
       "console": "integratedTerminal",
       "preLaunchTask": "Build backend"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Tests",
+      // "skipFiles": [
+      //   "<node_internals>/**"
+      // ],
+      // "program": "${workspaceFolder}/backend/node_modules/jest/bin/jest.js",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "--experimental-vm-modules",
+        "${workspaceFolder}/backend/node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--testTimeout=999999"
+      ],
+      // "args": ["--runInBand"],
+      // "outFiles": [
+      //   "${workspaceFolder}/backend/out/**/*.js"
+      // ],
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal",
+      "preLaunchTask": "Build backend"
     }
   ]
 }

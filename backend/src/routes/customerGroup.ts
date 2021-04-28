@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { CustomerGroup, CustomerGroups } from "../entities/CustomerGroup";
-import { Words } from "../entities/Word";
-import { get as getDb } from "../database";
+import { getDb } from "../database";
 import Validator from "validatorjs";
 import { QueryFailedError } from "typeorm";
+import { authToken } from "../middlewares/auth";
 
 export default Router()
+    .use("customerGroup", authToken)
 
     .get("/customerGroup", async (req, res) => {
         let getAll = await CustomerGroups.get();
@@ -45,18 +46,17 @@ export default Router()
             return
         } else if (validation.passes())
 
-        await getDb()
-            .createQueryBuilder()
-            .update(CustomerGroup)
-            .set({ text: text })
-            .where("id = :id", { id: id })
-            .execute();
+            await getDb()
+                .createQueryBuilder()
+                .update(CustomerGroup)
+                .set({ text: text })
+                .where("id = :id", { id: id })
+                .execute();
         res.status(200).json(group)
     })
 
     .post("/customerGroup", async (req, res) => {
         let text = req.body.text;
-        let customerGroup = new CustomerGroup(text);
 
         let validation = new Validator(req.body, {
             text: ['required', 'min:1', 'max:100', 'regex:/^[A-z0-9% &/-]+$/']
@@ -65,6 +65,7 @@ export default Router()
         if (validation.fails()) {
             res.status(400).json(validation.errors);
         } else if (validation.passes()) {
+            let customerGroup = new CustomerGroup(text);
             try {
                 customerGroup = await getDb().getRepository(CustomerGroup).save(new CustomerGroup(text));
                 res.status(200).json(customerGroup);
