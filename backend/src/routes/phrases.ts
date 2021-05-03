@@ -4,6 +4,7 @@ import Validator from "validatorjs"
 import { getDb } from "../database"
 import { Router } from "express"
 import { authToken } from "../middlewares/auth"
+import { trimText } from "../util"
 
 export default Router()
     .use("/phrases", authToken)
@@ -24,18 +25,18 @@ export default Router()
         res.status(200).json(phrasesById)
     })
     .post("/phrases", async (req, res) => {
-        let text = req.body.text
-        let phrase = new Phrase(text)
 
         let validation = new Validator(req.body, {
-            text: ["required", "min:1", "max:100", "regex:/^[A-z0-9% &/-]+$/"],
+            text: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/"],
         })
 
         if (validation.fails()) {
             res.status(400).json(validation.errors)
         } else if (validation.passes()) {
+            let text = trimText(req.body.text)
+            let phrase = new Phrase(text)
             try {
-                phrase = await getDb().getRepository(Phrase).save(new Phrase(text))
+                phrase = await getDb().getRepository(Phrase).save(phrase)
                 res.status(200).json(phrase)
             } catch (error) {
                 if (error instanceof QueryFailedError) {
@@ -45,24 +46,26 @@ export default Router()
         }
     })
     .put("/phrases/:phraseid", async (req, res) => {
-        let phraseid = req.params.phraseid
-        let text = req.body.text
 
         let validation = new Validator(req.body, {
-            text: ["required", "min:1", "max:100", "regex:/^[A-z0-9% &/-]+$/"],
+            text: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/"],
         })
 
         if (validation.fails()) {
             res.status(400).json(validation.errors)
             return
-        } else if (validation.passes())
+        } else if (validation.passes()) {
+            let phraseid = req.params.phraseid
+            let text = trimText(req.body.text)
+
             await getDb()
                 .createQueryBuilder()
                 .update(Phrase)
-                .set({ text: text })
+                .set({ text: text })     // testade att trimma
                 .where("id = :id", { id: phraseid })
                 .execute()
-        res.status(200).json()
+            res.status(200).json()
+        }
     })
 
     .delete("/phrases", async (req, res) => {
