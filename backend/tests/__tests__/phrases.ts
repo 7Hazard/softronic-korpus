@@ -26,6 +26,14 @@ test("add", async () => {
       text: "hell o",
       id: 3
     })
+
+    await api.post("/phrases").authenticate()
+    .send({ text: "   hej    då   " })
+    .expect(200)
+    .expect({
+      text: "hej då",
+      id: 4
+    })
 });
 
 test("get", async () => {
@@ -46,6 +54,11 @@ test("get", async () => {
       {
         text: "hell o",
         id: 3,
+        synonym: null
+      },
+      {
+        text: "hej då",
+        id: 4,
         synonym: null
       }
     ])

@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { getDb as getDb } from "../database";
 import Validator from "validatorjs";
 import { QueryFailedError } from "typeorm";
+import { trimText } from "../util";
 
 
 export default Router()
@@ -13,14 +14,14 @@ export default Router()
     .post("/signup", async (req, res) => {
 
         let validation = new Validator(req.body, {
-            username: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% .@&/-]+$/'],
+            username: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9%.@&/-]+$/'],
             password: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% .@&/-]+$/']
         });
 
         if (validation.fails()) {
             res.status(400).json(validation.errors);
         } else if (validation.passes()) {
-            let username = req.body.username;
+            let username = trimText(req.body.username);
             let password = req.body.password.toLowerCase()
 
             try {
@@ -37,7 +38,7 @@ export default Router()
     .post("/signin", async (req, res) => {
 
         let validation = new Validator(req.body, {
-            username: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% .@&/-]+$/"],
+            username: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9%.@&/-]+$/"],
             password: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% .@&/-]+$/"]
         })
 
