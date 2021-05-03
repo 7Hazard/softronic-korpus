@@ -26,29 +26,24 @@ test("add", async () => {
       text: "hell o",
       id: 3
     })
+
     await api.post("/phrases").authenticate()
-    .send({ text: "phrase" })
+    .send({ text: "   hej    då   " })
     .expect(200)
     .expect({
-      text: "phrase",
+      text: "hej då",
       id: 4
     })
-    await api.post("/phrases").authenticate()
-    .send({ text: "meaning" })
-    .expect(200)
-    .expect({
-      text: "meaning",
-      id: 5
-    })
+    
     await api.post("/synonyms").authenticate()
     .send(  {
-      phrase:4,
-      meaning:5
+      phrase:1,
+      meaning:2
    })
     .expect(200)
     .expect({
-      phrase: 4,
-      meaning: 5
+      phrase: 1,
+      meaning: 2
     })
 });
 
@@ -60,7 +55,13 @@ test("get", async () => {
       {
         text: "hi",
         id: 1,
-        synonym: null
+        synonym: {
+          phrase: 1,
+          meaning: {
+            text: "hello",
+            id: 2
+          }
+        }
       },
       {
         text: "hello",
@@ -73,21 +74,11 @@ test("get", async () => {
         synonym: null
       },
       {
-        text: "phrase",
+        text: "hej då",
         id: 4,
-        synonym: {
-          phrase: 4,
-          meaning: {
-            text: "meaning",
-            id: 5
-          }
-        }
-      },
-      {
-        text: "meaning",
-        id: 5,
         synonym: null
-      }
+      },
+      
     ])
 });
 
@@ -125,7 +116,7 @@ test("delete one existing", async () => {
 
 test("delete multiple", async () => {
   // add three phrases
-  let phrase1 = await addWord("hello")
+  let phrase1 = await addWord("hey")
   let phrase2 = await addWord("bye")
   let phrase3 = await addWord("goodbye")
 

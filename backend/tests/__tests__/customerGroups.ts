@@ -16,6 +16,21 @@ test("add", async () => {
       text: "hel lo",
       id: 2
     })
+    await api.post("/customerGroup").authenticate()
+    .send({ text: "hallå" })
+    .expect(200)
+    .expect({
+      text: "hallå",
+      id: 3
+    })
+
+    await api.post("/customerGroup").authenticate()
+    .send({ text: "            hej          då             " })
+    .expect(200)
+    .expect({
+      text: "hej då",
+      id: 4
+    })
 
   // Bad input tests
   await api.post("/customerGroup").authenticate().send({ text: "@£$!?=)(/&[]{}%" }).expect(400)
@@ -43,6 +58,8 @@ test("update group", async () => {
     .send({ text: "bye" })
     .expect(200)
 
+    
+
   // bad input tests
   await api.put("/customerGroup/1").authenticate().send({ text: "" }).expect(400)
   await api.put("/customerGroup/1").authenticate().send({ text: "@£$!?=)(/&[]{}%" }).expect(400)
@@ -51,6 +68,7 @@ test("update group", async () => {
 
 test("update non-existing", async () => {
   await api.put("/customerGroup/5").authenticate()
+    .send({ text: "bye" })
     .expect(404, {
       error: "invalid id"
     })

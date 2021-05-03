@@ -12,7 +12,9 @@ export class Synonym {
     // SynonymId: number;
 
     @PrimaryColumn()
-    @OneToOne(() => Phrase)
+    @OneToOne(() => Phrase,{
+        onDelete: "CASCADE"
+    })
     @JoinColumn({ name: "phrase" })
     phrase: number;
 
@@ -30,6 +32,13 @@ export class Synonyms extends Repository<Synonym>{
 
     static async getByPhrase(phraseid: number) {
         return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: phraseid }, {meaning: phraseid}], relations: ["phrase", "meaning"] })
+    }
+
+    static async getSynonym(phraseId: number, meaningId: number){
+        return await database.getDb().manager.getRepository(Synonym).createQueryBuilder()
+        .where("phrase = :phraseId",{phraseId: phraseId})
+        .andWhere("meaning = :meaningId", {meaningId: meaningId})
+        .getOne()
     }
 
     static async getBySynonymId(synonymId: number){
@@ -55,32 +64,37 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
+    public static async deleteSynonym(phraseId: number, meaningId: number){
+
+        try {
+            await database.getDb().getRepository(Synonym).
+            createQueryBuilder().delete()
+            .where("phrase = :phraseId", {phraseId: phraseId})
+            .andWhere("meaning = :meaningId", {meaningId: meaningId})
+            .execute()
+        } catch (error) {
+            console.log(error)
+            throw error;
+        }
+    }
+
     public static async isValidInput(phrase: number, meaning: number, oldMeaning?: number) {
         try {
             if (oldMeaning) {
-                let synonymExists = await database.getDb().getRepository(Synonym)
-                    .createQueryBuilder("synonym")
-                    .where("synonym.phrase = :phrase", { phrase: phrase })
-                    .andWhere("synonym.meaning = :meaning", { meaning: oldMeaning })
-                    .getOne();
+                let synonymExists = await Synonyms.getSynonym(phrase,oldMeaning);
 
-                if (synonymExists == undefined) {
+                if (synonymExists == undefined || (phrase == meaning)) {
                     return false;
                 }
             }
 
-            let oppositeExists = await database.getDb().getRepository(Synonym).
-                createQueryBuilder("synonym").
-                where("synonym.phrase = :phrase", { phrase: meaning }).
-                andWhere("synonym.meaning = :meaning", { meaning: phrase }).
-                getOne();
-
             let circularExists = await database.getDb().getRepository(Synonym)
                 .createQueryBuilder("synonym")
-                .where("synonym.meaning = :phrase", { phrase: phrase })
+                .where(`synonym.meaning = ${phrase}`)
+                .orWhere(`synonym.phrase = ${meaning}`)
                 .getOne();
 
-            if (oppositeExists == undefined || circularExists == undefined) {
+            if (circularExists == undefined) {
                 return true;
             } else return false;
         } catch (error) {
