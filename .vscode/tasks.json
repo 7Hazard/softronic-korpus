@@ -14,6 +14,17 @@
 		},
 		{
 			"type": "shell",
+			"label": "Fetch frontend dependencies",
+			"command": "npm i",
+			"options": {
+				"cwd": "${workspaceFolder}/frontend"
+			},
+			"group": "build",
+			"problemMatcher": [],
+			"dependsOn": ["Fetch global dependencies"]
+		},
+		{
+			"type": "shell",
 			"label": "Fetch global dependencies",
 			"command": "npm i",
 			"problemMatcher": []
@@ -35,6 +46,16 @@
 			"group": "build",
 			"problemMatcher": [],
 			"dependsOn":["Build backend"]
+		},
+		{
+			"type": "shell",
+			"label": "Run frontend",
+			"command": "npm run start",
+			"options": {
+				"cwd": "${workspaceFolder}/frontend"
+			},
+			"group": "build",
+			"problemMatcher": []
 		},
 		{
 			"type": "typescript",
