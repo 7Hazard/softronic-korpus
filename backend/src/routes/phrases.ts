@@ -7,8 +7,6 @@ import { authToken } from "../middlewares/auth"
 import { trimText } from "../util"
 
 export default Router()
-    .use("/phrases", authToken)
-
     .get("/phrases", async (req, res) => {
         let getAll = await Words.get()
         res.status(200).json(getAll)
@@ -24,7 +22,7 @@ export default Router()
         }
         res.status(200).json(phrasesById)
     })
-    .post("/phrases", async (req, res) => {
+    .post("/phrases", authToken, async (req, res) => {
 
         let validation = new Validator(req.body, {
             text: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/"],
@@ -45,7 +43,7 @@ export default Router()
             }
         }
     })
-    .put("/phrases/:phraseid", async (req, res) => {
+    .put("/phrases/:phraseid", authToken, async (req, res) => {
 
         let validation = new Validator(req.body, {
             text: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/"],
@@ -68,7 +66,7 @@ export default Router()
         }
     })
 
-    .delete("/phrases", async (req, res) => {
+    .delete("/phrases", authToken, async (req, res) => {
         let validation = new Validator(req.body, {
             //reqirement
             ids: "array|required",
