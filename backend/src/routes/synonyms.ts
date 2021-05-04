@@ -4,11 +4,9 @@ import { Synonym, Synonyms } from "../entities/Synonym"
 import { Words } from "../entities/Phrase"
 import { authToken } from "../middlewares/auth"
 import Validator from "validatorjs"
-import { QueryFailedError } from "typeorm"
 
 export default Router()
-    .use("/synonyms", authToken)
-    .post("/synonyms", async (req, res) => {
+    .post("/synonyms", authToken, async (req, res) => {
 
         let validation = new Validator(req.body, {
             phrase: ["required", "integer"],
@@ -92,7 +90,7 @@ export default Router()
             res.status(500).json()
         }
     })
-    .put("/synonyms", async (req, res) => {
+    .put("/synonyms", authToken, async (req, res) => {
         let phrase = req.body.phrase
         let meaning = req.body.meaning
         let newMeaning = req.body.newMeaning
@@ -132,7 +130,7 @@ export default Router()
             return
         }
     })
-    .delete("/synonyms", async (req, res) => {
+    .delete("/synonyms", authToken, async (req, res) => {
         let phraseId = req.body.phrase;
         let meaningId = req.body.meaning;
 

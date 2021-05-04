@@ -42,7 +42,7 @@ test("add synonym", async () => {
 })
 
 test("get all synonyms", async () => {
-  await api.get("/synonyms").authenticate()
+  await api.get("/synonyms")
     .expect(200, [
       {
         phrase: { text: 'hello', id: 1 }, // the phrase to equalize
@@ -56,10 +56,10 @@ test("get specific synonym", async () => {
   // TODO invalid input tests
 
   // search by phrase
-  await api.get(`/synonyms/${hello.id}`).authenticate()
+  await api.get(`/synonyms/${hello.id}`)
     .expect(200, [{ phrase: hello, meaning: hi }])
 
   // search by meaning
-  await api.get(`/synonyms/${hi.id}`).authenticate()
+  await api.get(`/synonyms/${hi.id}`)
     .expect(200, [{ phrase: hello, meaning: hi }])
 });

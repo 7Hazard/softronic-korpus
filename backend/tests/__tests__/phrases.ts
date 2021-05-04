@@ -44,8 +44,7 @@ test("add", async () => {
 });
 
 test("get", async () => {
-  await testAuth({ method: "get", path: "/phrases" })
-  let resp = await api.get("/phrases").authenticate()
+  let resp = await api.get("/phrases")
     .expect(200, [
       {
         text: "hi",
@@ -78,8 +77,7 @@ test("get", async () => {
 });
 
 test("get specific", async () => {
-  await testAuth({ method: "get", path: "/phrases/1" })
-  let resp = await api.get("/phrases/2").authenticate()
+  let resp = await api.get("/phrases/2")
     .expect(200, {
       text: "hello",
       id: 2

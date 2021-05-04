@@ -7,8 +7,6 @@ import { authToken } from "../middlewares/auth";
 import { trimText } from "../util";
 
 export default Router()
-    .use("customerGroup", authToken)
-
     .get("/customerGroup", async (req, res) => {
         let getAll = await CustomerGroups.get();
         res.status(200).json(getAll);
@@ -26,7 +24,7 @@ export default Router()
         res.status(200).json(group);
     })
 
-    .put('/customerGroup/:id', async (req, res) => {
+    .put('/customerGroup/:id', authToken, async (req, res) => {
 
         let validation = new Validator(req.body, {
             text: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
@@ -41,7 +39,7 @@ export default Router()
             const group = await CustomerGroups.get(id);
 
             if (!group) {
-                res.status(404).json({"error": "invalid id"})
+                res.status(404).json({ "error": "invalid id" })
                 return
             }
 
@@ -52,11 +50,11 @@ export default Router()
                 .where("id = :id", { id: id })
                 .execute();
 
-                res.status(200).json(group)
+            res.status(200).json(group)
         }
     })
 
-    .post("/customerGroup", async (req, res) => {
+    .post("/customerGroup", authToken, async (req, res) => {
 
         let validation = new Validator(req.body, {
             text: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
@@ -78,7 +76,7 @@ export default Router()
         }
     })
 
-    .delete("/customerGroup", async (req, res) => {
+    .delete("/customerGroup", authToken, async (req, res) => {
         let validation = new Validator(req.body, {
             //reqirement
             ids: "array|required",

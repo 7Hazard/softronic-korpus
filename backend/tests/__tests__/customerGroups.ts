@@ -35,7 +35,7 @@ test("add", async () => {
 })
 
 test("get specific", async () => {
-  await api.get("/customerGroup/1").authenticate()
+  await api.get("/customerGroup/1")
     .expect(200, {
       text: "hello",
       id: 1
