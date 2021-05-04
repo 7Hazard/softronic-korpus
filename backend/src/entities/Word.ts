@@ -40,6 +40,7 @@ export class Words extends Repository<Word> {
         return database.getDb().manager.findOne(Word, id);
     }
 
+
     public static async getSynonyms(word?: number) {
         if (word != null) {
             let wordresult;

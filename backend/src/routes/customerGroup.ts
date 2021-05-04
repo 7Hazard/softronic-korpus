@@ -88,9 +88,14 @@ export default Router()
         if (validation.fails()) {
             res.status(400).json(validation.errors)
         } else if (validation.passes()) {
+            let groups =await CustomerGroups.getCustomerGroupById(req.body.ids)
             try {
-                await getDb().manager.delete(CustomerGroup, req.body.ids) // find by id
-                res.status(200).json()
+                let deletedIds=[]
+                for (const group of groups) {
+                    deletedIds.push(group.id)  
+                }
+                res.status(200).json({deleted:deletedIds})
+                await getDb().manager.delete(CustomerGroup, deletedIds) // find by id
             } catch (error) {
                 res.status(500).json()
             }

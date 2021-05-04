@@ -5,6 +5,7 @@ import { getDb } from "../database"
 import { Router } from "express"
 import { authToken } from "../middlewares/auth"
 import { trimText } from "../util"
+import { Word } from "../entities/Word"
 
 export default Router()
     .use("/phrases", authToken)
@@ -78,9 +79,14 @@ export default Router()
         if (validation.fails()) {
             res.status(400).json(validation.errors)
         } else if (validation.passes()) {
+            let phrases =await Words.getByIds(req.body.ids)
             try {
+                let deletedIds=[]
+                for (const phrase of phrases) {
+                    deletedIds.push(phrase.id)  
+                }
+                res.status(200).json({deleted:deletedIds})
                 await getDb().manager.delete(Phrase, req.body.ids) // find by id
-                res.status(200).json()
             } catch (error) {
                 res.status(500).json()
             }

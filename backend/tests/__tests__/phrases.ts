@@ -111,7 +111,11 @@ test("update", async () => {
 
 test("delete one existing", async () => {
   await testAuth({ method: "delete", path: "/phrases", data: { ids: [1] } })
-  await api.delete("/phrases").authenticate().send({ ids: [1] }).expect(200)//.expect({deletedCount: 1})
+  await api.delete("/phrases").authenticate().send({ ids: [2] }).expect(200).expect({
+    deleted: [
+      2
+    ]
+  })//.expect({deletedCount: 1})
 });
 
 test("delete multiple", async () => {
@@ -123,18 +127,28 @@ test("delete multiple", async () => {
   // delete all
   await api.delete("/phrases").authenticate()
     .send({ ids: [phrase1.id, phrase2.id, phrase3.id] })
-    .expect(200)
-  //.expect({ deletedCount: 3 })
+    .expect(200).expect(200).expect({
+      deleted: [
+        phrase1.id,
+        phrase2.id,
+        phrase3.id
+      ]
+    })
 })
 
 test("delete none existing", async () => {
   await api.delete("/phrases").authenticate()
     .send({ ids: [1] })
-    .expect(200)
+    .expect(200).expect({
+      deleted: [
+      ]
+    })
   //.expect({ deletedCount: 0 })
 });
 
 test("delete with bad input", async () => {
   await expectErrors(api.delete("/phrases").authenticate().send({ ids: "" }), 400)
   await expectErrors(api.delete("/phrases").authenticate().send({ ids: {} }), 400)
+  await expectErrors(api.delete("/phrases").authenticate().send({ ids: "abc" }), 400)
+  await expectErrors(api.delete("/phrases").authenticate().send({ ids: 123 }), 400)
 });

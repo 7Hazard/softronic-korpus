@@ -80,6 +80,8 @@ test("delete one existing", async () => {
   // bad input tests
   await expectErrors(api.delete("/customerGroup").authenticate().send({ ids: "" }), 400)
   await expectErrors(api.delete("/customerGroup").authenticate().send({ ids: {} }), 400)
+  await expectErrors(api.delete("/customerGroup").authenticate().send({ ids: "abc" }), 400)
+  await expectErrors(api.delete("/customerGroup").authenticate().send({ ids: 123 }), 400)
 });
 
 test("delete multiple", async () => {
@@ -91,11 +93,20 @@ test("delete multiple", async () => {
   // delete all
   await api.delete("/customerGroup").authenticate()
     .send({ ids: [group1, group2, group3] })
-    .expect(200)
+    .expect(200).expect(200).expect({
+      deleted: [
+        group1,
+        group2,
+        group3
+      ]
+    })
 })
 
 test("delete non-existing", async () => {
   await api.delete("/customerGroup").authenticate()
     .send({ ids: [1] })
-    .expect(200)
+    .expect(200).expect({
+      deleted: [
+      ]
+    })
 });

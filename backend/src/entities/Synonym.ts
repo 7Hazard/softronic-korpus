@@ -41,6 +41,21 @@ export class Synonyms extends Repository<Synonym>{
         .getOne()
     }
 
+    static async getSynonymsById(phraseIds: number[]){
+        return await database.getDb().manager.findByIds(Synonym,phraseIds);
+    }
+
+//     public static getByIds(ids: number[]) {
+//         return database.getDb().manager.findByIds(Phrase,ids);
+// }
+
+
+    // public static getSynonymsById(ids:number[]){
+    //     return database.getDb().manager.getRepository(Synonym).createQueryBuilder()
+    //     .where("phrase = :phraseId", { phraseId: ids })
+    //     .getMany()
+    // }
+
     static async getBySynonymId(synonymId: number){
         return await database.getDb().manager.getRepository(Synonym).find({where: {id: synonymId},relations: ["phrase","meaning"]})
     }
@@ -64,13 +79,11 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
-    public static async deleteSynonym(phraseId: number, meaningId: number){
-
+    public static async deleteSynonym(phraseId: number[]){
         try {
             await database.getDb().getRepository(Synonym).
             createQueryBuilder().delete()
             .where("phrase = :phraseId", {phraseId: phraseId})
-            .andWhere("meaning = :meaningId", {meaningId: meaningId})
             .execute()
         } catch (error) {
             console.log(error)

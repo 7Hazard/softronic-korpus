@@ -42,6 +42,10 @@ export class Words extends Repository<Phrase> {
         return database.getDb().manager.findOne(Phrase, id);
     }
 
+    public static getByIds(ids: number[]) {
+            return database.getDb().manager.findByIds(Phrase,ids);
+    }
+
     public static async getSynonyms(phrase?: number) {
         if (phrase != null) {
             let phraseresult;
