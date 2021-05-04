@@ -12,7 +12,9 @@ export class Synonym {
     // SynonymId: number;
 
     @PrimaryColumn()
-    @OneToOne(() => Phrase)
+    @OneToOne(() => Phrase,{
+        onDelete: "CASCADE"
+    })
     @JoinColumn({ name: "phrase" })
     phrase: number;
 

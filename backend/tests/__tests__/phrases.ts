@@ -12,8 +12,7 @@ test("add", async () => {
   // add phrase 1
   await api.post("/phrases").authenticate()
     .send({ text: "hello" })
-    .expect(200)
-    .expect({
+    .expect(200, {
       text: "hello",
       id: 2
     })
@@ -21,30 +20,43 @@ test("add", async () => {
   // add phrase 2
   await api.post("/phrases").authenticate()
     .send({ text: "hell o" })
-    .expect(200)
-    .expect({
+    .expect(200, {
       text: "hell o",
       id: 3
     })
 
-    await api.post("/phrases").authenticate()
+  await api.post("/phrases").authenticate()
     .send({ text: "   hej    då   " })
-    .expect(200)
-    .expect({
+    .expect(200, {
       text: "hej då",
       id: 4
+    })
+
+  await api.post("/synonyms").authenticate()
+    .send({
+      phrase: 1,
+      meaning: 2
+    })
+    .expect(200, {
+      phrase: 1,
+      meaning: 2
     })
 });
 
 test("get", async () => {
   await testAuth({ method: "get", path: "/phrases" })
   let resp = await api.get("/phrases").authenticate()
-    .expect(200)
-    .expect([
+    .expect(200, [
       {
         text: "hi",
         id: 1,
-        synonym: null
+        synonym: {
+          phrase: 1,
+          meaning: {
+            text: "hello",
+            id: 2
+          }
+        }
       },
       {
         text: "hello",
@@ -60,15 +72,15 @@ test("get", async () => {
         text: "hej då",
         id: 4,
         synonym: null
-      }
+      },
+
     ])
 });
 
 test("get specific", async () => {
   await testAuth({ method: "get", path: "/phrases/1" })
   let resp = await api.get("/phrases/2").authenticate()
-    .expect(200)
-    .expect({
+    .expect(200, {
       text: "hello",
       id: 2
     })
@@ -98,7 +110,7 @@ test("delete one existing", async () => {
 
 test("delete multiple", async () => {
   // add three phrases
-  let phrase1 = await addWord("hello")
+  let phrase1 = await addWord("hey")
   let phrase2 = await addWord("bye")
   let phrase3 = await addWord("goodbye")
 
