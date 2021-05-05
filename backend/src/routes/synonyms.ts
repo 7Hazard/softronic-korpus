@@ -120,7 +120,7 @@ export default new Routes("/synonyms")
             return
         }
     })
-    .delete("/synonyms", async (req, res) => {
+    .delete("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
             //reqirement
@@ -134,14 +134,14 @@ export default new Routes("/synonyms")
             let synonyms = await Synonyms.getSynonymsById(req.body.ids)
             // let synonyms = await Synonyms.getSynonymsById(req.body.ids)
             try {
-                let deletedIds=[]
+                let deletedIds = []
                 for (const synonym of synonyms) {
                     let phrase = await Words.getOneById(synonym.phrase)
-                    deletedIds.push(phrase.id)  
+                    deletedIds.push(phrase.id)
                 }
-                res.status(200).json({deleted:deletedIds})
+                res.status(200).json({ deleted: deletedIds })
                 await getDb().manager.delete(Synonym, req.body.ids)
-                
+
             } catch (error) {
                 res.status(500).json()
             }
