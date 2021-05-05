@@ -133,7 +133,6 @@ test("delete none existing", async () => {
       deleted: [
       ]
     })
-  //.expect({ deletedCount: 0 })
 });
 
 test("delete with bad input", async () => {
