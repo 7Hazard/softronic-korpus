@@ -21,7 +21,6 @@ export class Synonym {
     @ManyToOne(() => Phrase, phrase => phrase.synonym)
     @JoinColumn({ name: "meaning" })
     meaning: number;
-
 }
 
 @EntityRepository(Synonym)
@@ -39,6 +38,10 @@ export class Synonyms extends Repository<Synonym>{
         .where("phrase = :phraseId",{phraseId: phraseId})
         .andWhere("meaning = :meaningId", {meaningId: meaningId})
         .getOne()
+    }
+
+    static async getSynonymsById(phraseIds: number[]){
+        return await database.getDb().manager.findByIds(Synonym,phraseIds);
     }
 
     static async getBySynonymId(synonymId: number){
@@ -64,13 +67,11 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
-    public static async deleteSynonym(phraseId: number, meaningId: number){
-
+    public static async deleteSynonym(phraseId: number[]){
         try {
             await database.getDb().getRepository(Synonym).
             createQueryBuilder().delete()
             .where("phrase = :phraseId", {phraseId: phraseId})
-            .andWhere("meaning = :meaningId", {meaningId: meaningId})
             .execute()
         } catch (error) {
             console.log(error)

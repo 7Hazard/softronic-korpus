@@ -23,7 +23,6 @@ export class Phrase {
 
     // @RelationId((phrase: Phrase) => phrase.synonyms)
     // synonymId: number
-
 }
 
 @EntityRepository(Phrase)
@@ -42,26 +41,18 @@ export class Words extends Repository<Phrase> {
         return database.getDb().manager.findOne(Phrase, id);
     }
 
+    public static getByIds(ids: number[]) {
+            return database.getDb().manager.findByIds(Phrase,ids);
+    }
+
     public static async getSynonyms(phrase?: number) {
         if (phrase != null) {
             let phraseresult;
             try {
                 return database.getDb().manager.findOne(Phrase, phrase, { relations: ['synonyms'] });
-                // phraseresult = await database.get().manager.findOne(Word, phrase);
-                // phraseresult.synonyms = await database.get().createQueryBuilder()
-                //     .relation(Word, "synonyms")
-                //     .of(phraseresult)
-                //     .loadMany();
             } catch (error) {
                 console.error(error);
             }
-            // try {
-            //     return database.get().manager.findOne(Word, phrase, {relations : ['synonyms']});
-            // } catch (error) {
-            //     console.log(error);
-            //     throw error;
-            // }
-
             return phraseresult;
         }
         else {
@@ -71,9 +62,6 @@ export class Words extends Repository<Phrase> {
                 console.error(error);
                 throw error;
             }
-
-
         }
-
     }
 }

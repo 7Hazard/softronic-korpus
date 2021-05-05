@@ -45,20 +45,10 @@ export class Words extends Repository<Word> {
             let wordresult;
             try {
                 return database.getDb().manager.findOne(Word, word, { relations: ['synonyms'] });
-                // wordresult = await database.get().manager.findOne(Word, word);
-                // wordresult.synonyms = await database.get().createQueryBuilder()
-                //     .relation(Word, "synonyms")
-                //     .of(wordresult)
-                //     .loadMany();
+                
             } catch (error) {
                 console.error(error);
             }
-            // try {
-            //     return database.get().manager.findOne(Word, word, {relations : ['synonyms']});
-            // } catch (error) {
-            //     console.log(error);
-            //     throw error;
-            // }
 
             return wordresult;
         }
@@ -69,9 +59,6 @@ export class Words extends Repository<Word> {
                 console.error(error);
                 throw error;
             }
-
-
         }
-
     }
 }
