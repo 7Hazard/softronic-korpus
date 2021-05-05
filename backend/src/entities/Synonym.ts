@@ -65,13 +65,12 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
-    public static async deleteSynonym(phraseId: number, meaningId: number){
+    public static async deleteSynonym(phraseId: number){
 
         try {
             await database.getDb().getRepository(Synonym).
             createQueryBuilder().delete()
             .where("phrase = :phraseId", {phraseId: phraseId})
-            .andWhere("meaning = :meaningId", {meaningId: meaningId})
             .execute()
         } catch (error) {
             console.log(error)

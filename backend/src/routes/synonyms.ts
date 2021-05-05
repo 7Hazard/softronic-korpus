@@ -129,26 +129,35 @@ export default new Routes("/synonyms")
         
     })
     .delete("/", [authToken], async (req, res) => {
-        let phraseId = req.body.phrase;
-        let meaningId = req.body.meaning;
+        
+        let validation = new Validator(req.body, {
+            phrase: ["required", "integer"]
+        })
 
-        if (
-            (await Words.get(phraseId)) == undefined ||
-            (await Words.get(meaningId)) == undefined
-        ) {
-            res.status(400).json({ error: "One of the IDs do not exist" })
-            return
-        }
+        if(!validation.passes()){
+            res.status(400).json(validation.errors)
+        } else {
+            let phraseId = req.body.phrase;
 
-        if ((await Synonyms.getSynonym(phraseId)) == undefined) {
-            res.status(400).json({ error: "The synonym does not exist!" })
-            return;
-        }
+            if (
+                (await Words.get(phraseId)) == undefined 
+            ) {
+                res.status(400).json({ error: "One of the IDs do not exist" })
+                return
+            }
 
-        try {
-            let synDel = await Synonyms.deleteSynonym(phraseId, meaningId)
-            res.status(200).json(synDel);
-        } catch (error) {
-            res.status(500).json(error.toString);
+            if ((await Synonyms.getSynonym(phraseId)) == undefined) {
+                res.status(400).json({ error: "The synonym does not exist!" })
+                return;
+            }
+
+            try {
+                let synDel = await Synonyms.deleteSynonym(phraseId)
+                res.status(200).json(synDel);
+            } catch (error) {
+                res.status(500).json(error.toString);
+            }
         }
+        
+        
     })
