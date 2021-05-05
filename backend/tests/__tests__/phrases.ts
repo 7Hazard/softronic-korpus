@@ -1,6 +1,4 @@
-import { addWord, expectErrors, testAuth } from "../helpers";
-import { api } from "../helpers";
-
+import { api, addWord, expectErrors, testAuth } from "../helpers";
 
 test("add", async () => {
   await testAuth({
@@ -12,8 +10,7 @@ test("add", async () => {
   // add phrase 1
   await api.post("/phrases").authenticate()
     .send({ text: "hello" })
-    .expect(200)
-    .expect({
+    .expect(200, {
       text: "hello",
       id: 2
     })
@@ -21,37 +18,32 @@ test("add", async () => {
   // add phrase 2
   await api.post("/phrases").authenticate()
     .send({ text: "hell o" })
-    .expect(200)
-    .expect({
+    .expect(200, {
       text: "hell o",
       id: 3
     })
 
-    await api.post("/phrases").authenticate()
+  await api.post("/phrases").authenticate()
     .send({ text: "   hej    då   " })
-    .expect(200)
-    .expect({
+    .expect(200, {
       text: "hej då",
       id: 4
     })
-    
-    await api.post("/synonyms").authenticate()
-    .send(  {
-      phrase:1,
-      meaning:2
-   })
-    .expect(200)
-    .expect({
+
+  await api.post("/synonyms").authenticate()
+    .send({
+      phrase: 1,
+      meaning: 2
+    })
+    .expect(200, {
       phrase: 1,
       meaning: 2
     })
 });
 
 test("get", async () => {
-  await testAuth({ method: "get", path: "/phrases" })
-  let resp = await api.get("/phrases").authenticate()
-    .expect(200)
-    .expect([
+  let resp = await api.get("/phrases")
+    .expect(200, [
       {
         text: "hi",
         id: 1,
@@ -78,15 +70,13 @@ test("get", async () => {
         id: 4,
         synonym: null
       },
-      
+
     ])
 });
 
 test("get specific", async () => {
-  await testAuth({ method: "get", path: "/phrases/1" })
-  let resp = await api.get("/phrases/2").authenticate()
-    .expect(200)
-    .expect({
+  let resp = await api.get("/phrases/2")
+    .expect(200, {
       text: "hello",
       id: 2
     })

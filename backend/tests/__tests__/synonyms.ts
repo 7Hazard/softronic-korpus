@@ -15,8 +15,7 @@ test("add synonym", async () => {
       phrase: hello.id, // the id of the phrase to equalize       //1 -> 2
       meaning: hi.id // the id to the equivalent phrase
     })
-    .expect(200)
-    .expect({
+    .expect(200, {
       phrase: hello.id, // the phrase to equalize
       meaning: hi.id // the id to the equivalent phrase
     })
@@ -34,8 +33,8 @@ test("add synonym", async () => {
     .send({
       phrase: 45,
       meaning: 123
-    }).expect(409)
-    .expect({ error: "One of the IDs do not exist" })
+    })
+    .expect(409, { error: "One of the IDs do not exist" })
 
   await api.post("/synonyms").authenticate()
     .send({
@@ -55,7 +54,7 @@ test("add synonym", async () => {
 })
 
 test("get all synonyms", async () => {
-  await api.get("/synonyms").authenticate()
+  await api.get("/synonyms")
     .expect(200, [
       {
         phrase: {

@@ -1,14 +1,9 @@
 import "reflect-metadata"
-import express from "express"
+import express, { Router } from "express"
 import bodyparser from "body-parser"
 import * as database from "./database"
-import routers from "./routes/all"
+import routes from "./routes/all"
 import * as http from "http"
-
-export const app = express()
-app.use(bodyparser.json({}))
-
-let server: http.Server
 
 export async function start({
     port = 2525,
@@ -21,9 +16,7 @@ export async function start({
 
     db.createQueryRunner()
 
-    app.use(routers)
-    server = http.createServer(app)
-    if (port != null) server.listen(port)
+    server = http.createServer(app).listen(port)
     if (logging) {
         // log available routes
         for (const router of routers) {
@@ -55,3 +48,15 @@ export async function stop() {
         })
     })
 }
+
+// setup app
+export const app = express()
+app.use(bodyparser.json({}))
+
+let server: http.Server
+
+let routers: Router[] = []
+for (const r of routes) {
+    routers.push(r.router)
+}
+app.use(routers)
