@@ -81,20 +81,6 @@ export default new Routes("/synonyms")
         }
     })
     .put("/", [authToken], async (req, res) => {
-        let phrase = req.body.phrase
-        let meaning = req.body.meaning
-        let newMeaning = req.body.newMeaning
-    .get("/synonymsById/:synonymID", async (req, res) => {
-        let synonymId = parseInt(req.params["synonymID"])
-        try {
-            let synonym = await Synonyms.getBySynonymId(synonymId)
-            res.status(200).json(synonym)
-        } catch (error) {
-            console.log(error)
-            res.status(500).json()
-        }
-    })
-    .put("/synonyms", async (req, res) => {
         
         let validation = new Validator(req.body, {
             phraseId: ["required", "integer"],
