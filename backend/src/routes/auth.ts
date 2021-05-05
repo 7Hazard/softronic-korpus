@@ -10,7 +10,6 @@ import { Routes } from "./Routes";
 
 export default new Routes()
 
-
     .post("/signup", [], async (req, res) => {
 
         let validation = new Validator(req.body, {

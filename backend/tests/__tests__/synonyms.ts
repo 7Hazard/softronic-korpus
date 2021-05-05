@@ -119,7 +119,6 @@ test("delete none existing", async () => {
   await api.delete("/synonyms").authenticate()
     .send({ ids: [1] })
     .expect(200)
-  //.expect({ deletedCount: 0 })
 });
 
 test("delete with bad input", async () => {

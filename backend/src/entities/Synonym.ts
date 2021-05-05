@@ -21,7 +21,6 @@ export class Synonym {
     @ManyToOne(() => Phrase, phrase => phrase.synonym)
     @JoinColumn({ name: "meaning" })
     meaning: number;
-
 }
 
 @EntityRepository(Synonym)
