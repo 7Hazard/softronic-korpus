@@ -26,7 +26,7 @@ export class CustomerGroups extends Repository<CustomerGroup> {
         else return database.getDb().manager.find(CustomerGroup);
     }
 
-    static async getCustomerGroupById(groupIds: number[]){
-        return await database.getDb().manager.findByIds(CustomerGroup,groupIds);
+    static async getCustomerGroupById(groupIds: number[]) {
+        return await database.getDb().manager.findByIds(CustomerGroup, groupIds);
     }
 }

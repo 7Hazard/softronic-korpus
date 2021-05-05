@@ -79,14 +79,13 @@ test("get specific synonym", async () => {
   // TODO invalid input tests
 
   // search by phrase
-  await api.get(`/synonyms/${hello.id}`).authenticate()
+  await api.get(`/synonyms/${hello.id}`)
     .expect(200, [{ phrase: hello, meaning: hi }])
 
   // search by meaning
-  await api.get(`/synonyms/${hi.id}`).authenticate()
+  await api.get(`/synonyms/${hi.id}`)
     .expect(200, [{ phrase: hello, meaning: hi }])
 });
-
 
 test("delete existing", async () => {
   await testAuth({ method: "delete", path: "/synonyms", data: { ids: [3] } })
@@ -98,9 +97,6 @@ test("delete existing", async () => {
 });
 
 test("delete multiple", async () => {
-  // add three phrases
-
-  // delete all
   await api.delete("/synonyms").authenticate()
     .send({ ids: [hello.id, sup.id] })
     .expect(200,{
@@ -114,7 +110,10 @@ test("delete multiple", async () => {
 test("delete none existing", async () => {
   await api.delete("/synonyms").authenticate()
     .send({ ids: [1] })
-    .expect(200)
+    .expect(200,{
+      deleted: [
+      ]
+    })
 });
 
 test("delete with bad input", async () => {

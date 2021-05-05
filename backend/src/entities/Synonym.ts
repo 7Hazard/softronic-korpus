@@ -48,7 +48,6 @@ export class Synonyms extends Repository<Synonym>{
         return await database.getDb().manager.findByIds(Synonym,phraseIds);
     }
    
-
     static async getBySynonymId(synonymId: number){
         return await database.getDb().manager.getRepository(Synonym).find({where: {id: synonymId},relations: ["phrase","meaning"]})
     }

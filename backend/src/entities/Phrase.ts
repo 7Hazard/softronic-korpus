@@ -34,7 +34,7 @@ export class Words extends Repository<Phrase> {
     public static get(phrase?: number) {
         if (phrase != null) {
             return database.getDb().manager.findOne(Phrase, phrase);
-        } else return database.getDb().manager.find(Phrase,{relations: ['synonym','synonym.meaning']});
+        } else return database.getDb().manager.find(Phrase, { relations: ['synonym', 'synonym.meaning'] });
     }
 
     public static getOneById(id: number) {
@@ -42,7 +42,7 @@ export class Words extends Repository<Phrase> {
     }
 
     public static getByIds(ids: number[]) {
-            return database.getDb().manager.findByIds(Phrase,ids);
+        return database.getDb().manager.findByIds(Phrase, ids);
     }
 
     public static async getSynonyms(phrase?: number) {
@@ -50,6 +50,7 @@ export class Words extends Repository<Phrase> {
             let phraseresult;
             try {
                 return database.getDb().manager.findOne(Phrase, phrase, { relations: ['synonyms'] });
+
             } catch (error) {
                 console.error(error);
             }
