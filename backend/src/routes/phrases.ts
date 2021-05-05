@@ -59,7 +59,7 @@ export default new Routes("/phrases")
             await getDb()
                 .createQueryBuilder()
                 .update(Phrase)
-                .set({ text: text })     // testade att trimma
+                .set({ text: text })
                 .where("id = :id", { id: phraseid })
                 .execute()
             res.status(200).json()
@@ -76,9 +76,14 @@ export default new Routes("/phrases")
         if (validation.fails()) {
             res.status(400).json(validation.errors)
         } else if (validation.passes()) {
+            let phrases =await Words.getByIds(req.body.ids)
             try {
-                await getDb().manager.delete(Phrase, req.body.ids) // find by id
-                res.status(200).json()
+                let deletedIds=[]
+                for (const phrase of phrases) {
+                    deletedIds.push(phrase.id)  
+                }
+                await getDb().manager.delete(Phrase, req.body.ids)
+                res.status(200).json({deleted:deletedIds})
             } catch (error) {
                 res.status(500).json()
             }

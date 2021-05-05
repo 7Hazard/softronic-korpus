@@ -6,6 +6,10 @@ import { Phrase } from "./Phrase";
 @Entity()
 @Index("Unique_Syn", ["phrase", "meaning"], { unique: true })
 export class Synonym {
+    constructor(phrase: number,meaning:number) {
+        this.phrase = phrase;
+        this.meaning = meaning;
+    }
 
     // // TODO remove, make both other columns together unique
     // @PrimaryGeneratedColumn("increment")
@@ -23,7 +27,6 @@ export class Synonym {
     @ManyToOne(() => Phrase, phrase => phrase.synonym)
     @JoinColumn({ name: "meaning" })
     meaning: number;
-
 }
 
 @EntityRepository(Synonym)
@@ -42,6 +45,10 @@ export class Synonyms extends Repository<Synonym>{
         .getOne()
     }
 
+    static async getSynonymsById(phraseIds: number[]){
+        return await database.getDb().manager.findByIds(Synonym,phraseIds);
+    }
+   
     static async getBySynonymId(synonymId: number){
         return await database.getDb().manager.getRepository(Synonym).find({where: {id: synonymId},relations: ["phrase","meaning"]})
     }
@@ -65,8 +72,7 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
-    public static async deleteSynonym(phraseId: number){
-
+    public static async deleteSynonym(phraseId: number[]){
         try {
             await database.getDb().getRepository(Synonym).
             createQueryBuilder().delete()

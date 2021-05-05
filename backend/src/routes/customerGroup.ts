@@ -86,9 +86,20 @@ export default new Routes("/customerGroup")
         if (validation.fails()) {
             res.status(400).json(validation.errors)
         } else if (validation.passes()) {
+            let groups =await CustomerGroups.getCustomerGroupById(req.body.ids)
+            if(groups.length == 0){
+                res.status(200).json({deleted:[]})
+                return
+            }
             try {
-                await getDb().manager.delete(CustomerGroup, req.body.ids) // find by id
-                res.status(200).json()
+                let deletedIds=[]
+                
+                for (const group of groups) {
+                    deletedIds.push(group.id)  
+                }
+                
+                await getDb().manager.delete(CustomerGroup, deletedIds)
+                res.status(200).json({deleted:deletedIds})
             } catch (error) {
                 res.status(500).json()
             }

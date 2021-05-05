@@ -24,33 +24,25 @@ export default new Routes("/synonyms")
                 res.status(400).json({ error: "phrase cannot be same as meaning" })
                 return;
             }
-
             if ((await Words.get(phrase)) == undefined || (await Words.get(meaning)) == undefined) {
                 res.status(409).json({ error: "One of the IDs do not exist" })
                 return
             }
-
             let isValidInput = await Synonyms.isValidInput(phrase, meaning)
 
             if (isValidInput) {
+                let synonym = new Synonym(phrase,meaning)
                 try {
-
-                    let result = await getDb()
-                        .createQueryBuilder()
-                        .insert()
-                        .into(Synonym)
-                        .values([{ phrase, meaning }])
-                        .execute()
+                    synonym = await getDb().getRepository(Synonym).save(synonym);
 
                     res.status(200).json({
-                        id: result.identifiers[0].id,
                         phrase,
                         meaning
                     })
                 } catch (error) {
                     console.log(error)
                     if (error.errno == 19) {
-                        res.status(400).json({ error: error.toString() })
+                        res.status(400).json({ error: error })
                     }
                     res.status(500).json()
                 }
@@ -129,35 +121,26 @@ export default new Routes("/synonyms")
         
     })
     .delete("/", [authToken], async (req, res) => {
-        
+
         let validation = new Validator(req.body, {
-            phrase: ["required", "integer"]
+            ids: "array|required",
+            "ids.*": "integer",
         })
 
-        if(!validation.passes()){
+        if (validation.fails()) {
             res.status(400).json(validation.errors)
-        } else {
-            let phraseId = req.body.phrase;
-
-            if (
-                (await Words.get(phraseId)) == undefined 
-            ) {
-                res.status(400).json({ error: "One of the IDs do not exist" })
-                return
-            }
-
-            if ((await Synonyms.getSynonym(phraseId)) == undefined) {
-                res.status(400).json({ error: "The synonym does not exist!" })
-                return;
-            }
-
+        } else if (validation.passes()) {
+            let synonyms = await Synonyms.getSynonymsById(req.body.ids)
             try {
-                let synDel = await Synonyms.deleteSynonym(phraseId)
-                res.status(200).json(synDel);
+                let deletedIds = []
+                for (const synonym of synonyms) {
+                    let phrase = await Words.getOneById(synonym.phrase)
+                    deletedIds.push(phrase.id)
+                }
+                await getDb().manager.delete(Synonym, req.body.ids)
+                res.status(200).json({ deleted: deletedIds })
             } catch (error) {
-                res.status(500).json(error.toString);
+                res.status(500).json()
             }
         }
-        
-        
     })
