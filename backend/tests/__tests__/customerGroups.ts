@@ -86,7 +86,7 @@ test("delete multiple", async () => {
   // delete all
   await api.delete("/customerGroup").authenticate()
     .send({ ids: [group1, group2, group3] })
-    .expect(200).expect(200).expect({
+    .expect(200,{
       deleted: [
         group1,
         group2,
@@ -97,8 +97,8 @@ test("delete multiple", async () => {
 
 test("delete non-existing", async () => {
   await api.delete("/customerGroup").authenticate()
-    .send({ ids: [1] })
-    .expect(200).expect({
+    .send({ ids: [123] })
+    .expect(200,{
       deleted: [
       ]
     })

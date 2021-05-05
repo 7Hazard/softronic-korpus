@@ -7,7 +7,7 @@ test("add", async () => {
     data: { text: "hi" },
     secondExpectedCode: 409
   })
-  // add phrase 1
+
   await api.post("/phrases").authenticate()
     .send({ text: "hello" })
     .expect(200, {
@@ -15,7 +15,6 @@ test("add", async () => {
       id: 2
     })
 
-  // add phrase 2
   await api.post("/phrases").authenticate()
     .send({ text: "hell o" })
     .expect(200, {
@@ -70,7 +69,6 @@ test("get", async () => {
         id: 4,
         synonym: null
       },
-
     ])
 });
 
@@ -101,11 +99,11 @@ test("update", async () => {
 
 test("delete one existing", async () => {
   await testAuth({ method: "delete", path: "/phrases", data: { ids: [1] } })
-  await api.delete("/phrases").authenticate().send({ ids: [2] }).expect(200).expect({
+  await api.delete("/phrases").authenticate().send({ ids: [2] }).expect(200,{
     deleted: [
       2
     ]
-  })//.expect({deletedCount: 1})
+  })
 });
 
 test("delete multiple", async () => {
@@ -117,7 +115,7 @@ test("delete multiple", async () => {
   // delete all
   await api.delete("/phrases").authenticate()
     .send({ ids: [phrase1.id, phrase2.id, phrase3.id] })
-    .expect(200).expect(200).expect({
+    .expect(200,{
       deleted: [
         phrase1.id,
         phrase2.id,
@@ -129,11 +127,10 @@ test("delete multiple", async () => {
 test("delete none existing", async () => {
   await api.delete("/phrases").authenticate()
     .send({ ids: [1] })
-    .expect(200).expect({
+    .expect(200,{
       deleted: [
       ]
     })
-  //.expect({ deletedCount: 0 })
 });
 
 test("delete with bad input", async () => {

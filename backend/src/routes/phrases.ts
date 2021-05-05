@@ -5,7 +5,6 @@ import { getDb } from "../database"
 import { authToken } from "../middlewares/auth"
 import { trimText } from "../util"
 import { Routes } from "./Routes"
-import { Word } from "../entities/Word"
 
 export default new Routes("/phrases")
     .get("/", [], async (req, res) => {
@@ -60,7 +59,7 @@ export default new Routes("/phrases")
             await getDb()
                 .createQueryBuilder()
                 .update(Phrase)
-                .set({ text: text })     // testade att trimma
+                .set({ text: text })
                 .where("id = :id", { id: phraseid })
                 .execute()
             res.status(200).json()
@@ -83,8 +82,8 @@ export default new Routes("/phrases")
                 for (const phrase of phrases) {
                     deletedIds.push(phrase.id)  
                 }
+                await getDb().manager.delete(Phrase, req.body.ids)
                 res.status(200).json({deleted:deletedIds})
-                await getDb().manager.delete(Phrase, req.body.ids) // find by id
             } catch (error) {
                 res.status(500).json()
             }
