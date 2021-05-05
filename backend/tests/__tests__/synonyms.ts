@@ -53,18 +53,18 @@ test("update synonym", async () => {
   // search by phrase
   await api.put(`/synonyms/`).authenticate()
     .send({
-      phraseId: hey.id,
+      phraseId: sup.id,
       newMeaningId: hello.id
     })
     .expect(400, { error: "No circular or transitive dependencies allowed" })
 
     await api.put('/synonyms/').authenticate()
       .send({
-          phraseId: hey.id,
+          phraseId: sup.id,
           newMeaningId: hi.id
       })
       .expect(200, {
-        phraseId: hey.id, // the phrase to equalize
+        phraseId: sup.id, // the phrase to equalize
         newMeaningId: hi.id // the id to the equivalent phrase
       })
 });
@@ -88,8 +88,8 @@ test("get all synonyms", async () => {
           id: sup.id
         },
         meaning: {
-          text: "yo",
-          id: yo.id
+          text: "hi",
+          id: hi.id
         }
       }
     ])
@@ -104,7 +104,7 @@ test("get specific synonym", async () => {
 
   // search by meaning
   await api.get(`/synonyms/3`)
-    .expect(200, [{ phrase: hey, meaning: hi }])
+    .expect(200, [])
 });
 
 test("delete existing", async () => {
