@@ -93,44 +93,52 @@ export default Router()
         }
     })
     .put("/synonyms", async (req, res) => {
-        let phrase = req.body.phrase
-        let meaning = req.body.meaning
-        let newMeaning = req.body.newMeaning
+        
+        let validation = new Validator(req.body, {
+            phraseId: ["required", "integer"],
+            newMeaningId: ["required", "integer"]
+        })
 
-        if (
-            (await Words.get(phrase)) == undefined ||
-            (await Words.get(meaning)) == undefined ||
-            (await Words.get(newMeaning)) == undefined
-        ) {
-            res.status(400).json({ error: "One of the IDs do not exist" })
-            return
-        }
-        if ((await Synonyms.getSynonym(phrase, meaning)) == undefined) {
-            res.status(400).json({ error: "The synonym does not exist!" })
-            return
+        if(!validation.passes()){
+            res.status(400).json(validation.errors)
+        } else {
+            let phraseId = req.body.phraseId
+            let newMeaningId = req.body.newMeaningId
+            if (
+                (await Words.get(phraseId)) == undefined ||
+                (await Words.get(newMeaningId)) == undefined
+            ) {
+                res.status(400).json({ error: "One of the IDs do not exist" })
+                return
+            }
+            if ((await Synonyms.getSynonym(phraseId)) == undefined) {
+                res.status(400).json({ error: "The synonym does not exist!" })
+                return
+            }
+    
+            try {
+                if (await Synonyms.isValidInput(phraseId, newMeaningId)) {
+                    let result = await getDb()
+                        .getRepository(Synonym)
+                        .createQueryBuilder("synonym")
+                        .update()
+                        .set({ meaning: newMeaningId })
+                        .where("phrase = :phraseId", { phraseId })
+                        .execute()
+    
+                    res.status(200).json({
+                        phraseId,
+                        newMeaningId
+                    })
+                } else res.status(400).json({ error: "No circular or transitive dependencies allowed" })
+            } catch (error) {
+                console.error(error)
+                res.status(400).json(error.toString)
+                return
+            }
         }
 
-        try {
-            if (await Synonyms.isValidInput(phrase, newMeaning, meaning)) {
-                let result = await getDb()
-                    .getRepository(Synonym)
-                    .createQueryBuilder("synonym")
-                    .update()
-                    .set({ meaning: newMeaning })
-                    .where("phrase = :phrase", { phrase })
-                    .andWhere("meaning = :meaning", { meaning })
-                    .execute()
-
-                res.status(200).json({
-                    phrase,
-                    newMeaning
-                })
-            } else res.status(400).json({ error: "No circular or transitive dependencies allowed" })
-        } catch (error) {
-            console.error(error)
-            res.status(400).json(error.toString)
-            return
-        }
+        
     })
     .delete("/synonyms", async (req, res) => {
         let phraseId = req.body.phrase;
@@ -144,7 +152,7 @@ export default Router()
             return
         }
 
-        if ((await Synonyms.getSynonym(phraseId, meaningId)) == undefined) {
+        if ((await Synonyms.getSynonym(phraseId)) == undefined) {
             res.status(400).json({ error: "The synonym does not exist!" })
             return;
         }

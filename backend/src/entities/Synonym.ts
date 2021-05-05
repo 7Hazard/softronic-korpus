@@ -11,6 +11,8 @@ export class Synonym {
     // @PrimaryGeneratedColumn("increment")
     // SynonymId: number;
 
+    
+
     @PrimaryColumn()
     @OneToOne(() => Phrase)
     @JoinColumn({ name: "phrase" })
@@ -32,10 +34,9 @@ export class Synonyms extends Repository<Synonym>{
         return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: phraseid }, {meaning: phraseid}], relations: ["phrase", "meaning"] })
     }
 
-    static async getSynonym(phraseId: number, meaningId: number){
+    static async getSynonym(phraseId: number){
         return await database.getDb().manager.getRepository(Synonym).createQueryBuilder()
         .where("phrase = :phraseId",{phraseId: phraseId})
-        .andWhere("meaning = :meaningId", {meaningId: meaningId})
         .getOne()
     }
 
@@ -76,20 +77,13 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
-    public static async isValidInput(phrase: number, meaning: number, oldMeaning?: number) {
+    public static async isValidInput(phraseId: number, meaningId: number) {
         try {
-            if (oldMeaning) {
-                let synonymExists = await Synonyms.getSynonym(phrase,oldMeaning);
-
-                if (synonymExists == undefined || (phrase == meaning)) {
-                    return false;
-                }
-            }
 
             let circularExists = await database.getDb().getRepository(Synonym)
                 .createQueryBuilder("synonym")
-                .where(`synonym.meaning = ${phrase}`)
-                .orWhere(`synonym.phrase = ${meaning}`)
+                .where(`synonym.meaning = ${phraseId}`)
+                .orWhere(`synonym.phrase = ${meaningId}`)
                 .getOne();
 
             if (circularExists == undefined) {
