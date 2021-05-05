@@ -92,8 +92,8 @@ export default new Routes("/customerGroup")
                 for (const group of groups) {
                     deletedIds.push(group.id)  
                 }
-                res.status(200).json({deleted:deletedIds})
                 await getDb().manager.delete(CustomerGroup, deletedIds) // find by id
+                res.status(200).json({deleted:deletedIds})
             } catch (error) {
                 res.status(500).json()
             }
