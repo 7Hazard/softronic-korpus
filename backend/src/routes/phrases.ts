@@ -83,8 +83,8 @@ export default new Routes("/phrases")
                 for (const phrase of phrases) {
                     deletedIds.push(phrase.id)  
                 }
-                res.status(200).json({deleted:deletedIds})
                 await getDb().manager.delete(Phrase, req.body.ids) // find by id
+                res.status(200).json({deleted:deletedIds})
             } catch (error) {
                 res.status(500).json()
             }
