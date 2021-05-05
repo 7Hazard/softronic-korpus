@@ -6,6 +6,10 @@ import { Phrase } from "./Phrase";
 @Entity()
 @Index("Unique_Syn", ["phrase", "meaning"], { unique: true })
 export class Synonym {
+    constructor(phrase: number,meaning:number) {
+        this.phrase = phrase;
+        this.meaning = meaning;
+    }
 
     // // TODO remove, make both other columns together unique
     // @PrimaryGeneratedColumn("increment")
@@ -43,7 +47,7 @@ export class Synonyms extends Repository<Synonym>{
     static async getSynonymsById(phraseIds: number[]){
         return await database.getDb().manager.findByIds(Synonym,phraseIds);
     }
-
+   
     static async getBySynonymId(synonymId: number){
         return await database.getDb().manager.getRepository(Synonym).find({where: {id: synonymId},relations: ["phrase","meaning"]})
     }
@@ -79,12 +83,16 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
-    public static async isValidInput(phrase: number, meaning: number, oldMeaning?: number) {
+    public static async isValidInput(phrase: number, meaning: number) {
         try {
-            if (oldMeaning) {
-                let synonymExists = await Synonyms.getSynonym(phrase,oldMeaning);
+            if (meaning) {
+                let synonymExistsPhrase = await Synonyms.getSynonymsById([phrase]); //does the phrase have a synonym?
+                let synonymExistsMeaning = await Synonyms.getSynonymsById([meaning]); //does the phrase have a synonym?
 
-                if (synonymExists == undefined || (phrase == meaning)) {
+                if(synonymExistsPhrase == undefined && synonymExistsMeaning == undefined){
+                    return true;
+                }
+                if(phrase == meaning){ //if it does not or the meaning is the same as the phrase return false
                     return false;
                 }
             }
