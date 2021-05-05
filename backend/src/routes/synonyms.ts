@@ -75,15 +75,15 @@ export default new Routes("/synonyms")
     .put("/", [authToken], async (req, res) => {
         
         let validation = new Validator(req.body, {
-            phraseId: ["required", "integer"],
-            newMeaningId: ["required", "integer"]
+            phrase: ["required", "integer"],
+            newMeaning: ["required", "integer"]
         })
 
         if(!validation.passes()){
             res.status(400).json(validation.errors)
         } else {
-            let phraseId = req.body.phraseId
-            let newMeaningId = req.body.newMeaningId
+            let phraseId = req.body.phrase
+            let newMeaningId = req.body.newMeaning
             if (
                 (await Words.get(phraseId)) == undefined ||
                 (await Words.get(newMeaningId)) == undefined
@@ -112,8 +112,8 @@ export default new Routes("/synonyms")
                     })
                 } else res.status(400).json({ error: "No circular or transitive dependencies allowed" })
             } catch (error) {
-                console.error(error)
-                res.status(400).json(error.toString)
+                console.log(error)
+                res.status(400).json(error.toString())
                 return
             }
         }
