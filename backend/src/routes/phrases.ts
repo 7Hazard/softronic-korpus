@@ -2,18 +2,16 @@ import { QueryFailedError } from "typeorm"
 import { Phrase, Words } from "../entities/Phrase"
 import Validator from "validatorjs"
 import { getDb } from "../database"
-import { Router } from "express"
 import { authToken } from "../middlewares/auth"
 import { trimText } from "../util"
+import { Routes } from "./Routes"
 
-export default Router()
-    .use("/phrases", authToken)
-
-    .get("/phrases", async (req, res) => {
+export default new Routes("/phrases")
+    .get("/", [], async (req, res) => {
         let getAll = await Words.get()
         res.status(200).json(getAll)
     })
-    .get("/phrases/:phraseid", async (req, res) => {
+    .get("/:phraseid", [], async (req, res) => {
         let phraseid = parseInt(req.params.phraseid)
         const phrasesById = await Words.get(phraseid)
         if (!phrasesById) {
@@ -24,7 +22,7 @@ export default Router()
         }
         res.status(200).json(phrasesById)
     })
-    .post("/phrases", async (req, res) => {
+    .post("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
             text: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/"],
@@ -45,7 +43,7 @@ export default Router()
             }
         }
     })
-    .put("/phrases/:phraseid", async (req, res) => {
+    .put("/:phraseid", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
             text: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/"],
@@ -68,7 +66,7 @@ export default Router()
         }
     })
 
-    .delete("/phrases", async (req, res) => {
+    .delete("/", [authToken], async (req, res) => {
         let validation = new Validator(req.body, {
             //reqirement
             ids: "array|required",

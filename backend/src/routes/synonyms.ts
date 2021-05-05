@@ -1,14 +1,12 @@
-import { Router } from "express"
 import { getDb } from "../database"
 import { Synonym, Synonyms } from "../entities/Synonym"
 import { Words } from "../entities/Phrase"
 import { authToken } from "../middlewares/auth"
 import Validator from "validatorjs"
-import { QueryFailedError } from "typeorm"
+import { Routes } from "./Routes"
 
-export default Router()
-    .use("/synonyms", authToken)
-    .post("/synonyms", async (req, res) => {
+export default new Routes("/synonyms")
+    .post("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
             phrase: ["required", "integer"],
@@ -62,7 +60,7 @@ export default Router()
             }
         }
     })
-    .get("/synonyms", async (req, res) => {
+    .get("/", [], async (req, res) => {
         try {
             let all = await Synonyms.getAll()
             res.status(200).json(all)
@@ -71,7 +69,7 @@ export default Router()
             res.status(500).json()
         }
     })
-    .get("/synonyms/:phraseid", async (req, res) => {
+    .get("/:phraseid", [], async (req, res) => {
         // TODO validate
         let phraseid = parseInt(req.params["phraseid"])
         try {
@@ -82,6 +80,10 @@ export default Router()
             res.status(500).json()
         }
     })
+    .put("/", [authToken], async (req, res) => {
+        let phrase = req.body.phrase
+        let meaning = req.body.meaning
+        let newMeaning = req.body.newMeaning
     .get("/synonymsById/:synonymID", async (req, res) => {
         let synonymId = parseInt(req.params["synonymID"])
         try {
@@ -140,7 +142,7 @@ export default Router()
 
         
     })
-    .delete("/synonyms", async (req, res) => {
+    .delete("/", [authToken], async (req, res) => {
         let phraseId = req.body.phrase;
         let meaningId = req.body.meaning;
 
