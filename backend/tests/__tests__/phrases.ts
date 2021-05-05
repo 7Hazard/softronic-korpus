@@ -1,6 +1,4 @@
-import { addWord, expectErrors, testAuth } from "../helpers";
-import { api } from "../helpers";
-
+import { api, addWord, expectErrors, testAuth } from "../helpers";
 
 test("add", async () => {
   await testAuth({

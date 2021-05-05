@@ -1,18 +1,18 @@
-import { Router } from "express";
 import { CustomerGroup, CustomerGroups } from "../entities/CustomerGroup";
 import { getDb } from "../database";
 import Validator from "validatorjs";
 import { QueryFailedError } from "typeorm";
 import { authToken } from "../middlewares/auth";
 import { trimText } from "../util";
+import { Routes } from "./Routes";
 
-export default Router()
-    .get("/customerGroup", async (req, res) => {
+export default new Routes("/customerGroup")
+    .get("/", [], async (req, res) => {
         let getAll = await CustomerGroups.get();
         res.status(200).json(getAll);
     })
 
-    .get("/customerGroup/:id", async (req, res) => {
+    .get("/:id", [], async (req, res) => {
         let id = parseInt(req.params.id);
         const group = await CustomerGroups.get(id);
         if (!group) {
@@ -24,7 +24,7 @@ export default Router()
         res.status(200).json(group);
     })
 
-    .put('/customerGroup/:id', authToken, async (req, res) => {
+    .put('/:id', [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
             text: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
@@ -54,7 +54,7 @@ export default Router()
         }
     })
 
-    .post("/customerGroup", authToken, async (req, res) => {
+    .post("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
             text: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
@@ -76,7 +76,7 @@ export default Router()
         }
     })
 
-    .delete("/customerGroup", authToken, async (req, res) => {
+    .delete("/", [authToken], async (req, res) => {
         let validation = new Validator(req.body, {
             //reqirement
             ids: "array|required",
