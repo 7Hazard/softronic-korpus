@@ -24,8 +24,7 @@ test("add synonym", async () => {
       phrase: sup.id, // the id of the phrase to equalize       //1 -> 2
       meaning: yo.id // the id to the equivalent phrase
     })
-    .expect(200)
-    .expect({
+    .expect(200,{
       phrase: sup.id, // the phrase to equalize
       meaning: yo.id // the id to the equivalent phrase
     })
@@ -33,23 +32,20 @@ test("add synonym", async () => {
     .send({
       phrase: 45,
       meaning: 123
-    })
-    .expect(409, { error: "One of the IDs do not exist" })
+    }).expect(409, { error: "One of the IDs do not exist" })
 
   await api.post("/synonyms").authenticate()
     .send({
       phrase: hi.id,                              //2 -> 1
       meaning: hello.id
-    }).expect(400)
-    .expect({ error: "No circular or transitive dependencies allowed" })
+    }).expect(400,{ error: "No circular or transitive dependencies allowed" })
 
   //transitiv test
   await api.post("/synonyms").authenticate()
     .send({
       phrase: hi.id,                            //2 -> 3
       meaning: hey.id
-    }).expect(400)
-    .expect({ error: "No circular or transitive dependencies allowed" })
+    }).expect(400,{ error: "No circular or transitive dependencies allowed" })
 
 })
 
@@ -94,7 +90,7 @@ test("get specific synonym", async () => {
 
 test("delete existing", async () => {
   await testAuth({ method: "delete", path: "/synonyms", data: { ids: [3] } })
-  await api.delete("/phrases").authenticate().send({ ids: [6] }).expect(200).expect({
+  await api.delete("/phrases").authenticate().send({ ids: [6] }).expect(200,{
     deleted: [
       bye.id
     ]
@@ -107,7 +103,7 @@ test("delete multiple", async () => {
   // delete all
   await api.delete("/synonyms").authenticate()
     .send({ ids: [hello.id, sup.id] })
-    .expect(200).expect({
+    .expect(200,{
       deleted: [
         hello.id,
         sup.id
