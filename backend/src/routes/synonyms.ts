@@ -131,7 +131,6 @@ export default new Routes("/synonyms")
             res.status(400).json(validation.errors)
         } else if (validation.passes()) {
             let synonyms = await Synonyms.getSynonymsById(req.body.ids)
-
             try {
                 let deletedIds = []
                 for (const synonym of synonyms) {

@@ -97,7 +97,7 @@ test("delete multiple", async () => {
 
 test("delete non-existing", async () => {
   await api.delete("/customerGroup").authenticate()
-    .send({ ids: [1] })
+    .send({ ids: [123] })
     .expect(200).expect({
       deleted: [
       ]
