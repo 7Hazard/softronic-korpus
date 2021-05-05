@@ -45,17 +45,6 @@ export class Synonyms extends Repository<Synonym>{
         return await database.getDb().manager.findByIds(Synonym,phraseIds);
     }
 
-//     public static getByIds(ids: number[]) {
-//         return database.getDb().manager.findByIds(Phrase,ids);
-// }
-
-
-    // public static getSynonymsById(ids:number[]){
-    //     return database.getDb().manager.getRepository(Synonym).createQueryBuilder()
-    //     .where("phrase = :phraseId", { phraseId: ids })
-    //     .getMany()
-    // }
-
     static async getBySynonymId(synonymId: number){
         return await database.getDb().manager.getRepository(Synonym).find({where: {id: synonymId},relations: ["phrase","meaning"]})
     }
