@@ -53,15 +53,15 @@ test("update synonym", async () => {
   // search by phrase
   await api.put(`/synonyms/`).authenticate()
     .send({
-      phraseId: sup.id,
-      newMeaningId: hello.id
+      phrase: sup.id,
+      newMeaning: hello.id
     })
     .expect(400, { error: "No circular or transitive dependencies allowed" })
 
     await api.put('/synonyms/').authenticate()
       .send({
-          phraseId: sup.id,
-          newMeaningId: hi.id
+          phrase: sup.id,
+          newMeaning: hi.id
       })
       .expect(200, {
         phraseId: sup.id, // the phrase to equalize
