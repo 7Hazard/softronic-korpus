@@ -1,4 +1,4 @@
-import { api, addWord, expectErrors, testAuth } from "../helpers";
+import { api, addPhrase, expectErrors, testAuth } from "../helpers";
 
 test("add", async () => {
   await testAuth({
@@ -108,9 +108,9 @@ test("delete one existing", async () => {
 
 test("delete multiple", async () => {
   // add three phrases
-  let phrase1 = await addWord("hey")
-  let phrase2 = await addWord("bye")
-  let phrase3 = await addWord("goodbye")
+  let phrase1 = await addPhrase("hey")
+  let phrase2 = await addPhrase("bye")
+  let phrase3 = await addPhrase("goodbye")
 
   // delete all
   await api.delete("/phrases").authenticate()

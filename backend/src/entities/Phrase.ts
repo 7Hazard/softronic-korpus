@@ -1,7 +1,6 @@
 import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, OneToMany, RelationId, OneToOne } from "typeorm";
 import * as database from "../database"
 import { Synonym } from "./Synonym";
-import { Word } from "./Word";
 
 @Entity()
 export class Phrase {

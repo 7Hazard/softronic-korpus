@@ -1,12 +1,12 @@
 import { send } from "node:process";
-import { addWord, api, expectErrors, testAuth } from "../helpers";
+import { addPhrase, api, expectErrors, testAuth } from "../helpers";
 
-let hello = await addWord("hello")
-let hi = await addWord("hi")
-let hey = await addWord("hey")
-let sup = await addWord("sup")
-let yo = await addWord("yo")
-let bye = await addWord("bye")
+let hello = await addPhrase("hello")
+let hi = await addPhrase("hi")
+let hey = await addPhrase("hey")
+let sup = await addPhrase("sup")
+let yo = await addPhrase("yo")
+let bye = await addPhrase("bye")
 
 
 test("add synonym", async () => {
