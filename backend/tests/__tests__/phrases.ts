@@ -7,7 +7,7 @@ test("add", async () => {
     data: { text: "hi" },
     secondExpectedCode: 409
   })
-  // add phrase 1
+
   await api.post("/phrases").authenticate()
     .send({ text: "hello" })
     .expect(200, {
@@ -15,7 +15,6 @@ test("add", async () => {
       id: 2
     })
 
-  // add phrase 2
   await api.post("/phrases").authenticate()
     .send({ text: "hell o" })
     .expect(200, {
@@ -70,7 +69,6 @@ test("get", async () => {
         id: 4,
         synonym: null
       },
-
     ])
 });
 
@@ -105,7 +103,7 @@ test("delete one existing", async () => {
     deleted: [
       2
     ]
-  })//.expect({deletedCount: 1})
+  })
 });
 
 test("delete multiple", async () => {
