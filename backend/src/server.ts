@@ -4,9 +4,11 @@ import bodyparser from "body-parser"
 import * as database from "./database"
 import routers from "./routes/all"
 import * as http from "http"
+import cors from "cors"
 
 export const app = express()
 app.use(bodyparser.json({}))
+app.use(cors())
 
 let server: http.Server
 
