@@ -15,6 +15,8 @@ export class Synonym {
     // @PrimaryGeneratedColumn("increment")
     // SynonymId: number;
 
+    
+
     @PrimaryColumn()
     @OneToOne(() => Phrase,{
         onDelete: "CASCADE"
@@ -37,10 +39,9 @@ export class Synonyms extends Repository<Synonym>{
         return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: phraseid }, {meaning: phraseid}], relations: ["phrase", "meaning"] })
     }
 
-    static async getSynonym(phraseId: number, meaningId: number){
+    static async getSynonym(phraseId: number){
         return await database.getDb().manager.getRepository(Synonym).createQueryBuilder()
         .where("phrase = :phraseId",{phraseId: phraseId})
-        .andWhere("meaning = :meaningId", {meaningId: meaningId})
         .getOne()
     }
 
@@ -83,24 +84,13 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
-    public static async isValidInput(phrase: number, meaning: number) {
+    public static async isValidInput(phraseId: number, meaningId: number) {
         try {
-            if (meaning) {
-                let synonymExistsPhrase = await Synonyms.getSynonymsById([phrase]); //does the phrase have a synonym?
-                let synonymExistsMeaning = await Synonyms.getSynonymsById([meaning]); //does the phrase have a synonym?
-
-                if(synonymExistsPhrase == undefined && synonymExistsMeaning == undefined){
-                    return true;
-                }
-                if(phrase == meaning){ //if it does not or the meaning is the same as the phrase return false
-                    return false;
-                }
-            }
 
             let circularExists = await database.getDb().getRepository(Synonym)
                 .createQueryBuilder("synonym")
-                .where(`synonym.meaning = ${phrase}`)
-                .orWhere(`synonym.phrase = ${meaning}`)
+                .where(`synonym.meaning = ${phraseId}`)
+                .orWhere(`synonym.phrase = ${meaningId}`)
                 .getOne();
 
             if (circularExists == undefined) {

@@ -73,55 +73,52 @@ export default new Routes("/synonyms")
         }
     })
     .put("/", [authToken], async (req, res) => {
-
+        
         let validation = new Validator(req.body, {
             phrase: ["required", "integer"],
             meaning: ["required", "integer"]
         })
 
-        if (validation.fails()) {
+        if(!validation.passes()){
             res.status(400).json(validation.errors)
-            return
-        } else if (validation.passes()) {
-            let phrase = req.body.phrase
-            let meaning = req.body.meaning
-
-            if (phrase == meaning) {
-                res.status(400).json({ error: "phrase cannot be same as meaning" })
-                return;
-            }
+        } else {
+            let phraseId = req.body.phrase
+            let newMeaningId = req.body.meaning
             if (
-                (await Words.get(phrase)) == undefined ||
-                (await Words.get(meaning)) == undefined
+                (await Words.get(phraseId)) == undefined ||
+                (await Words.get(newMeaningId)) == undefined
             ) {
                 res.status(400).json({ error: "One of the IDs do not exist" })
                 return
             }
-            if ((await Synonyms.getSynonymsById(phrase)) == undefined) {
+            if ((await Synonyms.getSynonym(phraseId)) == undefined) {
                 res.status(400).json({ error: "The synonym does not exist!" })
                 return
             }
-
+    
             try {
-                if (await Synonyms.isValidInput(phrase, meaning)) {
-                    await getDb()
-                        .createQueryBuilder()
-                        .update(Synonym)
-                        .set({ meaning: meaning })     // testade att trimma
-                        .where("phrase = :phrase", { phrase })
+                if (await Synonyms.isValidInput(phraseId, newMeaningId)) {
+                    let result = await getDb()
+                        .getRepository(Synonym)
+                        .createQueryBuilder("synonym")
+                        .update()
+                        .set({ meaning: newMeaningId })
+                        .where("phrase = :phraseId", { phraseId })
                         .execute()
-
+    
                     res.status(200).json({
-                        phrase,
-                        meaning
+                        phrase: phraseId,
+                        meaning: newMeaningId
                     })
                 } else res.status(400).json({ error: "No circular or transitive dependencies allowed" })
             } catch (error) {
-                console.error(error)
-                res.status(400).json(error)
+                console.log(error)
+                res.status(400).json(error.toString())
                 return
             }
         }
+
+        
     })
     .delete("/", [authToken], async (req, res) => {
 
