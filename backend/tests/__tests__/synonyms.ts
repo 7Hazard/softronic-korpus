@@ -24,7 +24,7 @@ test("add synonym", async () => {
       phrase: sup.id, // the id of the phrase to equalize       //1 -> 2
       meaning: yo.id // the id to the equivalent phrase
     })
-    .expect(200,{
+    .expect(200, {
       phrase: sup.id, // the phrase to equalize
       meaning: yo.id // the id to the equivalent phrase
     })
@@ -38,14 +38,14 @@ test("add synonym", async () => {
     .send({
       phrase: hi.id,                              //2 -> 1
       meaning: hello.id
-    }).expect(400,{ error: "No circular or transitive dependencies allowed" })
+    }).expect(400, { error: "No circular or transitive dependencies allowed" })
 
   //transitiv test
   await api.post("/synonyms").authenticate()
     .send({
       phrase: hi.id,                            //2 -> 3
       meaning: hey.id
-    }).expect(400,{ error: "No circular or transitive dependencies allowed" })
+    }).expect(400, { error: "No circular or transitive dependencies allowed" })
 
 })
 test("update synonym", async () => {
@@ -54,19 +54,19 @@ test("update synonym", async () => {
   await api.put(`/synonyms/`).authenticate()
     .send({
       phrase: sup.id,
-      newMeaning: hello.id
+      meaning: hello.id
     })
     .expect(400, { error: "No circular or transitive dependencies allowed" })
 
-    await api.put('/synonyms/').authenticate()
-      .send({
-          phrase: sup.id,
-          newMeaning: hi.id
-      })
-      .expect(200, {
-        phraseId: sup.id, // the phrase to equalize
-        newMeaningId: hi.id // the id to the equivalent phrase
-      })
+  await api.put('/synonyms/').authenticate()
+    .send({
+      phrase: sup.id,
+      meaning: hi.id
+    })
+    .expect(200, {
+      phrase: sup.id, // the phrase to equalize
+      meaning: hi.id // the id to the equivalent phrase
+    })
 });
 
 test("get all synonyms", async () => {
@@ -109,7 +109,7 @@ test("get specific synonym", async () => {
 
 test("delete existing", async () => {
   await testAuth({ method: "delete", path: "/synonyms", data: { ids: [3] } })
-  await api.delete("/phrases").authenticate().send({ ids: [6] }).expect(200,{
+  await api.delete("/phrases").authenticate().send({ ids: [6] }).expect(200, {
     deleted: [
       bye.id
     ]
@@ -119,7 +119,7 @@ test("delete existing", async () => {
 test("delete multiple", async () => {
   await api.delete("/synonyms").authenticate()
     .send({ ids: [hello.id, sup.id] })
-    .expect(200,{
+    .expect(200, {
       deleted: [
         hello.id,
         sup.id
@@ -130,7 +130,7 @@ test("delete multiple", async () => {
 test("delete none existing", async () => {
   await api.delete("/synonyms").authenticate()
     .send({ ids: [1] })
-    .expect(200,{
+    .expect(200, {
       deleted: [
       ]
     })

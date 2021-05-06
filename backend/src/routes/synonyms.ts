@@ -76,14 +76,14 @@ export default new Routes("/synonyms")
         
         let validation = new Validator(req.body, {
             phrase: ["required", "integer"],
-            newMeaning: ["required", "integer"]
+            meaning: ["required", "integer"]
         })
 
         if(!validation.passes()){
             res.status(400).json(validation.errors)
         } else {
             let phraseId = req.body.phrase
-            let newMeaningId = req.body.newMeaning
+            let newMeaningId = req.body.meaning
             if (
                 (await Words.get(phraseId)) == undefined ||
                 (await Words.get(newMeaningId)) == undefined
@@ -107,8 +107,8 @@ export default new Routes("/synonyms")
                         .execute()
     
                     res.status(200).json({
-                        phraseId,
-                        newMeaningId
+                        phrase: phraseId,
+                        meaning: newMeaningId
                     })
                 } else res.status(400).json({ error: "No circular or transitive dependencies allowed" })
             } catch (error) {
