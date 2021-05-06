@@ -40,10 +40,7 @@ export default new Routes("/synonyms")
                         meaning
                     })
                 } catch (error) {
-                    console.log(error)
-                    if (error.errno == 19) {
-                        res.status(400).json({ error: error })
-                    }
+                    
                     res.status(500).json()
                 }
             } else {
@@ -112,13 +109,9 @@ export default new Routes("/synonyms")
                     })
                 } else res.status(400).json({ error: "No circular or transitive dependencies allowed" })
             } catch (error) {
-                console.log(error)
-                res.status(400).json(error.toString())
-                return
+                res.status(500).json()
             }
         }
-
-        
     })
     .delete("/", [authToken], async (req, res) => {
 
