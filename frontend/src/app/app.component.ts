@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { backend } from './backend';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { setCookie } from 'src/cookies';
+import { backend } from 'src/backend';
 
 @Component({
   selector: 'app-root',
@@ -7,13 +9,30 @@ import { backend } from './backend';
   styleUrls: ['./app.component.styl']
 })
 export class AppComponent {
-  title = 'frontend';
+  // loginForm = this.formBuilder.group({
+
+  // })
+  loginForm: FormGroup
+
+  constructor(formBuilder: FormBuilder) {
+    this.loginForm = formBuilder.group({
+      username: "",
+      password: ""
+    })
+  }
+
   async signin() {
+    if(!this.loginForm.valid) return
     try {
       let response = await backend.post("/signin", {
-        username: "john", password: "doe"
+        username: this.loginForm.get("username").value,
+        password: this.loginForm.get("password").value
       })
-      alert(`${response.status}\n${response.data}`)
+      alert(`${response.status}\n${JSON.stringify(response.data)}`)
+      if(response.status == 200)
+      {
+        setCookie("token", response.data.token, 1)
+      }
     } catch (error) {
       alert(error)
     }

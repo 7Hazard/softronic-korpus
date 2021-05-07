@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 //imports necessary for angular material
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
@@ -28,7 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatTabsModule,
     MatFormFieldModule,
     MatCheckboxModule,
-    MatIconModule
+    MatIconModule,
   ],
   providers: [],
   declarations: [

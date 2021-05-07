@@ -4,16 +4,16 @@
     <mat-tab-group mat-stretch-tabs class="example-stretched-tabs">
       <mat-tab label="Sign In">
           <mat-card-content>
-            <form action="" (ngSubmit)="signin()">
+            <form action="" [formGroup]="loginForm" (ngSubmit)="signin()">
               <mat-form-field>
                 <input
                   matInput
                   placeholder="Username"
                   required
                   name="Username"
-                  ngModel
-                  #email="ngModel">
-                  <mat-error *ngIf="email.invalid">Username is required</mat-error>
+                  formControlName="username"
+                  ngControl="username">
+                  <mat-error *ngIf="username.invalid">Username is required</mat-error>
                 <mat-icon matSuffix>email</mat-icon>
               </mat-form-field>
               <mat-form-field>
@@ -22,10 +22,10 @@
                   placeholder="Password"
                   type="password"
                   required
-                  minlength="6"
+                  minlength="3"
                   name="password"
-                  ngModel
-                  #password="ngModel">
+                  formControlName="password"
+                  ngControl="password">
                   <mat-error
                     *ngIf="password.errors && password.errors.required">
                     Password is required
