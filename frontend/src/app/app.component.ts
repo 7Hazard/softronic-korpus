@@ -38,7 +38,7 @@ export class AppComponent {
   async signup() {
     if (!this.signupForm.valid) return
     try {
-      let response = await backend.post("/singup", {
+      let response = await backend.post("/signup", {
         username: this.signupForm.get("username").value,
         password: this.signupForm.get("password").value
       })
