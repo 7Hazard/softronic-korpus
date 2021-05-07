@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { setCookie } from 'src/cookies';
+import { getCookie, setCookie } from 'src/cookies';
 import { backend } from 'src/backend';
 
 @Component({
@@ -46,5 +46,9 @@ export class AppComponent {
     } catch (error) {
       alert(error)
     }
+  }
+
+  isSignedIn() {
+    return getCookie("token") != null
   }
 }

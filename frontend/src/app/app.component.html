@@ -1,4 +1,4 @@
-<div class="login-page">
+<div class="login-page" *ngIf="!isSignedIn()">
   <mat-card class="mat-elevation-z12">
     <mat-card-title style="text-align:center;">Korpus</mat-card-title>
     <mat-tab-group mat-stretch-tabs class="example-stretched-tabs">
