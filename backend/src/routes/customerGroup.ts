@@ -1,19 +1,18 @@
-import { Router } from "express";
 import { CustomerGroup, CustomerGroups } from "../entities/CustomerGroup";
 import { getDb } from "../database";
 import Validator from "validatorjs";
 import { QueryFailedError } from "typeorm";
 import { authToken } from "../middlewares/auth";
+import { trimText } from "../util";
+import { Routes } from "./Routes";
 
-export default Router()
-    .use("customerGroup", authToken)
-
-    .get("/customerGroup", async (req, res) => {
+export default new Routes("/customerGroup")
+    .get("/", [], async (req, res) => {
         let getAll = await CustomerGroups.get();
         res.status(200).json(getAll);
     })
 
-    .get("/customerGroup/:id", async (req, res) => {
+    .get("/:id", [], async (req, res) => {
         let id = parseInt(req.params.id);
         const group = await CustomerGroups.get(id);
         if (!group) {
@@ -25,26 +24,24 @@ export default Router()
         res.status(200).json(group);
     })
 
-    .put('/customerGroup/:id', async (req, res) => {
-        let id = parseInt(req.params.id);
-        let text = req.body.text;
-        const group = await CustomerGroups.get(id);
+    .put('/:id', [authToken], async (req, res) => {
 
-
-        if (!group) {
-            res.status(404).json({
-                "error": "invalid id"
-            })
-            return
-        }
         let validation = new Validator(req.body, {
-            text: ['required', 'min:1', 'max:100', 'regex:/^[A-z0-9% &/-]+$/']
+            text: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
         });
 
         if (validation.fails()) {
             res.status(400).json(validation.errors);
             return
-        } else if (validation.passes())
+        } else if (validation.passes()) {
+            let id = parseInt(req.params.id);
+            let text = req.body.text;
+            const group = await CustomerGroups.get(id);
+
+            if (!group) {
+                res.status(404).json({ "error": "invalid id" })
+                return
+            }
 
             await getDb()
                 .createQueryBuilder()
@@ -52,22 +49,24 @@ export default Router()
                 .set({ text: text })
                 .where("id = :id", { id: id })
                 .execute();
-        res.status(200).json(group)
+
+            res.status(200).json(group)
+        }
     })
 
-    .post("/customerGroup", async (req, res) => {
-        let text = req.body.text;
+    .post("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            text: ['required', 'min:1', 'max:100', 'regex:/^[A-z0-9% &/-]+$/']
+            text: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
         });
 
         if (validation.fails()) {
             res.status(400).json(validation.errors);
         } else if (validation.passes()) {
+            let text = trimText(req.body.text);
             let customerGroup = new CustomerGroup(text);
             try {
-                customerGroup = await getDb().getRepository(CustomerGroup).save(new CustomerGroup(text));
+                customerGroup = await getDb().getRepository(CustomerGroup).save(customerGroup);
                 res.status(200).json(customerGroup);
             } catch (error) {
                 if (error instanceof QueryFailedError) {
@@ -77,7 +76,7 @@ export default Router()
         }
     })
 
-    .delete("/customerGroup", async (req, res) => {
+    .delete("/", [authToken], async (req, res) => {
         let validation = new Validator(req.body, {
             //reqirement
             ids: "array|required",
@@ -87,9 +86,20 @@ export default Router()
         if (validation.fails()) {
             res.status(400).json(validation.errors)
         } else if (validation.passes()) {
+            let groups =await CustomerGroups.getCustomerGroupById(req.body.ids)
+            if(groups.length == 0){
+                res.status(200).json({deleted:[]})
+                return
+            }
             try {
-                await getDb().manager.delete(CustomerGroup, req.body.ids) // find by id
-                res.status(200).json()
+                let deletedIds=[]
+                
+                for (const group of groups) {
+                    deletedIds.push(group.id)  
+                }
+                
+                await getDb().manager.delete(CustomerGroup, deletedIds)
+                res.status(200).json({deleted:deletedIds})
             } catch (error) {
                 res.status(500).json()
             }

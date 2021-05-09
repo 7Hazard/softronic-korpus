@@ -3,18 +3,29 @@ import { addGroup, api, expectErrors } from "../helpers";
 test("add", async () => {
   await api.post("/customerGroup").authenticate()
     .send({ text: "hello" })
-    .expect(200)
-    .expect({
+    .expect(200, {
       text: "hello",
       id: 1
     })
 
   await api.post("/customerGroup").authenticate()
     .send({ text: "hel lo" })
-    .expect(200)
-    .expect({
+    .expect(200, {
       text: "hel lo",
       id: 2
+    })
+  await api.post("/customerGroup").authenticate()
+    .send({ text: "hallå" })
+    .expect(200, {
+      text: "hallå",
+      id: 3
+    })
+
+  await api.post("/customerGroup").authenticate()
+    .send({ text: "            hej          då             " })
+    .expect(200, {
+      text: "hej då",
+      id: 4
     })
 
   // Bad input tests
@@ -24,9 +35,8 @@ test("add", async () => {
 })
 
 test("get specific", async () => {
-  await api.get("/customerGroup/1").authenticate()
-    .expect(200)
-    .expect({
+  await api.get("/customerGroup/1")
+    .expect(200, {
       text: "hello",
       id: 1
     })
@@ -51,6 +61,7 @@ test("update group", async () => {
 
 test("update non-existing", async () => {
   await api.put("/customerGroup/5").authenticate()
+    .send({ text: "bye" })
     .expect(404, {
       error: "invalid id"
     })
@@ -62,6 +73,8 @@ test("delete one existing", async () => {
   // bad input tests
   await expectErrors(api.delete("/customerGroup").authenticate().send({ ids: "" }), 400)
   await expectErrors(api.delete("/customerGroup").authenticate().send({ ids: {} }), 400)
+  await expectErrors(api.delete("/customerGroup").authenticate().send({ ids: "abc" }), 400)
+  await expectErrors(api.delete("/customerGroup").authenticate().send({ ids: 123 }), 400)
 });
 
 test("delete multiple", async () => {
@@ -73,11 +86,20 @@ test("delete multiple", async () => {
   // delete all
   await api.delete("/customerGroup").authenticate()
     .send({ ids: [group1, group2, group3] })
-    .expect(200)
+    .expect(200,{
+      deleted: [
+        group1,
+        group2,
+        group3
+      ]
+    })
 })
 
 test("delete non-existing", async () => {
   await api.delete("/customerGroup").authenticate()
-    .send({ ids: [1] })
-    .expect(200)
+    .send({ ids: [123] })
+    .expect(200,{
+      deleted: [
+      ]
+    })
 });
