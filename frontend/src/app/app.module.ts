@@ -14,6 +14,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
+import { ShowingPhrasesComponent } from './showing-phrases/showing-phrases.component';
 
 @NgModule({
   imports: [
@@ -32,7 +33,8 @@ import { MatIconModule } from '@angular/material/icon';
   ],
   providers: [],
   declarations: [
-    AppComponent
+    AppComponent,
+    ShowingPhrasesComponent
   ],
   bootstrap: [AppComponent],
 })
