@@ -1,6 +1,6 @@
 import { getDb } from "../database"
 import { Synonym, Synonyms } from "../entities/Synonym"
-import { Words } from "../entities/Phrase"
+import { Phrases } from "../entities/Phrase"
 import { authToken } from "../middlewares/auth"
 import Validator from "validatorjs"
 import { Routes } from "./Routes"
@@ -24,7 +24,7 @@ export default new Routes("/synonyms")
                 res.status(400).json({ error: "phrase cannot be same as meaning" })
                 return;
             }
-            if ((await Words.get(phrase)) == undefined || (await Words.get(meaning)) == undefined) {
+            if ((await Phrases.getOneById(phrase)) == undefined || (await Phrases.getOneById(meaning)) == undefined) {
                 res.status(409).json({ error: "One of the IDs do not exist" })
                 return
             }
@@ -65,7 +65,7 @@ export default new Routes("/synonyms")
         // TODO validate
         let phraseid = parseInt(req.params["phraseid"])
         try {
-            let synonym = await Synonyms.getByPhrase(phraseid)
+            let synonym = await Synonyms.getByPhraseAndMeaning(phraseid)
             res.status(200).json(synonym)
         } catch (error) {
             console.error(error)
@@ -85,8 +85,8 @@ export default new Routes("/synonyms")
             let phraseId = req.body.phrase
             let newMeaningId = req.body.meaning
             if (
-                (await Words.get(phraseId)) == undefined ||
-                (await Words.get(newMeaningId)) == undefined
+                (await Phrases.getOneById(phraseId)) == undefined ||
+                (await Phrases.getOneById(newMeaningId)) == undefined
             ) {
                 res.status(400).json({ error: "One of the IDs do not exist" })
                 return
@@ -130,11 +130,11 @@ export default new Routes("/synonyms")
         if (validation.fails()) {
             res.status(400).json(validation.errors)
         } else if (validation.passes()) {
-            let synonyms = await Synonyms.getSynonymsById(req.body.ids)
+            let synonyms = await Synonyms.getByPhraseIds(req.body.ids)
             try {
                 let deletedIds = []
                 for (const synonym of synonyms) {
-                    let phrase = await Words.getOneById(synonym.phrase)
+                    let phrase = await Phrases.getOneById(synonym.phrase)
                     deletedIds.push(phrase.id)
                 }
                 await getDb().manager.delete(Synonym, req.body.ids)

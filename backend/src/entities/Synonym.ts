@@ -1,32 +1,27 @@
 import { join } from "node:path";
 import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, Unique, ManyToOne, Index, PrimaryColumn, BeforeInsert, JoinColumn, RelationId, OneToOne } from "typeorm";
 import * as database from "../database"
+import phrases from "../routes/phrases";
 import { Phrase } from "./Phrase";
 
 @Entity()
 @Index("Unique_Syn", ["phrase", "meaning"], { unique: true })
 export class Synonym {
-    constructor(phrase: number,meaning:number) {
+    constructor(phrase: number, meaning: number) {
         this.phrase = phrase;
         this.meaning = meaning;
     }
 
-    // // TODO remove, make both other columns together unique
-    // @PrimaryGeneratedColumn("increment")
-    // SynonymId: number;
-
-    
-
     @PrimaryColumn()
-    @OneToOne(() => Phrase,{
+    @OneToOne(() => Phrase, {
         onDelete: "CASCADE"
     })
     @JoinColumn({ name: "phrase" })
     phrase: number;
 
-    @ManyToOne(() => Phrase, phrase => phrase.synonym)
+    @ManyToOne(() => Phrase)
     @JoinColumn({ name: "meaning" })
-    meaning: number;
+    meaning: any;
 }
 
 @EntityRepository(Synonym)
@@ -35,22 +30,22 @@ export class Synonyms extends Repository<Synonym>{
         return database.getDb().manager.find(Synonym, { relations: ['phrase', 'meaning'] });
     }
 
+    static async getByPhraseIds(ids: number[]) {
+        return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: ids }], relations: ["phrase", "meaning"] });
+    }
+
     static async getByPhrase(phraseid: number) {
-        return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: phraseid }, {meaning: phraseid}], relations: ["phrase", "meaning"] })
+        return await database.getDb().manager.getRepository(Synonym).findOne({ where: [{ phrase: phraseid }], relations: ["meaning"] })
     }
 
-    static async getSynonym(phraseId: number){
+    static async getByPhraseAndMeaning(phraseid: number) {
+        return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: phraseid }, { meaning: phraseid }], relations: ["phrase", "meaning"] })
+    }
+
+    static async getSynonym(phraseId: number) {
         return await database.getDb().manager.getRepository(Synonym).createQueryBuilder()
-        .where("phrase = :phraseId",{phraseId: phraseId})
-        .getOne()
-    }
-
-    static async getSynonymsById(phraseIds: number[]){
-        return await database.getDb().manager.findByIds(Synonym,phraseIds);
-    }
-   
-    static async getBySynonymId(synonymId: number){
-        return await database.getDb().manager.getRepository(Synonym).find({where: {id: synonymId},relations: ["phrase","meaning"]})
+            .where("phrase = :phraseId", { phraseId: phraseId })
+            .getOne()
     }
 
     public static getSynonyms(word?: number) {
@@ -72,12 +67,12 @@ export class Synonyms extends Repository<Synonym>{
         }
     }
 
-    public static async deleteSynonym(phraseId: number[]){
+    public static async deleteSynonym(phraseId: number[]) {
         try {
             await database.getDb().getRepository(Synonym).
-            createQueryBuilder().delete()
-            .where("phrase = :phraseId", {phraseId: phraseId})
-            .execute()
+                createQueryBuilder().delete()
+                .where("phrase = :phraseId", { phraseId: phraseId })
+                .execute()
         } catch (error) {
             console.log(error)
             throw error;
