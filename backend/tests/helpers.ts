@@ -4,7 +4,7 @@ import supertest, { Test } from "supertest";
 import { Users } from "../src/entities/User" // second
 import { Phrase } from "../src/entities/Phrase";
 import { Synonym } from "../src/entities/Synonym";
-import { CustomerGroup } from "../src/entities/CustomerGroup";
+import { Group } from "../src/entities/Group";
 
 let stuff = await korpusapi.start({ dbpath: ":memory:", port: null, logging: false });
 
@@ -119,8 +119,8 @@ export async function addSynonym(phrase: number, meaning: number, group?: number
 }
 
 export async function addGroup(name: string) {
-  let response = await api.post("/customerGroup").authenticate().send({ name })
-  return response.body as CustomerGroup
+  let response = await api.post("/groups").authenticate().send({ name })
+  return response.body as Group
 }
 
 export async function expectErrors(request: supertest.Test, code: number) {

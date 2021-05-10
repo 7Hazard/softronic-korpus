@@ -1,6 +1,6 @@
 import { Entity, EntityRepository, Repository, ManyToOne, Index, PrimaryGeneratedColumn, In } from "typeorm";
 import * as database from "../database"
-import { CustomerGroup } from "./CustomerGroup";
+import { Group } from "./Group";
 import { Phrase, Phrases } from "./Phrase";
 
 @Entity()
@@ -27,7 +27,7 @@ export class Synonym {
     })
     meaning: any;
 
-    @ManyToOne(() => CustomerGroup, {
+    @ManyToOne(() => Group, {
         onDelete: "CASCADE"
     })
     group: any;

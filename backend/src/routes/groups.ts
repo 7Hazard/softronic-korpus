@@ -1,4 +1,4 @@
-import { CustomerGroup, CustomerGroups } from "../entities/CustomerGroup";
+import { Group, Groups } from "../entities/Group";
 import { getDb } from "../database";
 import Validator from "validatorjs";
 import { QueryFailedError } from "typeorm";
@@ -6,15 +6,15 @@ import { authToken } from "../middlewares/auth";
 import { Routes } from "./Routes";
 import { trimText } from "../util";
 
-export default new Routes("/customerGroup")
+export default new Routes("/groups")
     .get("/", [], async (req, res) => {
-        let getAll = await CustomerGroups.get();
+        let getAll = await Groups.get();
         res.status(200).json(getAll);
     })
 
     .get("/:id", [], async (req, res) => {
         let id = parseInt(req.params.id);
-        const group = await CustomerGroups.get(id);
+        const group = await Groups.get(id);
         if (!group) {
             res.status(404).json({
                 "error": "Group not found"
@@ -36,7 +36,7 @@ export default new Routes("/customerGroup")
         } else if (validation.passes()) {
             let id = parseInt(req.params.id);
             let name = req.body.name;
-            const group = await CustomerGroups.get(id);
+            const group = await Groups.get(id);
 
             if (!group) {
                 res.status(404).json({ error: "invalid id" })
@@ -45,7 +45,7 @@ export default new Routes("/customerGroup")
 
             await getDb()
                 .createQueryBuilder()
-                .update(CustomerGroup)
+                .update(Group)
                 .set({ name })
                 .where(`id = ${id}`)
                 .execute();
@@ -64,10 +64,10 @@ export default new Routes("/customerGroup")
             res.status(400).json(validation.errors);
         } else if (validation.passes()) {
             let name = trimText(req.body.name);
-            let customerGroup = new CustomerGroup(name);
+            let group = new Group(name);
             try {
-                customerGroup = await getDb().getRepository(CustomerGroup).save(customerGroup);
-                res.status(200).json(customerGroup);
+                group = await getDb().getRepository(Group).save(group);
+                res.status(200).json(group);
             } catch (error) {
                 if (error instanceof QueryFailedError) {
                     res.status(409).json();
@@ -86,7 +86,7 @@ export default new Routes("/customerGroup")
         if (validation.fails()) {
             res.status(400).json(validation.errors)
         } else if (validation.passes()) {
-            let groups =await CustomerGroups.getCustomerGroupById(req.body.ids)
+            let groups =await Groups.getByIds(req.body.ids)
             if(groups.length == 0){
                 res.status(200).json({deleted:[]})
                 return
@@ -98,7 +98,7 @@ export default new Routes("/customerGroup")
                     deletedIds.push(group.id)  
                 }
                 
-                await getDb().manager.delete(CustomerGroup, deletedIds)
+                await getDb().manager.delete(Group, deletedIds)
                 res.status(200).json({deleted:deletedIds})
             } catch (error) {
                 res.status(500).json()
