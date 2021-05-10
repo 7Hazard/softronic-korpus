@@ -25,7 +25,7 @@ export default new Routes("/phrases")
     .post("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            text: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/"],
+            text: ["required", "min:1", "max:100", "regex:/^[a-zA-Z0-9äöåÄÖÅ.%@&/-]*$/"],
         })
 
         if (validation.fails()) {
@@ -46,7 +46,7 @@ export default new Routes("/phrases")
     .put("/:phraseid", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            text: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/"],
+            text: ["required", "min:1", "max:100", "regex:/^[a-zA-Z0-9äöåÄÖÅ.%@&/-]*$/"],
         })
 
         if (validation.fails()) {
