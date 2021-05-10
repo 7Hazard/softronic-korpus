@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { backend } from 'src/backend';
+import { backend } from'src/backend';
+import {MatDialog} from '@angular/material/dialog';
+import { DialogWindowComponent } from '../dialog-window/dialog-window.component';
 
 @Component({
   selector: 'app-showing-phrases',
@@ -7,6 +9,13 @@ import { backend } from 'src/backend';
   styleUrls: ['./showing-phrases.component.styl']
 })
 export class ShowingPhrasesComponent implements OnInit {
+
+  constructor (public dialog: MatDialog){}
+
+  openDialog(){
+    this.dialog.open(DialogWindowComponent);
+  }
+
 
   async ngOnInit() {
     try {

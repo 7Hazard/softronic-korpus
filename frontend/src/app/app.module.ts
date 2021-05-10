@@ -15,6 +15,8 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { ShowingPhrasesComponent } from './showing-phrases/showing-phrases.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import { DialogWindowComponent } from './dialog-window/dialog-window.component';
 
 @NgModule({
   imports: [
@@ -30,11 +32,13 @@ import { ShowingPhrasesComponent } from './showing-phrases/showing-phrases.compo
     MatFormFieldModule,
     MatCheckboxModule,
     MatIconModule,
-  ],
+    MatDialogModule,
+  ],entryComponents:[ DialogWindowComponent],
   providers: [],
   declarations: [
     AppComponent,
-    ShowingPhrasesComponent
+    ShowingPhrasesComponent,
+    DialogWindowComponent
   ],
   bootstrap: [AppComponent],
 })

@@ -1,12 +1,39 @@
-<table>
-  <tr>
-    <th>Id</th>
-    <th>Phrase</th>
-    <!-- <th>Meaning</th> -->
-  </tr>
-  <tr ngFor *ngFor="let phrase of phrases">
-    <td>{{ phrase.id }}</td>
-    <td>{{ phrase.text }}</td>
-    <!-- <td>{{ meaning }}</td> -->
-  </tr>
-</table>
+<html>
+
+  <head>  
+      <style>
+
+      </style>
+
+      <script>
+
+      </script>
+  </head>
+
+  <body>
+  <table>
+    <tr>
+      <th>Id</th>
+      <th>Phrase</th>
+      <th>Synonyms</th>
+      <!-- <th>Meaning</th> -->
+    </tr>
+    <tr ngFor *ngFor="let phrase of phrases">
+      <td>{{ phrase.id }}
+      </td>
+      <td>{{ phrase.text }}
+      </td>
+      <td>
+        <button mat-raised-button (click)="openDialog()">Read more</button>
+      </td>
+      <!-- <td>{{ meaning }}</td> -->
+    </tr>
+  </table>
+
+
+  </body>
+
+</html>
+
+
+
