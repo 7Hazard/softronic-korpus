@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { backend } from'src/backend';
-import {MatDialog} from '@angular/material/dialog';
+import { backend } from 'src/backend';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogWindowComponent } from '../dialog-window/dialog-window.component';
 
 @Component({
@@ -10,17 +10,13 @@ import { DialogWindowComponent } from '../dialog-window/dialog-window.component'
 })
 export class ShowingPhrasesComponent implements OnInit {
 
-  constructor (public dialog: MatDialog){}
-
-  openDialog(){
-    this.dialog.open(DialogWindowComponent);
-  }
+  constructor(public dialog: MatDialog) { }
 
 
   async ngOnInit() {
     try {
       let response = await backend.get("/phrases")
-      if(response.status != 200)
+      if (response.status != 200)
         alert(response.data)
       else {
         this.phrases = response.data
@@ -31,5 +27,17 @@ export class ShowingPhrasesComponent implements OnInit {
   }
 
   phrases = [];
+
+
+  async getSpecificSynonym(phrase:number) {
+    try {
+
+      this.dialog.open(DialogWindowComponent,{data: phrase});
+     
+    } catch (error) {
+      alert(error)
+    }
+  }
+  synonyms = [];
 
 }
