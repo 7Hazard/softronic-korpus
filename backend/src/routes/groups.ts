@@ -27,7 +27,7 @@ export default new Routes("/groups")
     .put('/:id', [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            name: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
+            name: ['required', 'min:1', 'max:100', 'regex:/^[a-zA-Z0-9äöåÄÖÅ. %@&/-]*$/']
         });
 
         if (validation.fails()) {
@@ -57,7 +57,7 @@ export default new Routes("/groups")
     .post("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            name: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
+            name: ['required', 'min:1', 'max:100', 'regex:/^[a-zA-Z0-9äöåÄÖÅ. %@&/-]*$/']
         });
 
         if (validation.fails()) {

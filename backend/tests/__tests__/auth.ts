@@ -13,6 +13,24 @@ test("sign up", async () => {
     }
     {
         signups.push(api.post("/signup")
+            .send({ username: "[username]", password: "password" })
+            .expect(400)
+        )
+    }
+    {
+        signups.push(api.post("/signup")
+            .send({ username: "^^", password: "password" })
+            .expect(400)
+        )
+    }
+    {
+        signups.push(api.post("/signup")
+            .send({ username: "¤¤", password: "password" })
+            .expect(400)
+        )
+    }
+    {
+        signups.push(api.post("/signup")
             .send({ username: "hello@world.com", password: "123456" })
             .expect(200)
         )

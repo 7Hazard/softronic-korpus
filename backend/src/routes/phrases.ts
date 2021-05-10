@@ -5,6 +5,7 @@ import { getDb } from "../database"
 import { authToken } from "../middlewares/auth"
 import { trimText } from "../util"
 import { Routes } from "./Routes"
+const regexVar = /^[a-zA-Z0-9äöåÄÖÅ. %@&/-]*$/
 
 export default new Routes("/phrases")
     .get("/", [], async (req, res) => {
@@ -25,7 +26,7 @@ export default new Routes("/phrases")
     .post("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            text: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/"],
+            text: ["required", "min:1", "max:100", `regex:${regexVar}`],
         })
 
         if (validation.fails()) {
@@ -46,7 +47,7 @@ export default new Routes("/phrases")
     .put("/:phraseid", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            text: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/"],
+            text: ["required", "min:1", "max:100", `regex:${regexVar}`],
         })
 
         if (validation.fails()) {
