@@ -4,15 +4,15 @@ import * as database from "../database"
 @Entity()
 export class CustomerGroup {
 
-    constructor(text: string) {
-        this.text = text;
+    constructor(name: string) {
+        this.name = name;
     }
 
     @PrimaryGeneratedColumn("increment")
     id: number;
 
     @Column({ nullable: false, unique: true, type: "varchar" })
-    text: string;
+    name: string;
 }
 @EntityRepository(CustomerGroup)
 export class CustomerGroups extends Repository<CustomerGroup> {

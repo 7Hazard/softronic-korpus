@@ -1,6 +1,5 @@
 import { getDb } from "../database"
 import { Synonym, Synonyms } from "../entities/Synonym"
-import { Phrases } from "../entities/Phrase"
 import { authToken } from "../middlewares/auth"
 import Validator from "validatorjs"
 import { Routes } from "./Routes"
@@ -9,49 +8,28 @@ export default new Routes("/synonyms")
     .post("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            phrase: ["required", "integer"],
-            meaning: ["required", "integer"]
+            phrase: ["required", "integer"], // phrase id
+            meaning: ["required", "integer"], // meaning id
+            group: ["integer"], // group id
         })
 
-        if (validation.fails()) {
-            res.status(400).json(validation.errors)
-            return
-        } else if (validation.passes()) {
-            let phrase = req.body.phrase
-            let meaning = req.body.meaning
-            // if you put same id on phrase and meaning
-            if (phrase == meaning) {
-                res.status(400).json({ error: "phrase cannot be same as meaning" })
-                return;
-            }
-            if ((await Phrases.getOneById(phrase)) == undefined || (await Phrases.getOneById(meaning)) == undefined) {
-                res.status(409).json({ error: "One of the IDs do not exist" })
-                return
-            }
-            let isValidInput = await Synonyms.isValidInput(phrase, meaning)
+        if (validation.fails())
+            return res.status(400).json(validation.errors)
 
-            if (isValidInput) {
-                let synonym = new Synonym(phrase,meaning)
-                try {
-                    synonym = await getDb().getRepository(Synonym).save(synonym);
+        let synonym = new Synonym({
+            phrase: req.body.phrase,
+            meaning: req.body.meaning,
+            group: req.body.group,
+        })
 
-                    res.status(200).json({
-                        phrase,
-                        meaning
-                    })
-                } catch (error) {
-                    console.log(error)
-                    if (error.errno == 19) {
-                        res.status(400).json({ error: error })
-                    }
-                    res.status(500).json()
-                }
-            } else {
-                res.status(400).json({ error: "No circular or transitive dependencies allowed" })
-                return;
-            }
-        }
+        let errors = await synonym.errors()
+        if (errors)
+            return res.status(409).json(errors)
+
+        synonym = await getDb().getRepository(Synonym).save(synonym);
+        res.status(200).json(synonym)
     })
+
     .get("/", [], async (req, res) => {
         try {
             let all = await Synonyms.getAll()
@@ -61,65 +39,45 @@ export default new Routes("/synonyms")
             res.status(500).json()
         }
     })
-    .get("/:phraseid", [], async (req, res) => {
-        // TODO validate
-        let phraseid = parseInt(req.params["phraseid"])
-        try {
-            let synonym = await Synonyms.getByPhraseAndMeaning(phraseid)
-            res.status(200).json(synonym)
-        } catch (error) {
-            console.error(error)
-            res.status(500).json()
-        }
+
+    .get("/:id", [], async (req, res) => {
+
+        let id = parseInt(req.params["id"])
+        if (isNaN(id))
+            return res.sendStatus(400)
+
+        let synonyms = await Synonyms.getByIds([id])
+        if (synonyms.length == 0)
+            return res.sendStatus(404)
+        else
+            res.status(200).json(synonyms[0])
     })
-    .put("/", [authToken], async (req, res) => {
-        
+
+    .put("/:id", [authToken], async (req, res) => {
         let validation = new Validator(req.body, {
-            phrase: ["required", "integer"],
-            meaning: ["required", "integer"]
+            phrase: ["required", "integer"], // phrase id
+            meaning: ["required", "integer"], // meaning id
+            group: ["integer"], // group id
         })
 
-        if(!validation.passes()){
-            res.status(400).json(validation.errors)
-        } else {
-            let phraseId = req.body.phrase
-            let newMeaningId = req.body.meaning
-            if (
-                (await Phrases.getOneById(phraseId)) == undefined ||
-                (await Phrases.getOneById(newMeaningId)) == undefined
-            ) {
-                res.status(400).json({ error: "One of the IDs do not exist" })
-                return
-            }
-            if ((await Synonyms.getSynonym(phraseId)) == undefined) {
-                res.status(400).json({ error: "The synonym does not exist!" })
-                return
-            }
-    
-            try {
-                if (await Synonyms.isValidInput(phraseId, newMeaningId)) {
-                    let result = await getDb()
-                        .getRepository(Synonym)
-                        .createQueryBuilder("synonym")
-                        .update()
-                        .set({ meaning: newMeaningId })
-                        .where("phrase = :phraseId", { phraseId })
-                        .execute()
-    
-                    res.status(200).json({
-                        phrase: phraseId,
-                        meaning: newMeaningId
-                    })
-                } else res.status(400).json({ error: "No circular or transitive dependencies allowed" })
-            } catch (error) {
-                console.log(error)
-                res.status(400).json(error.toString())
-                return
-            }
-        }
+        if (validation.fails())
+            return res.status(400).json(validation.errors)
 
-        
+        let synonym = new Synonym({
+            phrase: req.body.phrase,
+            meaning: req.body.meaning,
+            group: req.body.group,
+            id: parseInt(req.params["id"]),
+        })
+
+        let errors = await synonym.errors()
+        if (errors)
+            return res.status(409).json(errors)
+
+        synonym = await getDb().getRepository(Synonym).save(synonym);
+        res.status(200).json(synonym)
     })
+
     .delete("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
@@ -127,20 +85,15 @@ export default new Routes("/synonyms")
             "ids.*": "integer",
         })
 
-        if (validation.fails()) {
-            res.status(400).json(validation.errors)
-        } else if (validation.passes()) {
-            let synonyms = await Synonyms.getByPhraseIds(req.body.ids)
-            try {
-                let deletedIds = []
-                for (const synonym of synonyms) {
-                    let phrase = await Phrases.getOneById(synonym.phrase)
-                    deletedIds.push(phrase.id)
-                }
-                await getDb().manager.delete(Synonym, req.body.ids)
-                res.status(200).json({ deleted: deletedIds })
-            } catch (error) {
-                res.status(500).json()
-            }
+        if (validation.fails())
+            return res.status(400).json(validation.errors)
+
+        let synonyms = await Synonyms.getByIds(req.body.ids)
+        let deletedIds = []
+        for (const synonym of synonyms) {
+            deletedIds.push(synonym.id)
         }
+
+        await getDb().manager.delete(Synonym, req.body.ids)
+        res.status(200).json({ deleted: deletedIds })
     })

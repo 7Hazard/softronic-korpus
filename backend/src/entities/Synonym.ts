@@ -1,27 +1,51 @@
-import { join } from "node:path";
-import { Entity, EntityRepository, Repository, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, Unique, ManyToOne, Index, PrimaryColumn, BeforeInsert, JoinColumn, RelationId, OneToOne } from "typeorm";
+import { Entity, EntityRepository, Repository, ManyToOne, Index, PrimaryGeneratedColumn, In } from "typeorm";
 import * as database from "../database"
-import phrases from "../routes/phrases";
-import { Phrase } from "./Phrase";
+import { CustomerGroup } from "./CustomerGroup";
+import { Phrase, Phrases } from "./Phrase";
 
 @Entity()
-@Index("Unique_Syn", ["phrase", "meaning"], { unique: true })
+@Index((synonym: Synonym) => [synonym.phrase, synonym.meaning, synonym.group], { unique: true })
 export class Synonym {
-    constructor(phrase: number, meaning: number) {
-        this.phrase = phrase;
-        this.meaning = meaning;
+    constructor(args: { phrase: number, meaning: number, group?: number, id?: number }) {
+        if (!args) return
+        this.id = args.id
+        this.phrase = args.phrase;
+        this.meaning = args.meaning;
+        this.group = args.group;
     }
 
-    @PrimaryColumn()
-    @OneToOne(() => Phrase, {
+    @PrimaryGeneratedColumn()
+    public readonly id: number;
+
+    @ManyToOne(() => Phrase, {
         onDelete: "CASCADE"
     })
-    @JoinColumn({ name: "phrase" })
-    phrase: number;
+    phrase: any;
 
-    @ManyToOne(() => Phrase)
-    @JoinColumn({ name: "meaning" })
+    @ManyToOne(() => Phrase, {
+        onDelete: "CASCADE"
+    })
     meaning: any;
+
+    @ManyToOne(() => CustomerGroup, {
+        onDelete: "CASCADE"
+    })
+    group: any;
+
+    async errors() {
+        if (this.phrase == this.meaning)
+            return { error: "phrase cannot be same as meaning" }
+        else if ((await Phrases.getOneById(this.phrase)) == undefined)
+            return { error: "phrase does not exist" }
+        else if ((await Phrases.getOneById(this.meaning)) == undefined)
+            return { error: "meaning does not exist" }
+        else if ((await Synonyms.getByMeaningIds([this.phrase])).length != 0)
+            return { error: "phrase is already used as a meaning" }
+        else if ((await Synonyms.getByPhraseIds([this.meaning])).length != 0)
+            return { error: "meaning is already used as a phrase" }
+        else if (this.group && (await Synonyms.getByPhraseAndMeaningAndGroup(this.phrase, this.meaning, null)) != undefined)
+            return { error: "global synonym already exists" }
+    }
 }
 
 @EntityRepository(Synonym)
@@ -30,70 +54,46 @@ export class Synonyms extends Repository<Synonym>{
         return database.getDb().manager.find(Synonym, { relations: ['phrase', 'meaning'] });
     }
 
+    static getByIds(synonymIds: number[]) {
+        return database.getDb().manager.getRepository(Synonym).findByIds(synonymIds,
+            { relations: ['phrase', 'meaning'] }
+        );
+    }
+
     static async getByPhraseIds(ids: number[]) {
-        return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: ids }], relations: ["phrase", "meaning"] });
+        return await database.getDb().manager.getRepository(Synonym).find({
+            where: { phrase: In(ids) },
+            relations: ["meaning"]
+        });
     }
 
-    static async getByPhrase(phraseid: number) {
-        return await database.getDb().manager.getRepository(Synonym).findOne({ where: [{ phrase: phraseid }], relations: ["meaning"] })
+    static async getByMeaningIds(ids: number[]) {
+        return await database.getDb().manager.getRepository(Synonym).find({
+            where: { meaning: In(ids) },
+            relations: ["phrase"]
+        });
     }
 
-    static async getByPhraseAndMeaning(phraseid: number) {
-        return await database.getDb().manager.getRepository(Synonym).find({ where: [{ phrase: phraseid }, { meaning: phraseid }], relations: ["phrase", "meaning"] })
+    // phrase && group
+    static async getByPhraseAndGroup(phrase: number, group: number) {
+        return await database.getDb().manager.getRepository(Synonym).findOne({
+            where: { phrase, group },
+            relations: ["meaning", "group"]
+        })
     }
 
-    static async getSynonym(phraseId: number) {
-        return await database.getDb().manager.getRepository(Synonym).createQueryBuilder()
-            .where("phrase = :phraseId", { phraseId: phraseId })
-            .getOne()
+    // phrase || meaning
+    static async getByPhraseOrMeaning(phraseid: number) {
+        return await database.getDb().manager.getRepository(Synonym).find({
+            where: [{ phrase: phraseid }, { meaning: phraseid }],
+            relations: ["phrase", "meaning"]
+        })
     }
 
-    public static getSynonyms(word?: number) {
-        if (word != null) {
-            try {
-                return database.getDb().manager.findOne(Phrase, word, { relations: ['synonyms'] });
-            } catch (error) {
-                console.log(error);
-                throw error;
-            }
-        }
-        else {
-            try {
-                return database.getDb().manager.find(Phrase, { relations: ['synonyms'] })
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
-        }
-    }
-
-    public static async deleteSynonym(phraseId: number[]) {
-        try {
-            await database.getDb().getRepository(Synonym).
-                createQueryBuilder().delete()
-                .where("phrase = :phraseId", { phraseId: phraseId })
-                .execute()
-        } catch (error) {
-            console.log(error)
-            throw error;
-        }
-    }
-
-    public static async isValidInput(phraseId: number, meaningId: number) {
-        try {
-
-            let circularExists = await database.getDb().getRepository(Synonym)
-                .createQueryBuilder("synonym")
-                .where(`synonym.meaning = ${phraseId}`)
-                .orWhere(`synonym.phrase = ${meaningId}`)
-                .getOne();
-
-            if (circularExists == undefined) {
-                return true;
-            } else return false;
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
+    // phrase && meaning && Group
+    static async getByPhraseAndMeaningAndGroup(phrase: number, meaning: number, group: number) {
+        return await database.getDb().manager.getRepository(Synonym).findOne({
+            where: { phrase, meaning, group, }
+        })
     }
 }

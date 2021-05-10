@@ -28,7 +28,7 @@ export default new Routes("/translations")
                     // if synonym not cached, fetch from db
                     if(!synonym) {
                         // fetch synonym
-                        synonym = await Synonyms.getByPhrase(phrase.synonym.phrase);
+                        synonym = await Synonyms.getByPhraseIds(phrase.synonym.phrase)[0];
                         // cache the synonym
                         synonymsCache.set(phrase.synonym, synonym)
                     }

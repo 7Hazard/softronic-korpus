@@ -3,8 +3,8 @@ import { getDb } from "../database";
 import Validator from "validatorjs";
 import { QueryFailedError } from "typeorm";
 import { authToken } from "../middlewares/auth";
-import { trimText } from "../util";
 import { Routes } from "./Routes";
+import { trimText } from "../util";
 
 export default new Routes("/customerGroup")
     .get("/", [], async (req, res) => {
@@ -27,7 +27,7 @@ export default new Routes("/customerGroup")
     .put('/:id', [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            text: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
+            name: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
         });
 
         if (validation.fails()) {
@@ -35,19 +35,19 @@ export default new Routes("/customerGroup")
             return
         } else if (validation.passes()) {
             let id = parseInt(req.params.id);
-            let text = req.body.text;
+            let name = req.body.name;
             const group = await CustomerGroups.get(id);
 
             if (!group) {
-                res.status(404).json({ "error": "invalid id" })
+                res.status(404).json({ error: "invalid id" })
                 return
             }
 
             await getDb()
                 .createQueryBuilder()
                 .update(CustomerGroup)
-                .set({ text: text })
-                .where("id = :id", { id: id })
+                .set({ name })
+                .where(`id = ${id}`)
                 .execute();
 
             res.status(200).json(group)
@@ -57,14 +57,14 @@ export default new Routes("/customerGroup")
     .post("/", [authToken], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            text: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
+            name: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% &/-]+$/']
         });
 
         if (validation.fails()) {
             res.status(400).json(validation.errors);
         } else if (validation.passes()) {
-            let text = trimText(req.body.text);
-            let customerGroup = new CustomerGroup(text);
+            let name = trimText(req.body.name);
+            let customerGroup = new CustomerGroup(name);
             try {
                 customerGroup = await getDb().getRepository(CustomerGroup).save(customerGroup);
                 res.status(200).json(customerGroup);
