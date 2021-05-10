@@ -35,6 +35,7 @@ test("add", async () => {
       meaning: 2
     })
     .expect(200, {
+      id: 1,
       phrase: 1,
       meaning: 2
     })
@@ -47,7 +48,7 @@ test("get", async () => {
         text: "hi",
         id: 1,
         synonym: {
-          phrase: 1,
+          id: 1,
           meaning: {
             text: "hello",
             id: 2

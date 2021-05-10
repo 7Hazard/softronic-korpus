@@ -15,25 +15,22 @@ export class Phrase {
     @Column({ nullable: false, unique: true, type: "varchar" })
     text: string;
 
-    // TODO redundant, remove
     @OneToOne(() => Synonym, synonym => synonym.phrase)
-    //@JoinColumn()
-    synonym: Phrase;
-
-    // @RelationId((phrase: Phrase) => phrase.synonyms)
-    // synonymId: number
+    synonym: any;
 }
 
 @EntityRepository(Phrase)
-export class Words extends Repository<Phrase> {
+export class Phrases extends Repository<Phrase> {
     public static add(phrase: Phrase) {
         return database.getDb().getRepository(Phrase).save(phrase);
     }
 
-    public static get(phrase?: number) {
-        if (phrase != null) {
-            return database.getDb().manager.findOne(Phrase, phrase);
-        } else return database.getDb().manager.find(Phrase, { relations: ['synonym', 'synonym.meaning'] });
+    public static getAll() {
+        return database.getDb().manager.find(Phrase, { relations: ['synonym', 'synonym.meaning'] });
+    }
+
+    public static getAllWithRelations(relations) {
+        return database.getDb().manager.find(Phrase, {relations});
     }
 
     public static getOneById(id: number) {

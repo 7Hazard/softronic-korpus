@@ -4,6 +4,7 @@ import bodyparser from "body-parser"
 import * as database from "./database"
 import routes from "./routes/all"
 import * as http from "http"
+import cors from "cors"
 
 export async function start({
     port = 2525,
@@ -52,6 +53,7 @@ export async function stop() {
 // setup app
 export const app = express()
 app.use(bodyparser.json({}))
+app.use(cors())
 
 let server: http.Server
 

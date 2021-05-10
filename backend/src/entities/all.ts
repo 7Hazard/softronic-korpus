@@ -1,11 +1,11 @@
-import { CustomerGroup } from "./CustomerGroup";
+import { Group } from "./Group";
 import { Synonym } from "./Synonym";
 import { User } from "./User";
 import { Phrase } from "./Phrase";
 
 export default [
     Phrase,
-    CustomerGroup,
+    Group,
     Synonym,
     User
 ]

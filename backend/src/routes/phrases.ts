@@ -1,5 +1,5 @@
 import { QueryFailedError } from "typeorm"
-import { Phrase, Words } from "../entities/Phrase"
+import { Phrase, Phrases } from "../entities/Phrase"
 import Validator from "validatorjs"
 import { getDb } from "../database"
 import { authToken } from "../middlewares/auth"
@@ -8,12 +8,12 @@ import { Routes } from "./Routes"
 
 export default new Routes("/phrases")
     .get("/", [], async (req, res) => {
-        let getAll = await Words.get()
+        let getAll = await Phrases.getAll()
         res.status(200).json(getAll)
     })
     .get("/:phraseid", [], async (req, res) => {
         let phraseid = parseInt(req.params.phraseid)
-        const phrasesById = await Words.get(phraseid)
+        const phrasesById = await Phrases.getOneById(phraseid)
         if (!phrasesById) {
             res.status(404).json({
                 error: "Word not found",
@@ -76,7 +76,7 @@ export default new Routes("/phrases")
         if (validation.fails()) {
             res.status(400).json(validation.errors)
         } else if (validation.passes()) {
-            let phrases =await Words.getByIds(req.body.ids)
+            let phrases =await Phrases.getByIds(req.body.ids)
             try {
                 let deletedIds=[]
                 for (const phrase of phrases) {

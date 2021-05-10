@@ -13,8 +13,8 @@ export default new Routes()
     .post("/signup", [], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            username: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9%.@&/-]+$/'],
-            password: ['required', 'min:1', 'max:100', 'regex:/^[A-zäöåÄÖÅ0-9% .@&/-]+$/']
+            username: ['required', 'min:1', 'max:100', 'regex:/^[a-zA-Z0-9äöåÄÖÅ.%@&/-]*$/'],
+            password: ['required', 'min:1', 'max:100', 'regex:/^[a-zA-Z0-9äöåÄÖÅ.%@&/-]*$/']
         });
 
         if (validation.fails()) {
@@ -37,8 +37,8 @@ export default new Routes()
     .post("/signin", [], async (req, res) => {
 
         let validation = new Validator(req.body, {
-            username: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9%.@&/-]+$/"],
-            password: ["required", "min:1", "max:100", "regex:/^[A-zäöåÄÖÅ0-9% .@&/-]+$/"]
+            username: ["required", "min:1", "max:100", "regex:/^[a-zA-Z0-9äöåÄÖÅ.%@&/-]*$/"],
+            password: ["required", "min:1", "max:100", "regex:/^[a-zA-Z0-9äöåÄÖÅ.%@&/-]*$/"]
         })
 
         if (validation.fails()) {

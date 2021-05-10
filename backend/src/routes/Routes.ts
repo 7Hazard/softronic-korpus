@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 
-type Middleware = (req: Request, res: Response, next: NextFunction) => Promise<void>;
-type Handler = (req: Request, res: Response) => Promise<void>;
+type Middleware = (req: Request, res: Response, next: NextFunction) => Promise<any>;
+type Handler = (req: Request, res: Response) => Promise<any>;
 
 export class Routes {
     router = Router()
