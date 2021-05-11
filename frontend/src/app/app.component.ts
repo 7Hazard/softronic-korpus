@@ -26,7 +26,6 @@ export class AppComponent {
         username: this.signinForm.get("username").value,
         password: this.signinForm.get("password").value
       })
-      alert(`${response.status}\n${JSON.stringify(response.data)}`)
       if (response.status == 200) {
         setCookie("token", response.data.token, 1)
       }
@@ -42,7 +41,6 @@ export class AppComponent {
         username: this.signupForm.get("username").value,
         password: this.signupForm.get("password").value
       })
-      alert(`${response.status}\n${JSON.stringify(response.data)}`)
     } catch (error) {
       alert(error)
     }

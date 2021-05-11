@@ -1,4 +1,5 @@
-<app-showing-phrases></app-showing-phrases>
+<app-showing-phrases *ngIf="isSignedIn()"></app-showing-phrases>
+
 <div class="login-page" *ngIf="!isSignedIn()">
   <mat-card class="mat-elevation-z12">
     <mat-card-title style="text-align:center;">Korpus</mat-card-title>
