@@ -28,7 +28,7 @@ export default new Routes()
                 res.status(200).json();
             } catch (error) {
                 if (error instanceof QueryFailedError) {
-                    res.status(409).json();
+                    res.status(409).json({ error:"Username not available" });
                 }
             }
         }
