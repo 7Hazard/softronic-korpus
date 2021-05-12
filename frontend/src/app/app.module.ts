@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ShowingPhrasesComponent } from './showing-phrases/showing-phrases.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { DialogWindowComponent } from './dialog-window/dialog-window.component';
+import {MatTableModule} from '@angular/material/table';
 
 @NgModule({
   imports: [
@@ -33,6 +34,7 @@ import { DialogWindowComponent } from './dialog-window/dialog-window.component';
     MatCheckboxModule,
     MatIconModule,
     MatDialogModule,
+    MatTableModule
   ],entryComponents:[ DialogWindowComponent],
   providers: [],
   declarations: [
