@@ -18,6 +18,8 @@ import { ShowingPhrasesComponent } from './showing-phrases/showing-phrases.compo
 import {MatDialogModule} from '@angular/material/dialog';
 import { DialogWindowComponent } from './dialog-window/dialog-window.component';
 import {MatTableModule} from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator'
+
 
 @NgModule({
   imports: [
@@ -34,7 +36,8 @@ import {MatTableModule} from '@angular/material/table';
     MatCheckboxModule,
     MatIconModule,
     MatDialogModule,
-    MatTableModule
+    MatTableModule,
+    MatPaginatorModule
   ],entryComponents:[ DialogWindowComponent],
   providers: [],
   declarations: [
