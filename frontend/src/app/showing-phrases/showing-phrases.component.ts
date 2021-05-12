@@ -38,6 +38,8 @@ export class ShowingPhrasesComponent {
   displayedColumns: string[] = ['id', 'phrase', 'synonyms'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
 
+  constructor(public dialog:MatDialog){}
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   ngAfterViewInit() {
@@ -49,5 +51,11 @@ export class ShowingPhrasesComponent {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  getSpecificSynonym(){}
+  getSpecificSynonym(){
+    try{
+      this.dialog.open(DialogWindowComponent);
+    } catch (error){
+      alert(error)
+    }
+  }
 }
