@@ -6,24 +6,12 @@ import {MatTableDataSource} from '@angular/material/table';
 
 import {AfterViewInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
+import { eraseCookie } from 'src/cookies';
 
 export interface PeriodicElement {
   phrase: string;
   id: number;
 }
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {id: 1, phrase: 'Läsk'},
-  {id: 2, phrase: 'Dryck'},
-  {id: 3, phrase: 'Cola'},
-  {id: 4, phrase: 'Vätska'},
-  {id: 5, phrase: 'Vin'},
-  {id: 6, phrase: 'Nocco'},
-  {id: 7, phrase: 'Clean'},
-  {id: 8, phrase: 'Monster'},
-  {id: 9, phrase: 'Powerking'},
-  {id: 10, phrase: 'Haiwa'},
-];
 
 /**
  * @title Table with filtering
@@ -35,15 +23,36 @@ const ELEMENT_DATA: PeriodicElement[] = [
 })
 
 export class ShowingPhrasesComponent {
+  phrases = [];
   displayedColumns: string[] = ['id', 'phrase', 'synonyms'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+   dataSource: MatTableDataSource<unknown>;
+
 
   constructor(public dialog:MatDialog){}
+
+  async ngOnInit() {
+    this.dataSource = new MatTableDataSource(await this.fetchPhrases());
+      //alert(JSON.stringify( this.dataSource));
+    
+  }
+
+  async fetchPhrases(){
+    try {
+      let response = await backend.get("/phrases")
+      if (response.status != 200)
+        alert(response.data)
+      else {
+        return response.data;
+      }
+    } catch (error) {
+      alert(error)
+    }
+  }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    //this.dataSource.paginator = this.paginator;
   }
 
   applyFilter(event: Event) {
@@ -57,5 +66,11 @@ export class ShowingPhrasesComponent {
     } catch (error){
       alert(error)
     }
+  }
+
+  logOut(){
+    eraseCookie('token');
+    alert('You have signed out');
+    location.reload();
   }
 }
