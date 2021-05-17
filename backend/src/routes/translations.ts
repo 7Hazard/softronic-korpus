@@ -1,46 +1,66 @@
-import Validator from "validatorjs";
-import { Phrase, Phrases } from "../entities/Phrase";
-import { Synonym, Synonyms } from "../entities/Synonym";
-import { Routes } from "./Routes";
+import Validator from "validatorjs"
+import { Phrase, Phrases } from "../entities/Phrase"
+import { Synonym, Synonyms } from "../entities/Synonym"
+import { Routes } from "./Routes"
 
-export default new Routes("/translations")
-    .post("/", [], async (req, res) => {
-        let validation = new Validator(req.body, {
-            text: ["required", "max: 10000"]
-        });
+export default new Routes("/translations").post("/", [], async (req, res) => {
+    let validation = new Validator(req.body, {
+        text: ["required", "max: 10000"],
+    })
 
-        if (validation.fails()) {
-            res.status(400).send(validation.errors)
-            return;
-        }
+    if (validation.fails()) {
+        res.status(400).send(validation.errors)
+        return
+    }
 
-        let phrases = await Phrases.getAllWithRelations(['synonym']);
-        
-        let words = (req.body.text as string).split(" ")
-        let synonymsCache = new Map<Number, Synonym>()
+    // build phrase-meaning map
+    let phrases = await Phrases.getAllWithRelations(["synonym", "synonym.meaning"])
+    let phraseMeaningMap = new Map<string, string>()
+    for (const phrase of phrases) {
+        let synonym = phrase.synonym as Synonym
+        if(!synonym) continue
+        let meaning = synonym.meaning as Phrase
+        phraseMeaningMap.set(phrase.text, meaning.text)
+    }
 
-        for (const [index, word] of words.entries()) {
-            for (const phrase of phrases) {
-                if (word == phrase.text && phrase.synonym)
-                {
-                    // get the synonym from the cache
-                    let synonym = synonymsCache.get(phrase.synonym)
-                    // if synonym not cached, fetch from db
-                    if(!synonym) {
-                        // fetch synonym
-                        synonym = await Synonyms.getByPhraseIds(phrase.synonym.phrase)[0];
-                        // cache the synonym
-                        synonymsCache.set(phrase.synonym, synonym)
-                    }
-                    // replace word
-                    words[index] = (synonym.meaning as Phrase).text
-                    break;
-                }
+    let text = new Text(req.body.text)
+    let result = text.translate()
+
+    // send translation
+    res.status(200).send({ translation: result })
+})
+
+class Text {
+    tokens: string[]
+    phraseCandidates: string[]
+
+    constructor(text: string) {
+        // Split text into tokens
+        this.tokens = text.split(" ")
+
+        let start = 0;
+        let end = 0;
+        // let lastTokenIndex = this.tokens.length-1;
+        let tokensCount = this.tokens.length
+        while(start != tokensCount && end != tokensCount)
+        {
+            let tokenCandidates = []
+            while(end != tokensCount)
+            {
+                tokenCandidates.push(this.tokens[end])
+                end++
+            }
+            start++
+            end = start
+            let phraseCandidate = tokenCandidates.join(" ")
+            if(!this.phraseCandidates.includes(phraseCandidate))
+            {
+                this.phraseCandidates.push(phraseCandidate)
             }
         }
+    }
 
-        // join replaced words together
-        let result = words.join(" ")
-        // send translation
-        res.status(200).send({ translation: result });
-    })
+    translate() {
+        return this.tokens.join(" ")
+    }
+}
