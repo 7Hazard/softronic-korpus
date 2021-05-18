@@ -5,6 +5,11 @@
   </div>
 </mat-toolbar>
 
+<!-- Dialog window Add Phrase -->
+<div class="add-button" style="background-color:white;">
+  <button mat-raised-button (click)="openDialog()"> Add Phrase</button>
+</div>
+
 <div class="FilterBox" style="background-color:white;">
 <mat-form-field>
   <mat-label>Filter</mat-label>
@@ -12,7 +17,8 @@
 </mat-form-field>
 </div>
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
 
   <!-- ID Column -->
   <ng-container matColumnDef="id">
@@ -31,13 +37,22 @@
     <th mat-header-cell *matHeaderCellDef> Synonyms </th>
     <td mat-cell *matCellDef="let element"> {{element.synonym ? element.synonym.meaning.text : "-"}} </td>
   </ng-container>
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  <!-- Delete columns -->
+  <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
+      <td mat-cell *matCellDef="let element"> 
+        <button mat-raised-button color="warn" (click)="deleteSynonym()"> Delete </button>
+      </td>
+    </ng-container>
 
   <!-- Row shown when there is no matching data. -->
   <tr class="mat-row" *matNoDataRow>
     <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
   </tr>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
 <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

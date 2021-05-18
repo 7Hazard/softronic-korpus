@@ -1,2 +1,13 @@
-<h2 mat-dialog-title>Synonymous phrase link</h2>
-<mat-dialog-content> {{phrase.text}} ->{{getSynonymText()}}</mat-dialog-content>
+
+<h1 mat-dialog-title>Add phrase</h1>
+<div mat-dialog-content>
+  <p> Enter phrase: </p>
+  <mat-form-field>
+    <mat-label>Phrase</mat-label>
+    <input matInput [(ngModel)]="data.phrase" >
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button color="warn" (click)="onNoClick()">Cancel</button>
+  <button mat-button [mat-dialog-close]="data.phrase" cdkFocusInitial>Add</button>
+</div>

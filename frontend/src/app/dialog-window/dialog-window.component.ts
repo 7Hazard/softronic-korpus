@@ -1,25 +1,29 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { DialogData } from '../showing-phrases/showing-phrases.component';
 
+
+/**
+ * @title Dialog Overview
+ */
 @Component({
   selector: 'app-dialog-window',
   templateUrl: './dialog-window.component.html',
   styleUrls: ['./dialog-window.component.styl']
 })
 export class DialogWindowComponent implements OnInit {
-  constructor(@Inject(MAT_DIALOG_DATA) public phrase) {
-    // alert(JSON.stringify(data))
-    
-  }
+  phrase:string;
 
-  getSynonymText(){
-    if(this.phrase.synonym == null)
-      return "No synonyms";
-      else return this.phrase.synonym.meaning.text
-  }
-
+  constructor(
+    public dialogRef: MatDialogRef<DialogWindowComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
   ngOnInit(): void {
   }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
 
 }

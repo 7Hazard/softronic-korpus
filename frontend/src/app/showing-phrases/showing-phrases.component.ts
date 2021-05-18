@@ -6,11 +6,17 @@ import {MatTableDataSource} from '@angular/material/table';
 
 import {AfterViewInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
-import { eraseCookie } from 'src/cookies';
+import { eraseCookie, getCookie } from 'src/cookies';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { FormControl, FormGroup } from '@angular/forms';
 
 export interface PeriodicElement {
   phrase: string;
   id: number;
+}
+
+export interface DialogData {
+  phrase: string;
 }
 
 /**
@@ -23,17 +29,42 @@ export interface PeriodicElement {
 })
 
 export class ShowingPhrasesComponent {
-  phrases = [];
-  displayedColumns: string[] = ['id', 'phrase', 'synonyms'];
-   dataSource: MatTableDataSource<unknown>;
+  phraseForm = new FormGroup({phrase: new FormControl()});
+  phrase: string; // input from dialog window
 
+  phrases = [];
+  displayedColumns: string[] = ['id', 'phrase', 'synonyms', 'actions'];
+  dataSource: MatTableDataSource<unknown>;
 
   constructor(public dialog:MatDialog){}
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogWindowComponent, {
+      width: '250px',
+      data: {phrase: this.phrase}
+    });
+
+    dialogRef.afterClosed().subscribe(async result => { //called when dialog window closed
+      console.log('The dialog was closed');
+      this.phrase = result;
+      try{
+        let response = await backend.post("/phrases", {text: this.phrase}, {
+         headers: { authorization: `Bearer: ${getCookie("token")}`}})
+        if(response.status  != 200){
+          alert('Response is not 200');
+        }
+      }catch(error){
+        alert(error)
+      }
+      location.reload();
+      //this.phrases.push(this.phrase);
+      //alert(this.phrase)
+    });
+  }
 
   async ngOnInit() {
     this.dataSource = new MatTableDataSource(await this.fetchPhrases());
       //alert(JSON.stringify( this.dataSource));
-    
   }
 
   async fetchPhrases(){
@@ -73,4 +104,6 @@ export class ShowingPhrasesComponent {
     alert('You have signed out');
     location.reload();
   }
+  
+  deleteSynonym(){}
 }
