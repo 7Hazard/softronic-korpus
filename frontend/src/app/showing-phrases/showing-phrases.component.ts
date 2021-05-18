@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { backend } from 'src/backend';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogWindowComponent } from '../dialog-window/dialog-window.component';
-import {MatTableDataSource} from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 
-import {AfterViewInit, ViewChild} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
+import { AfterViewInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 import { eraseCookie, getCookie } from 'src/cookies';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
 
 export interface PeriodicElement {
@@ -22,40 +22,43 @@ export interface DialogData {
 /**
  * @title Table with filtering
  */
- @Component({
+@Component({
   selector: 'app-showing-phrases',
   templateUrl: './showing-phrases.component.html',
   styleUrls: ['./showing-phrases.component.styl']
 })
 
 export class ShowingPhrasesComponent {
-  phraseForm = new FormGroup({phrase: new FormControl()});
+  phraseForm = new FormGroup({ phrase: new FormControl() });
   phrase: string; // input from dialog window
 
   phrases = [];
   displayedColumns: string[] = ['id', 'phrase', 'synonyms', 'actions'];
   dataSource: MatTableDataSource<unknown>;
 
-  constructor(public dialog:MatDialog){}
+  constructor(public dialog: MatDialog) { }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogWindowComponent, {
       width: '250px',
-      data: {phrase: this.phrase}
+      data: { phrase: this.phrase }
     });
 
     dialogRef.afterClosed().subscribe(async result => { //called when dialog window closed
       console.log('The dialog was closed');
       this.phrase = result;
-      try{
-        let response = await backend.post("/phrases", {text: this.phrase}, {
-         headers: { authorization: `Bearer: ${getCookie("token")}`}})
-        if(response.status  != 200){
+      alert(result)
+      try {
+        let response = await backend.post("/phrases", { text: this.phrase }, {
+          headers: { authorization: `Bearer: ${getCookie("token")}` }
+        })
+        if (response.status != 200) {
           alert('Response is not 200');
         }
-      }catch(error){
+      } catch (error) {
         alert(error)
       }
+      //this.dataSource.data.push(this.phrase);
       location.reload();
       //this.phrases.push(this.phrase);
       //alert(this.phrase)
@@ -64,10 +67,11 @@ export class ShowingPhrasesComponent {
 
   async ngOnInit() {
     this.dataSource = new MatTableDataSource(await this.fetchPhrases());
-      //alert(JSON.stringify( this.dataSource));
+    
+    //alert(JSON.stringify( this.dataSource));
   }
 
-  async fetchPhrases(){
+  async fetchPhrases() {
     try {
       let response = await backend.get("/phrases")
       if (response.status != 200)
@@ -91,19 +95,31 @@ export class ShowingPhrasesComponent {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  getSpecificSynonym(){
-    try{
+  getSpecificSynonym() {
+    try {
       this.dialog.open(DialogWindowComponent);
-    } catch (error){
+    } catch (error) {
       alert(error)
     }
   }
 
-  logOut(){
+  logOut() {
     eraseCookie('token');
     alert('You have signed out');
     location.reload();
   }
-  
-  deleteSynonym(){}
+
+  async deleteSynonym(id: any) {
+    alert(id);
+    try{
+    let response = await backend.delete("/phrases",
+      {
+        headers: { authorization: `Bearer: ${getCookie("token")}` },
+        data: { ids: [id] }
+      })
+    }catch(error){
+      alert(error)
+    }
+      location.reload();
+  }
 }
