@@ -11,10 +11,21 @@
 </div>
 
 <div class="FilterBox" style="background-color:white;">
+  <mat-form-field appearance="fill">
+  <mat-label>Select Group</mat-label>
+  <mat-select>
+    <mat-option *ngFor="let customerGroup of customerGroups" [value]="customerGroup.name">
+      {{customerGroup.name}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
 <mat-form-field>
   <mat-label>Filter</mat-label>
   <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
 </mat-form-field>
+
+
 </div>
 
 

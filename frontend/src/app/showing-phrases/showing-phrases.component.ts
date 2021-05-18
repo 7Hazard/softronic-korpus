@@ -9,6 +9,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { eraseCookie, getCookie } from 'src/cookies';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
+import {MatSelectModule} from '@angular/material/select';
 
 export interface PeriodicElement {
   phrase: string;
@@ -29,6 +30,16 @@ export interface DialogData {
 })
 
 export class ShowingPhrasesComponent {
+  title = 'angular-mat-select-app';
+  customerGroups = [
+    { name: 'Nordea' },
+    { name: 'Skandia' },
+    { name: 'Swedbank' },
+    { name: 'Santander' },
+    { name: 'SEB' }
+  ];
+  selected: string;
+
   phraseForm = new FormGroup({ phrase: new FormControl() });
   phrase: string; // input from dialog window
 

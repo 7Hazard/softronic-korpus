@@ -20,6 +20,7 @@ import { DialogWindowComponent } from './dialog-window/dialog-window.component';
 import {MatTableModule} from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator'
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatSelectModule} from '@angular/material/select';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import {MatToolbarModule} from '@angular/material/toolbar';
     MatDialogModule,
     MatTableModule,
     MatPaginatorModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatSelectModule
   ],entryComponents:[ DialogWindowComponent],
   providers: [],
   declarations: [
