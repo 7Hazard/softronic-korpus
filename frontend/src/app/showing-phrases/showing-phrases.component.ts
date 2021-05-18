@@ -31,13 +31,7 @@ export interface DialogData {
 
 export class ShowingPhrasesComponent {
   title = 'angular-mat-select-app';
-  customerGroups = [
-    { name: 'Nordea' },
-    { name: 'Skandia' },
-    { name: 'Swedbank' },
-    { name: 'Santander' },
-    { name: 'SEB' }
-  ];
+  customerGroups = [];
   selected: string;
 
   phraseForm = new FormGroup({ phrase: new FormControl() });
@@ -46,6 +40,7 @@ export class ShowingPhrasesComponent {
   phrases = [];
   displayedColumns: string[] = ['id', 'phrase', 'synonyms', 'actions'];
   dataSource: MatTableDataSource<unknown>;
+  //customerSource:  MatTableDataSource<unknown>;
 
   constructor(public dialog: MatDialog) { }
 
@@ -78,13 +73,26 @@ export class ShowingPhrasesComponent {
 
   async ngOnInit() {
     this.dataSource = new MatTableDataSource(await this.fetchPhrases());
-    
+    this.customerGroups = await this.fetchCustomerGroups();
     //alert(JSON.stringify( this.dataSource));
   }
 
   async fetchPhrases() {
     try {
       let response = await backend.get("/phrases")
+      if (response.status != 200)
+        alert(response.data)
+      else {
+        return response.data;
+      }
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  async fetchCustomerGroups() {
+    try {
+      let response = await backend.get("/groups")
       if (response.status != 200)
         alert(response.data)
       else {
