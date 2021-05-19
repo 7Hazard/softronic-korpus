@@ -43,6 +43,8 @@ export class Synonym {
             return { error: "phrase is already used as a meaning" }
         else if ((await Synonyms.getByPhraseIds([this.meaning])).length != 0)
             return { error: "meaning is already used as a phrase" }
+        else if ((await Synonyms.getByPhraseAndMeaningAndGroup(this.phrase, this.meaning, this.group)) != undefined)
+            return { error: "this synonym already exists" }
         else if (this.group && (await Synonyms.getByPhraseAndMeaningAndGroup(this.phrase, this.meaning, null)) != undefined)
             return { error: "global synonym already exists" }
     }
@@ -51,12 +53,16 @@ export class Synonym {
 @EntityRepository(Synonym)
 export class Synonyms extends Repository<Synonym>{
     static getAll() {
-        return database.getDb().manager.find(Synonym, { relations: ['phrase', 'meaning'] });
+        return database.getDb().manager.find(Synonym, { relations: ['phrase', 'meaning', 'group'] });
+    }
+
+    static get(synonym: Synonym) {
+        return database.getDb().manager.getRepository(Synonym).findOne(synonym, { relations: ['phrase', 'meaning', 'group'] });
     }
 
     static getByIds(synonymIds: number[]) {
         return database.getDb().manager.getRepository(Synonym).findByIds(synonymIds,
-            { relations: ['phrase', 'meaning'] }
+            { relations: ['phrase', 'meaning', 'group'] }
         );
     }
 

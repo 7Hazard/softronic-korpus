@@ -21,13 +21,16 @@ export default new Routes("/synonyms")
             meaning: req.body.meaning,
             group: req.body.group,
         })
-
+        if(synonym.group == undefined){
+            synonym.group = null;
+        }
+        
         let errors = await synonym.errors()
         if (errors)
             return res.status(409).json(errors)
 
         synonym = await getDb().getRepository(Synonym).save(synonym);
-        res.status(200).json(synonym)
+        res.status(200).json(await Synonyms.get(synonym))
     })
 
     .get("/", [], async (req, res) => {
