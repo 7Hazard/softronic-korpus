@@ -32,7 +32,7 @@ export interface DialogData {
 export class ShowingPhrasesComponent {
   title = 'angular-mat-select-app';
   customerGroups = [];
-  selected: string;
+  selectedCustomer: string;
 
   phraseForm = new FormGroup({ phrase: new FormControl() });
   phrase: string; // input from dialog window
@@ -140,5 +140,10 @@ export class ShowingPhrasesComponent {
       alert(error)
     }
       location.reload();
+  }
+
+  onSelectionChange(selectedCustomer){
+    console.log(selectedCustomer);
+    alert(selectedCustomer);
   }
 }

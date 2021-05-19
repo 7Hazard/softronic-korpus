@@ -13,7 +13,8 @@
 <div class="FilterBox" style="background-color:white;">
   <mat-form-field appearance="fill">
   <mat-label>Select Group</mat-label>
-  <mat-select>
+  <mat-select name="customerString" [(value)]="selectedCustomer" (selectionChange)="onSelectionChange(selectedCustomer)"
+  placeholder="customerGroup">
     <mat-option *ngFor="let customerGroup of customerGroups" [value]="customerGroup.name">
       {{customerGroup.name}}
     </mat-option>
@@ -22,7 +23,7 @@
 
 <mat-form-field>
   <mat-label>Filter</mat-label>
-  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Redbull" #input>
 </mat-form-field>
 
 
