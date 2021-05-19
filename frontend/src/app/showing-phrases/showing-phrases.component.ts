@@ -9,6 +9,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { eraseCookie, getCookie } from 'src/cookies';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
+import { UpdatePhrasesComponent } from '../update-phrases/update-phrases.component';
 
 export interface PeriodicElement {
   phrase: string;
@@ -64,6 +65,36 @@ export class ShowingPhrasesComponent {
       //alert(this.phrase)
     });
   }
+
+  openDialog2(id: any): void {
+    
+    const dialogRef = this.dialog.open(UpdatePhrasesComponent, {
+      width: '250px',
+      data: { phrase: this.phrase }
+    });
+
+    dialogRef.afterClosed().subscribe(async result => { //called when dialog window closed
+      console.log('The dialog was closed');
+      this.phrase = result;
+      alert(result)
+      try {
+        let response = await backend.put(`/phrases/${id}`, { text: this.phrase }, {
+          headers: { authorization: `Bearer: ${getCookie("token")}` }
+        })
+        if (response.status != 200) {
+          alert('Response is not 200');
+        }
+      } catch (error) {
+        alert(error)
+      }
+      //this.dataSource.data.push(this.phrase);
+      location.reload();
+      //this.phrases.push(this.phrase);
+      //alert(this.phrase)
+    });
+  }
+
+
 
   async ngOnInit() {
     this.dataSource = new MatTableDataSource(await this.fetchPhrases());
@@ -122,4 +153,22 @@ export class ShowingPhrasesComponent {
     }
       location.reload();
   }
+
+  async updateSynonymm(id: any) {
+
+
+    alert(id);
+    try{
+    let response = await backend.put(id,
+      {
+        
+        headers: { authorization: `Bearer: ${getCookie("token")}` },
+        data: { ids: [id] }
+      })
+    }catch(error){
+      alert(error)
+    }
+      location.reload();
+  }
+
 }
