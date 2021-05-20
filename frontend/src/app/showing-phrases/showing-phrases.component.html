@@ -10,6 +10,7 @@
   <button mat-raised-button (click)="openDialog()"> Add Phrase</button>
 </div>
 
+<!-- Filter selectbox -->
 <div class="FilterBox" style="background-color:white;">
   <mat-form-field appearance="fill">
   <mat-label>Select Group</mat-label>
@@ -21,15 +22,13 @@
   </mat-select>
 </mat-form-field>
 
+<!-- Filter textbox -->
 <mat-form-field>
   <mat-label>Filter</mat-label>
   <input matInput (keyup)="applyFilter($event)" placeholder="Search..." #input>
   <mat-icon matSuffix>search</mat-icon>
 </mat-form-field>
-
-
 </div>
-
 
 <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
 

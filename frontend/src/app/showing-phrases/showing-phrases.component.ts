@@ -9,7 +9,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { eraseCookie, getCookie } from 'src/cookies';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 
 export interface PeriodicElement {
   phrase: string;
@@ -41,7 +41,6 @@ export class ShowingPhrasesComponent {
   displayedColumns: string[] = ['id', 'phrase', 'synonyms', 'actions'];
   dataSource: MatTableDataSource<unknown>;
   phraseFilter: string = '';
-  //customerSource:  MatTableDataSource<unknown>;
 
   constructor(public dialog: MatDialog) { }
 
@@ -54,48 +53,42 @@ export class ShowingPhrasesComponent {
     dialogRef.afterClosed().subscribe(async result => { //called when dialog window closed
       console.log('The dialog was closed');
       this.phrase = result;
-      alert(result)
       try {
         let response = await backend.post("/phrases", { text: this.phrase }, {
           headers: { authorization: `Bearer: ${getCookie("token")}` }
         })
         if (response.status != 200) {
-          alert('Response is not 200');
+          alert(response.data);
         }
       } catch (error) {
         alert(error)
       }
-      //this.dataSource.data.push(this.phrase);
       location.reload();
-      //this.phrases.push(this.phrase);
-      //alert(this.phrase)
     });
   }
 
   async ngOnInit() {
-    
+
     this.dataSource = new MatTableDataSource(await this.fetchPhrases());
-   
-    this.dataSource.filterPredicate = (data:any,filter) => {
-      if(!data.text.toLowerCase().includes(this.phraseFilter)){
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.filterPredicate = (data: any, filter) => {
+
+      if (!data.text.toLowerCase().includes(this.phraseFilter)) {
         return false;
       }
-      if(this.selectedCustomer == 'All'){
+      if (this.selectedCustomer == 'All') {
         return true;
       }
-      if(this.selectedCustomer && data.synonyms.length > 0){
+      if (this.selectedCustomer && data.synonyms.length > 0) {
         for (const synonym of data.synonyms) {
-            if(synonym.group && synonym.group.name == this.selectedCustomer){
-              return true;
-            }
+          if (synonym.group && synonym.group.name == this.selectedCustomer) {
+            return true;
+          }
         }
       }
-
-    
       return false;
     }
     this.customerGroups = await this.fetchCustomerGroups();
-    //alert(JSON.stringify( this.dataSource));
   }
 
   async fetchPhrases() {
@@ -126,10 +119,6 @@ export class ShowingPhrasesComponent {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  ngAfterViewInit() {
-    //this.dataSource.paginator = this.paginator;
-  }
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.phraseFilter = filterValue.trim().toLowerCase();
@@ -151,23 +140,20 @@ export class ShowingPhrasesComponent {
   }
 
   async deleteSynonym(id: any) {
-    alert(id);
-    try{
-    let response = await backend.delete("/phrases",
-      {
-        headers: { authorization: `Bearer: ${getCookie("token")}` },
-        data: { ids: [id] }
-      })
-    }catch(error){
+    try {
+      let response = await backend.delete("/phrases",
+        {
+          headers: { authorization: `Bearer: ${getCookie("token")}` },
+          data: { ids: [id] }
+        })
+    } catch (error) {
       alert(error)
     }
-      location.reload();
+    location.reload();
   }
 
-  onSelectionChange(selectedCustomer){
+  onSelectionChange(selectedCustomer) {
     console.log(selectedCustomer);
-    alert(selectedCustomer);
-  //  this.dataSource.filterPredicate = () => { return false }
     this.dataSource.filter = selectedCustomer;
   }
 }
