@@ -32,7 +32,7 @@ export interface DialogData {
 export class ShowingPhrasesComponent {
   title = 'angular-mat-select-app';
   customerGroups = [];
-  selectedCustomer: string;
+  selectedCustomer: string = 'All';
 
   phraseForm = new FormGroup({ phrase: new FormControl() });
   phrase: string; // input from dialog window
@@ -40,6 +40,7 @@ export class ShowingPhrasesComponent {
   phrases = [];
   displayedColumns: string[] = ['id', 'phrase', 'synonyms', 'actions'];
   dataSource: MatTableDataSource<unknown>;
+  phraseFilter: string = '';
   //customerSource:  MatTableDataSource<unknown>;
 
   constructor(public dialog: MatDialog) { }
@@ -72,7 +73,27 @@ export class ShowingPhrasesComponent {
   }
 
   async ngOnInit() {
+    
     this.dataSource = new MatTableDataSource(await this.fetchPhrases());
+   
+    this.dataSource.filterPredicate = (data:any,filter) => {
+      if(!data.text.toLowerCase().includes(this.phraseFilter)){
+        return false;
+      }
+      if(this.selectedCustomer == 'All'){
+        return true;
+      }
+      if(this.selectedCustomer && data.synonyms.length > 0){
+        for (const synonym of data.synonyms) {
+            if(synonym.group && synonym.group.name == this.selectedCustomer){
+              return true;
+            }
+        }
+      }
+
+    
+      return false;
+    }
     this.customerGroups = await this.fetchCustomerGroups();
     //alert(JSON.stringify( this.dataSource));
   }
@@ -111,6 +132,7 @@ export class ShowingPhrasesComponent {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
+    this.phraseFilter = filterValue.trim().toLowerCase();
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
@@ -145,5 +167,7 @@ export class ShowingPhrasesComponent {
   onSelectionChange(selectedCustomer){
     console.log(selectedCustomer);
     alert(selectedCustomer);
+  //  this.dataSource.filterPredicate = () => { return false }
+    this.dataSource.filter = selectedCustomer;
   }
 }
