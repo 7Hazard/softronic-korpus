@@ -74,7 +74,7 @@ test("get", async () => {
       {
         text: "hi",
         id: 1,
-        synonym: {
+        synonyms: [{
           id: 1,
           meaning: {
             text: "hello",
@@ -86,17 +86,17 @@ test("get", async () => {
       {
         text: "hello",
         id: 2,
-        synonym: null
+        synonyms: []
       },
       {
         text: "hell o",
         id: 3,
-        synonym: null
+        synonyms: []
       },
       {
         text: "hej då",
         id: 4,
-        synonym: null
+        synonyms: []
       },
       {
         text: "ship",

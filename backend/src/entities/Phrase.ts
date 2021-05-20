@@ -15,8 +15,8 @@ export class Phrase {
     @Column({ nullable: false, unique: true, type: "varchar" })
     text: string;
 
-    @OneToOne(() => Synonym, synonym => synonym.phrase)
-    synonym: any;
+    @OneToMany(() => Synonym, synonym => synonym.phrase)
+    synonyms: any[];
 }
 
 @EntityRepository(Phrase)
