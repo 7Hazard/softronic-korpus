@@ -1,5 +1,6 @@
-import { api, addPhrase, expectErrors, testAuth } from "../helpers";
+import { api, addPhrase, expectErrors, testAuth, addGroup } from "../helpers";
 import { Phrases } from "../../src/entities/Phrase";
+import { Groups } from "../../src/entities/Group";
 
 test("add", async () => {
   await testAuth({
@@ -29,26 +30,45 @@ test("add", async () => {
       text: "hej då",
       id: 4
     })
-    let phrase = await Phrases.getOneById(1)
-    phrase = Object.setPrototypeOf(phrase, Object.prototype);
-    let meaning = await Phrases.getOneById(2)
-    meaning = Object.setPrototypeOf(meaning, Object.prototype);
+  let phrase = await Phrases.getOneById(1)
+  phrase = Object.setPrototypeOf(phrase, Object.prototype);
+  let meaning = await Phrases.getOneById(2)
+  meaning = Object.setPrototypeOf(meaning, Object.prototype);
+
   await api.post("/synonyms").authenticate()
-    
     .send({
       phrase: 1,
       meaning: 2
     })
-    
+
     .expect(200, {
       id: 1,
-      phrase:  phrase,
+      phrase: phrase,
       meaning: meaning,
       group: null
     })
-});
+
+  let group = await addGroup("postnord")
+  let phrase2 = await addPhrase("ship")
+  let meaning2 = await addPhrase("send it")
+
+  await api.post("/synonyms").authenticate()
+    .send({
+      phrase: phrase2.id,
+      meaning: meaning2.id,
+      group: group.id
+    })
+    .expect(200, {
+      id: 2,
+      phrase: phrase2,
+      meaning: meaning2,
+      group: group
+    });
+})
+
 
 test("get", async () => {
+
   let resp = await api.get("/phrases")
     .expect(200, [
       {
@@ -59,7 +79,8 @@ test("get", async () => {
           meaning: {
             text: "hello",
             id: 2
-          }
+          },
+          group: null
         }
       },
       {
@@ -77,6 +98,26 @@ test("get", async () => {
         id: 4,
         synonym: null
       },
+      {
+        text: "ship",
+        id: 5,
+        synonym: {
+          id: 2,
+          meaning: {
+            text: "send it",
+            id: 6
+          },
+          group: {
+            name: "postnord",
+            id: 1
+          }
+        }
+      },
+      {
+        text: "send it",
+        id: 6,
+        synonym: null
+      }
     ])
 });
 
@@ -107,7 +148,7 @@ test("update", async () => {
 
 test("delete one existing", async () => {
   await testAuth({ method: "delete", path: "/phrases", data: { ids: [1] } })
-  await api.delete("/phrases").authenticate().send({ ids: [2] }).expect(200,{
+  await api.delete("/phrases").authenticate().send({ ids: [2] }).expect(200, {
     deleted: [
       2
     ]
@@ -123,7 +164,7 @@ test("delete multiple", async () => {
   // delete all
   await api.delete("/phrases").authenticate()
     .send({ ids: [phrase1.id, phrase2.id, phrase3.id] })
-    .expect(200,{
+    .expect(200, {
       deleted: [
         phrase1.id,
         phrase2.id,
@@ -135,7 +176,7 @@ test("delete multiple", async () => {
 test("delete none existing", async () => {
   await api.delete("/phrases").authenticate()
     .send({ ids: [1] })
-    .expect(200,{
+    .expect(200, {
       deleted: [
       ]
     })

@@ -30,4 +30,5 @@ export class Groups extends Repository<Group> {
     static async getByIds(groupIds: number[]) {
         return await database.getDb().manager.findByIds(Group, groupIds);
     }
+    
 }
