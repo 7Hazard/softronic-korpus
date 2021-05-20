@@ -21,6 +21,7 @@ import {MatTableModule} from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator'
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSelectModule} from '@angular/material/select';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import {MatSelectModule} from '@angular/material/select';
     MatTableModule,
     MatPaginatorModule,
     MatToolbarModule,
-    MatSelectModule
+    MatSelectModule,
+    MatSnackBarModule
   ],entryComponents:[ DialogWindowComponent],
   providers: [],
   declarations: [
