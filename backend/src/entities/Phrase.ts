@@ -26,7 +26,7 @@ export class Phrases extends Repository<Phrase> {
     }
 
     public static getAll() {
-        return database.getDb().manager.find(Phrase, { relations: ['synonyms', 'synonyms.meaning'] });
+        return database.getDb().manager.find(Phrase, { relations: ['synonyms', 'synonyms.meaning', 'synonyms.group'] });
     }
 
     public static getAllWithRelations(relations) {
