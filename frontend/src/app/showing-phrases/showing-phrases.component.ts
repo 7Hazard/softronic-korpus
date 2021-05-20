@@ -59,10 +59,7 @@ export class ShowingPhrasesComponent {
       } catch (error) {
         alert(error)
       }
-      //this.dataSource.data.push(this.phrase);
       location.reload();
-      //this.phrases.push(this.phrase);
-      //alert(this.phrase)
     });
   }
 
@@ -76,21 +73,17 @@ export class ShowingPhrasesComponent {
     dialogRef.afterClosed().subscribe(async result => { //called when dialog window closed
       console.log('The dialog was closed');
       this.phrase = result;
-      alert(result)
       try {
         let response = await backend.put(`/phrases/${id}`, { text: this.phrase }, {
           headers: { authorization: `Bearer: ${getCookie("token")}` }
         })
         if (response.status != 200) {
-          alert('Response is not 200');
+          
         }
       } catch (error) {
-        alert(error)
+        
       }
-      //this.dataSource.data.push(this.phrase);
       location.reload();
-      //this.phrases.push(this.phrase);
-      //alert(this.phrase)
     });
   }
 
@@ -154,21 +147,5 @@ export class ShowingPhrasesComponent {
       location.reload();
   }
 
-  async updateSynonymm(id: any) {
-
-
-    alert(id);
-    try{
-    let response = await backend.put(id,
-      {
-        
-        headers: { authorization: `Bearer: ${getCookie("token")}` },
-        data: { ids: [id] }
-      })
-    }catch(error){
-      alert(error)
-    }
-      location.reload();
-  }
 
 }
