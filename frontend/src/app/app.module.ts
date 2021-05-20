@@ -22,6 +22,7 @@ import { MatPaginatorModule } from '@angular/material/paginator'
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { DialogNormalisingComponent } from './dialog-normalising/dialog-normalising.component';
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
   declarations: [
     AppComponent,
     ShowingPhrasesComponent,
-    DialogWindowComponent
+    DialogWindowComponent,
+    DialogNormalisingComponent
   ],
   bootstrap: [AppComponent],
 })

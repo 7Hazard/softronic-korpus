@@ -12,6 +12,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { Action } from 'rxjs/internal/scheduler/Action';
+import { DialogNormalisingComponent } from '../dialog-normalising/dialog-normalising.component';
 
 export interface PeriodicElement {
   phrase: string;
@@ -44,7 +45,11 @@ export class ShowingPhrasesComponent {
   dataSource: MatTableDataSource<unknown>;
   phraseFilter: string = '';
 
-  constructor(public dialog: MatDialog, private snackBar: MatSnackBar) { }
+  constructor(public dialog: MatDialog, public normalizeDialog:MatDialog, private snackBar: MatSnackBar) { }
+
+  openNormalizeDialog():void {
+      const dialogRef = this.dialog.open(DialogNormalisingComponent);
+  }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogWindowComponent, {
@@ -65,7 +70,7 @@ export class ShowingPhrasesComponent {
       } catch (error) {
         alert(error)
       }
-      location.reload();
+      this.dataSource = new MatTableDataSource(await this.fetchPhrases());
     });
   }
 
@@ -142,7 +147,7 @@ export class ShowingPhrasesComponent {
   }
 
   async deleteSynonym(id: any) {
-    this.snackBar.open('Item deleted', 'Dissmiss');
+    this.snackBar.open('Item deleted', 'Dismiss');
     try {
       let response = await backend.delete("/phrases",
         {
