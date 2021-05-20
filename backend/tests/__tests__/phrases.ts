@@ -74,14 +74,16 @@ test("get", async () => {
       {
         text: "hi",
         id: 1,
-        synonyms: [{
-          id: 1,
-          meaning: {
-            text: "hello",
-            id: 2
-          },
-          group: null
-        }
+        synonyms: [
+          {
+            id: 1,
+            meaning: {
+              text: "hello",
+              id: 2
+            },
+            group: null
+          }
+        ]
       },
       {
         text: "hello",
@@ -101,22 +103,24 @@ test("get", async () => {
       {
         text: "ship",
         id: 5,
-        synonym: {
-          id: 2,
-          meaning: {
-            text: "send it",
-            id: 6
-          },
-          group: {
-            name: "postnord",
-            id: 1
+        synonyms: [
+          {
+            id: 2,
+            meaning: {
+              text: "send it",
+              id: 6
+            },
+            group: {
+              name: "postnord",
+              id: 1
+            }
           }
-        }
+        ]
       },
       {
         text: "send it",
         id: 6,
-        synonym: null
+        synonyms: []
       }
     ])
 });
