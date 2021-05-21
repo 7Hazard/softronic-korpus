@@ -5,6 +5,7 @@ import * as database from "./database"
 import routes from "./routes/all"
 import * as http from "http"
 import cors from "cors"
+import { insertExampleData } from "./exampleData"
 
 export async function start({
     port = 2525,
@@ -15,7 +16,15 @@ export async function start({
     let db = await database.start(logging, dbpath)
     if (logging) console.log("SQLite initialized in file 'database.db'")
 
+    // init db structure, entities, tables etc...
     db.createQueryRunner()
+
+    // create test data
+    try {
+        await insertExampleData()
+    } catch (error) {
+        console.error("Couldn't insert example data")
+    }
 
     server = http.createServer(app).listen(port)
     if (logging) {

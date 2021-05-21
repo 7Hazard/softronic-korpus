@@ -52,6 +52,10 @@ export class Synonym {
 
 @EntityRepository(Synonym)
 export class Synonyms extends Repository<Synonym>{
+    static add(synonym: Synonym) {
+        return database.getDb().getRepository(Synonym).save(synonym);
+    }
+
     static getAll() {
         return database.getDb().manager.find(Synonym, { relations: ['phrase', 'meaning', 'group'] });
     }
