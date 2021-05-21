@@ -13,7 +13,7 @@ export class DialogNormalisingComponent implements OnInit {
   value :string=''; // text input from textbox
   result :string=''; // text input from textbox
   customerGroups = [];
-  selectedCustomer: string = '';
+  selectedCustomer: string = 'All';
   customerControl = new FormControl('', Validators.required);
   selectFormControl = new FormControl('', Validators.required);
 

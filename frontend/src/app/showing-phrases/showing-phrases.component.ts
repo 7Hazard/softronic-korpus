@@ -95,6 +95,7 @@ export class ShowingPhrasesComponent {
       }
       return false;
     }
+    this.customerGroups.push('All');
     this.customerGroups = await this.fetchCustomerGroups();
   }
 

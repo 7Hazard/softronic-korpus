@@ -5,14 +5,11 @@
       <h4>Select customer group</h4>
       <mat-form-field appearance="fill">
         <mat-select name="customerString" [(value)]="selectedCustomer"
-          (selectionChange)="onSelectionChange(selectedCustomer)" placeholder="Select" [formControl]="customerControl"
-          required>
-          <mat-option>--</mat-option>
+          (selectionChange)="onSelectionChange(selectedCustomer)" placeholder="Select" >
           <mat-option *ngFor="let customerGroup of customerGroups" [value]="customerGroup.name">
             {{customerGroup.name}}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="customerControl.hasError('required')">Please select customer group</mat-error>
       </mat-form-field>
       <div>
         <label for="clipboard-example-textarea">Text to be normalized</label>
