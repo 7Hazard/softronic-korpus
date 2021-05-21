@@ -5,21 +5,18 @@
       <h4>Select customer group</h4>
       <mat-form-field appearance="fill">
         <mat-select name="customerString" [(value)]="selectedCustomer"
-          (selectionChange)="onSelectionChange(selectedCustomer)" placeholder="Select" [formControl]="customerControl"
-          required>
-          <mat-option>--</mat-option>
-          <mat-option *ngFor="let customerGroup of customerGroups" [value]="customerGroup.name">
+           placeholder="Select" >
+          <mat-option *ngFor="let customerGroup of customerGroups" [value]="customerGroup">
             {{customerGroup.name}}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="customerControl.hasError('required')">Please select customer group</mat-error>
       </mat-form-field>
       <div>
-        <label for="clipboard-example-textarea">Text to be normalized</label>
+        <label for="clipboard-example-textarea">Text to be normalized:</label>
       </div>
       <div>
         <textarea id="clipboard-example-textarea" cols="40" rows="5" [(ngModel)]="value"></textarea>
-        <label>Result</label>
+        <label>Result:</label>
         <textarea id="clipboard-example-textarea" cols="40" rows="5" [(ngModel)]="result" disabled="disabled"></textarea>
       </div>
       <button mat-raised-button (click)="translateText()" color="primary">Translate</button>

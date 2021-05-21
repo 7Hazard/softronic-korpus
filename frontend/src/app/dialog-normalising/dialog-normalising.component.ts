@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { backend } from 'src/backend';
+import { backend, fetchCustomerGroups } from 'src/backend';
+import { getCookie } from 'src/cookies';
 
 
 @Component({
@@ -13,39 +14,32 @@ export class DialogNormalisingComponent implements OnInit {
   value :string=''; // text input from textbox
   result :string=''; // text input from textbox
   customerGroups = [];
-  selectedCustomer: string = '';
+  selectedCustomer: any ;
   customerControl = new FormControl('', Validators.required);
   selectFormControl = new FormControl('', Validators.required);
 
   constructor() { }
 
   async ngOnInit() {
-    this.customerGroups = await this.fetchCustomerGroups();
+    this.customerGroups = await fetchCustomerGroups();
+    this.selectedCustomer = this.customerGroups[0];
   }
 
-  async fetchCustomerGroups() {
+  async translateText(){
     try {
-      let response = await backend.get("/groups")
-      if (response.status != 200)
-        alert(response.data)
-      else {
-        return response.data;
+      let response = await backend.post("/translations", { text: this.value, group: this.selectedCustomer.id }, {
+        headers: { authorization: `Bearer: ${getCookie("token")}` }
+      })
+      this.result = response.data.translation;
+      if (response.status != 200) {
+        alert(response.data);
       }
     } catch (error) {
       alert(error)
     }
   }
 
-  translateText(){
-
-  }
-
   resetTextBox(){
-
+    this.result='';
   }
-
-  onSelectionChange(selectedCustomer){ 
-    alert(selectedCustomer);
-  }
-
 }

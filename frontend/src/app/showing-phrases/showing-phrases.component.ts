@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { backend } from 'src/backend';
+import { backend, fetchCustomerGroups } from 'src/backend';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogWindowComponent } from '../dialog-window/dialog-window.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -36,7 +36,7 @@ export interface DialogData {
 export class ShowingPhrasesComponent {
   title = 'angular-mat-select-app';
   customerGroups = [];
-  selectedCustomer: string = 'All';
+  selectedCustomer: any;
 
   phraseForm = new FormGroup({ phrase: new FormControl() });
   phrase: string; // input from dialog window
@@ -122,7 +122,9 @@ export class ShowingPhrasesComponent {
       }
       return false;
     }
-    this.customerGroups = await this.fetchCustomerGroups();
+    this.customerGroups = await fetchCustomerGroups();
+    //alert(this.customerGroups[0].name);
+    this.selectedCustomer = this.customerGroups[0].name;
   }
 
   async fetchPhrases() {
@@ -138,19 +140,6 @@ export class ShowingPhrasesComponent {
     }
   }
 
-  async fetchCustomerGroups() {
-    try {
-      let response = await backend.get("/groups")
-      if (response.status != 200)
-        alert(response.data)
-      else {
-        (response.data as any[]).splice(0, 0, {name: "All"});
-        return response.data;
-      }
-    } catch (error) {
-      alert(error)
-    }
-  }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
