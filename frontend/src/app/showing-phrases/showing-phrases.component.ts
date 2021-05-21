@@ -144,6 +144,7 @@ export class ShowingPhrasesComponent {
       if (response.status != 200)
         alert(response.data)
       else {
+        (response.data as any[]).splice(0, 0, {name: "All"});
         return response.data;
       }
     } catch (error) {
