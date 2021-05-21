@@ -19,7 +19,7 @@ export async function insertExampleData() {
     let marine = await Groups.add(new Group("marine"))
     let ship = await Phrases.add(new Phrase("ship"))
     let send = await Phrases.add(new Phrase("send"))
-    await Synonyms.add(new Synonym({ phrase: send.id, meaning: ship.id, group: logistics.id }))
+    await Synonyms.add(new Synonym({ phrase: ship.id, meaning: send.id, group: logistics.id }))
     let boat = await Phrases.add(new Phrase("boat"))
-    await Synonyms.add(new Synonym({ phrase: boat.id, meaning: ship.id, group: marine.id }))
+    await Synonyms.add(new Synonym({ phrase: ship.id, meaning: boat.id, group: marine.id }))
 }

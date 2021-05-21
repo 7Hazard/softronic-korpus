@@ -21,7 +21,7 @@ export default new Routes("/translations").post("/", [], async (req, res) => {
     }
 
     // build dictionaries for global synonyms
-    let phrases = await Phrases.getAllWithRelations(["synonyms", "synonyms.meaning"])
+    let phrases = await Phrases.getAll()
     let dictionaries: Dictionary[] = []
     function makeDictionary(groupId?: number) {
         let dictionary = new Dictionary()
@@ -29,7 +29,8 @@ export default new Routes("/translations").post("/", [], async (req, res) => {
             let synonyms = phrase.synonyms as Synonym[]
             if (!synonyms) continue
             for (const synonym of synonyms) {
-                if (groupId && synonym.group != groupId) continue
+                if(!groupId && synonym.group) continue;
+                if (groupId && synonym.group && synonym.group.id != groupId) continue
                 let meaning = synonym.meaning as Phrase
                 dictionary.set(phrase.text, meaning.text)
             }
@@ -40,7 +41,7 @@ export default new Routes("/translations").post("/", [], async (req, res) => {
         // check if all groups exists
         let groups = await Groups.getByIds(groupIds)
         if (groups.length != groupIds.length) {
-            return res.send(400).json({ error: "some groups are invalid" })
+            return res.status(400).json({ error: "some groups are invalid" })
         }
 
         // make a dictionary for each group, in order as specified
