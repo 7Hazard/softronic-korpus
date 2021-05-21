@@ -1,4 +1,5 @@
 import { api, addPhrase, expectErrors, testAuth } from "../helpers";
+import { Phrases } from "../../src/entities/Phrase";
 
 test("add", async () => {
   await testAuth({
@@ -28,16 +29,22 @@ test("add", async () => {
       text: "hej då",
       id: 4
     })
-
+    let phrase = await Phrases.getOneById(1)
+    phrase = Object.setPrototypeOf(phrase, Object.prototype);
+    let meaning = await Phrases.getOneById(2)
+    meaning = Object.setPrototypeOf(meaning, Object.prototype);
   await api.post("/synonyms").authenticate()
+    
     .send({
       phrase: 1,
       meaning: 2
     })
+    
     .expect(200, {
       id: 1,
-      phrase: 1,
-      meaning: 2
+      phrase:  phrase,
+      meaning: meaning,
+      group: null
     })
 });
 
@@ -47,28 +54,28 @@ test("get", async () => {
       {
         text: "hi",
         id: 1,
-        synonym: {
+        synonyms: [{
           id: 1,
           meaning: {
             text: "hello",
             id: 2
           }
-        }
+        }]
       },
       {
         text: "hello",
         id: 2,
-        synonym: null
+        synonyms: []
       },
       {
         text: "hell o",
         id: 3,
-        synonym: null
+        synonyms: []
       },
       {
         text: "hej då",
         id: 4,
-        synonym: null
+        synonyms: []
       },
     ])
 });

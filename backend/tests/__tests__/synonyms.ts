@@ -20,19 +20,22 @@ let hey_hello: Synonym
 // (phrase as used meaning) - meaning as used phrase
 let hello_hi_bad = {
   phrase: hello.id,
-  meaning: hi.id
+  meaning: hi.id,
+  group: null
 }
 
 // (phrase as used meaning) - meaning as new
 let hello_sup_bad = {
   phrase: hello.id,
-  meaning: sup.id
+  meaning: sup.id,
+  group: null
 }
 
 // phrase as new - (meaning as used phrase)
 let sup_hi_bad = {
   phrase: sup.id,
-  meaning: hi.id
+  meaning: hi.id,
+  group: null
 }
 
 test("add synonym", async () => {
@@ -43,8 +46,9 @@ test("add synonym", async () => {
     })
     .expect(200, {
       id: 1,
-      phrase: hi.id, // the phrase to equalize
-      meaning: hello.id // the id to the equivalent phrase
+      phrase: hi, // the phrase to equalize
+      meaning: hello, // the id to the equivalent phrase
+      group: null
     })
   hi_hello = response.body
 
@@ -55,8 +59,9 @@ test("add synonym", async () => {
     })
     .expect(200, {
       id: 2,
-      phrase: hey.id, // the phrase to equalize
-      meaning: hello.id // the id to the equivalent phrase
+      phrase: hey, // the phrase to equalize
+      meaning: hello, // the id to the equivalent phrase
+      group: null
     })
   hey_hello = response.body
 
@@ -100,15 +105,18 @@ test("update synonym", async () => {
       meaning: hello.id
     })
   sup_hello = response.body
-});
 
-test("get all synonyms", async () => {
   // api will give us expanded .phrase and .meaning
   // so we put them in the recieved synonyms
   sup_hello.phrase = sup
   sup_hello.meaning = hello
+  sup_hello.group = null
   hey_hello.phrase = hey
   hey_hello.meaning = hello
+});
+
+test("get all synonyms", async () => {
+  
 
   let response = await api.get("/synonyms")
     .expect(200, [sup_hello, hey_hello])
@@ -147,9 +155,9 @@ test("add synonyms with group", async () => {
     })
     .expect(200, {
       id: 3,
-      phrase: yo.id,
-      meaning: hello.id,
-      group: street.id,
+      phrase: yo,
+      meaning: hello,
+      group: street,
     })
 
   await api.post("/synonyms").authenticate()
@@ -160,9 +168,9 @@ test("add synonyms with group", async () => {
     })
     .expect(200, {
       id: 4,
-      phrase: yo.id,
-      meaning: hello.id,
-      group: slang.id,
+      phrase: yo,
+      meaning: hello,
+      group: slang,
     })
 })
 

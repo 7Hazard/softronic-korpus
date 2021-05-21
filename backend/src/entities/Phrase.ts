@@ -15,8 +15,8 @@ export class Phrase {
     @Column({ nullable: false, unique: true, type: "varchar" })
     text: string;
 
-    @OneToOne(() => Synonym, synonym => synonym.phrase)
-    synonym: any;
+    @OneToMany(() => Synonym, synonym => synonym.phrase)
+    synonyms: any[];
 }
 
 @EntityRepository(Phrase)
@@ -26,7 +26,7 @@ export class Phrases extends Repository<Phrase> {
     }
 
     public static getAll() {
-        return database.getDb().manager.find(Phrase, { relations: ['synonym', 'synonym.meaning'] });
+        return database.getDb().manager.find(Phrase, { relations: ['synonyms', 'synonyms.meaning'] });
     }
 
     public static getAllWithRelations(relations) {
