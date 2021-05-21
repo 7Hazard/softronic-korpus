@@ -7,9 +7,11 @@ await addSynonym(good_day.id, hello.id)
 let friends = await addPhrase("friends")
 let mates = await addPhrase("mates")
 await addSynonym(mates.id, friends.id)
+let lads = await addPhrase("lads")
+await addSynonym(lads.id, friends.id)
 
 test("translate piece of text", async () => {
-    await testTranslate("good day my mates", "hello my friends")
+    await testTranslate("good day lads, my mates", "hello friends, my friends")
 })
 
 test("translate by group", async () => {

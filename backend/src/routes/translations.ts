@@ -73,7 +73,6 @@ class Text {
 
         let start = 0
         let end = 0
-        // let lastTokenIndex = this.tokens.length-1;
         let tokensCount = this.tokens.length
         while (start != tokensCount && end != tokensCount) {
             let tokenCandidates: Token[] = []
@@ -123,9 +122,12 @@ class Text {
             this.tokens.splice(candidatePosition, candidate.tokens.length, ...translatedTokens)
 
             // update new positions after candidatePosition+candidate.tokens.length
-            for (let i = candidatePosition + translatedTokens.length; i < this.tokens.length; i++) {
-                const token = this.tokens[i]
-                token.position -= translatedTokens.length
+            if(translatedTokens.length > 1)
+            {
+                for (let i = candidatePosition + translatedTokens.length; i < this.tokens.length; i++) {
+                    const token = this.tokens[i]
+                    token.position -= translatedTokens.length
+                }
             }
         }
     }

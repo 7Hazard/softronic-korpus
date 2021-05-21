@@ -11,6 +11,7 @@ export async function start({
     port = 2525,
     logging = true,
     dbpath = "database.db",
+    exampleData = false
 }) {
     // setup database
     let db = await database.start(logging, dbpath)
@@ -20,10 +21,13 @@ export async function start({
     db.createQueryRunner()
 
     // create test data
-    try {
-        await insertExampleData()
-    } catch (error) {
-        console.error("Couldn't insert example data")
+    if(exampleData)
+    {
+        try {
+            await insertExampleData()
+        } catch (error) {
+            console.error("Couldn't insert example data")
+        }
     }
 
     server = http.createServer(app).listen(port)
