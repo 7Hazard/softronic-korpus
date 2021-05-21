@@ -2,10 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { backend } from 'src/backend';
 
-interface Animal {
-  name: string;
-  sound: string;
-}
 
 @Component({
   selector: 'app-dialog-normalising',
@@ -15,6 +11,7 @@ interface Animal {
 export class DialogNormalisingComponent implements OnInit {
 
   value :string=''; // text input from textbox
+  result :string=''; // text input from textbox
   customerGroups = [];
   selectedCustomer: string = '';
   customerControl = new FormControl('', Validators.required);
@@ -40,6 +37,10 @@ export class DialogNormalisingComponent implements OnInit {
   }
 
   translateText(){
+
+  }
+
+  resetTextBox(){
 
   }
 

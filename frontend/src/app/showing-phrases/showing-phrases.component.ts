@@ -53,7 +53,7 @@ export class ShowingPhrasesComponent {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogWindowComponent, {
-      width: '250px',
+      width: '460px', height: '320px',
       data: { phrase: this.phrase }
     });
 

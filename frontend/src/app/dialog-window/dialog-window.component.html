@@ -1,4 +1,5 @@
 
+<mat-card class="card">
 <h1 mat-dialog-title>Add phrase</h1>
 <div mat-dialog-content>
   <p> Enter phrase: </p>
@@ -11,3 +12,4 @@
   <button mat-button color="warn" (click)="onNoClick()">Cancel</button>
   <button mat-button [mat-dialog-close]="data.phrase" cdkFocusInitial>Add</button>
 </div>
+</mat-card>
