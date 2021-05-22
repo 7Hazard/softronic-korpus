@@ -57,3 +57,8 @@ Tech stack:
 | POST /groups |`name`: string - the name for the new group|`name`: string - the name of the group<br>`id`: integer - the id of the group|Adds a customer group|
 | PUT /groups/:id |`name`: string - new name for the group|`json`: status - 200 ok response|Change the name of a customer group|
 | DELETE /groups |`ids`: number[] - IDs of groups to be deleted|`deleted`: number[] - array for the deleted group IDs|Deletion of one or more customer groups through IDs|
+
+### Translations
+| Route | Request body | Response body | Description |
+| -------------|:-------------|:-------------|:-------------|
+| POST /translations | `text`: string - text to translate<br>`groups`: number[] - groups to find synonyms by (max 1) |`translation`: string - translated text | Translates a piece of text based on synonyms<br>Grouped synonyms are prioritized over global synonyms|
