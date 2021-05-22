@@ -5,7 +5,7 @@
       <h4>Select customer group</h4>
       <mat-form-field appearance="fill">
         <mat-select name="customerString" [(value)]="selectedCustomer"
-           placeholder="Select" >
+        (selectionChange)="onSelectionChange(selectedCustomer)" placeholder="Select" >
           <mat-option *ngFor="let customerGroup of customerGroups" [value]="customerGroup">
             {{customerGroup.name}}
           </mat-option>

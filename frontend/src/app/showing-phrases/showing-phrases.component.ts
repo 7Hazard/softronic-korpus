@@ -123,7 +123,6 @@ export class ShowingPhrasesComponent {
       return false;
     }
     this.customerGroups = await fetchCustomerGroups();
-    //alert(this.customerGroups[0].name);
     this.selectedCustomer = this.customerGroups[0].name;
   }
 
@@ -139,8 +138,7 @@ export class ShowingPhrasesComponent {
       alert(error)
     }
   }
-
-
+  
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   applyFilter(event: Event) {

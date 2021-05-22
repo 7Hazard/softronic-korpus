@@ -38,6 +38,9 @@ export class DialogNormalisingComponent implements OnInit {
       alert(error)
     }
   }
+  onSelectionChange(selectedCustomer){
+    this.customerGroups.filter =  selectedCustomer;
+  }
 
   resetTextBox(){
     this.result='';
