@@ -78,7 +78,7 @@ export class ShowingPhrasesComponent {
   openDialog2(id: any): void {
     
     const dialogRef = this.dialog.open(UpdatePhrasesComponent, {
-      width: '250px',
+      width: '460px', height: '320px',
       data: { phrase: this.phrase }
     });
 
@@ -95,7 +95,7 @@ export class ShowingPhrasesComponent {
       } catch (error) {
         
       }
-      location.reload();
+      this.dataSource = new MatTableDataSource(await this.fetchPhrases());
     });
   }
 

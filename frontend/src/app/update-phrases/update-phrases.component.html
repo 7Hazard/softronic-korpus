@@ -1,13 +1,14 @@
-
-<h1 mat-dialog-title>Update phrase</h1>
-<div mat-dialog-content>
-  <p> Phrase to update: </p>
-  <mat-form-field>
-    <mat-label>Phrase</mat-label>
-    <input matInput [(ngModel)]="data.phrase" >
-  </mat-form-field>
-</div>
-<div mat-dialog-actions>
-  <button mat-button color="warn" (click)="onNoClick()">Cancel</button>
-  <button mat-button [mat-dialog-close]="data.phrase" cdkFocusInitial>Update</button>
-</div>
+<mat-card class="card">
+  <h1 mat-dialog-title>Update phrase</h1>
+  <div mat-dialog-content>
+    <p> Phrase to update: </p>
+    <mat-form-field>
+      <mat-label>Phrase</mat-label>
+      <input matInput [(ngModel)]="data.phrase">
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button color="warn" (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="data.phrase" cdkFocusInitial>Update</button>
+  </div>
+</mat-card>
