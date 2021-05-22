@@ -66,6 +66,9 @@ class Text {
     private translated = false
 
     constructor(text: string) {
+        // trim and prepare text for tokenization
+        text = text.trim().replace(/\s+/g,' ');
+
         // Split text into tokens
         let tmp = text.split(" ")
         tmp.forEach((element, i) => {
@@ -144,9 +147,7 @@ class Text {
 }
 
 class Token {
-    constructor(public content: string, public position: number) {
-
-    }
+    constructor(public content: string, public position: number) {}
 
     toString() {
         return this.content

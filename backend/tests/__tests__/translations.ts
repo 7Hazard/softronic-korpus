@@ -3,6 +3,8 @@ import { addGroup, addPhrase, addSynonym, api } from "../helpers"
 let hello = await addPhrase("hello")
 let good_day = await addPhrase("good day")
 await addSynonym(good_day.id, hello.id)
+let hi = await addPhrase("hi")
+await addSynonym(hi.id, hello.id)
 
 let friends = await addPhrase("friends")
 let mates = await addPhrase("mates")
@@ -11,7 +13,7 @@ let lads = await addPhrase("lads")
 await addSynonym(lads.id, friends.id)
 
 test("translate piece of text", async () => {
-    await testTranslate("good day lads, my mates", "hello friends, my friends")
+    await testTranslate("good day lads my mates", "hello friends my friends")
 })
 
 test("translate by group", async () => {
@@ -22,7 +24,7 @@ test("translate by group", async () => {
     await addSynonym(mates.id, collegues.id, work.id)
 
     // translate by group
-    await testTranslate("good day my mates", "hello my collegues", [work.id])
+    await testTranslate("good day good day and hi my mates", "hello hello and hello my collegues", [work.id])
 })
 
 // test("translate by multiple groups", async () => {
