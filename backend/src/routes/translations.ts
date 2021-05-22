@@ -29,7 +29,7 @@ export default new Routes("/translations").post("/", [], async (req, res) => {
             let synonyms = phrase.synonyms as Synonym[]
             if (!synonyms) continue
             for (const synonym of synonyms) {
-                if(!groupId && synonym.group) continue;
+                if (!groupId && synonym.group) continue;
                 if (groupId && synonym.group && synonym.group.id != groupId) continue
                 let meaning = synonym.meaning as Phrase
                 dictionary.set(phrase.text, meaning.text)
@@ -52,8 +52,8 @@ export default new Routes("/translations").post("/", [], async (req, res) => {
     // add global dictionary as last fallback
     dictionaries.push(makeDictionary())
 
-    let text = new Text(req.body.text, dictionaries)
-    let result = text.translation
+    let text = new Text(req.body.text)
+    let result = text.translate(dictionaries)
 
     // send translation
     res.status(200).send({ translation: result })
@@ -63,8 +63,9 @@ class Dictionary extends Map<string, string> { }
 class Text {
     tokens: Token[] = []
     phraseCandidates = new PhraseCandidateSet()
+    private translated = false
 
-    constructor(text: string, dictionaries: Dictionary[]) {
+    constructor(text: string) {
         // Split text into tokens
         let tmp = text.split(" ")
         tmp.forEach((element, i) => {
@@ -89,6 +90,13 @@ class Text {
             start++
             end = start
         }
+    }
+
+    public translate(dictionaries: Dictionary[]) {
+        if (this.translated)
+            return this.tokens.join(" ")
+        
+        this.translated = true
 
         // sort phrase candidates
         this.phraseCandidates.sort()
@@ -122,24 +130,20 @@ class Text {
             this.tokens.splice(candidatePosition, candidate.tokens.length, ...translatedTokens)
 
             // update new positions after candidatePosition+candidate.tokens.length
-            if(translatedTokens.length > 1)
-            {
+            if (candidate.tokens.length > 1) {
                 for (let i = candidatePosition + translatedTokens.length; i < this.tokens.length; i++) {
                     const token = this.tokens[i]
                     token.position -= translatedTokens.length
                 }
             }
         }
-    }
 
-    public get translation() {
+        // return translation
         return this.tokens.join(" ")
     }
 }
 
 class Token {
-    translated = false
-
     constructor(public content: string, public position: number) {
 
     }
