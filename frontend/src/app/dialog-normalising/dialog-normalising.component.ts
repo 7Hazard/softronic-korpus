@@ -27,7 +27,7 @@ export class DialogNormalisingComponent implements OnInit {
 
   async translateText(){
     try {
-      let response = await backend.post("/translations", { text: this.value, group: this.selectedCustomer.id }, {
+      let response = await backend.post("/translations", { text: this.value, groups: [this.selectedCustomer.id] }, {
         headers: { authorization: `Bearer: ${getCookie("token")}` }
       })
       this.result = response.data.translation;
