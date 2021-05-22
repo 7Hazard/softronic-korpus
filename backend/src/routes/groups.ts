@@ -50,7 +50,7 @@ export default new Routes("/groups")
                 .where(`id = ${id}`)
                 .execute();
 
-            res.status(200).json(group)
+            res.status(200).json()
         }
     })
 
