@@ -7,16 +7,30 @@
 
 <!-- Dialog window Add Phrase -->
 <div class="add-button" style="background-color:white;">
-  <button mat-raised-button (click)="openDialog()"> Add Phrase</button>
+  <button mat-raised-button (click)="openDialog()">Add Phrase</button>
+  <span class="normalize-button-span"></span>
+  <button mat-raised-button (click)="openNormalizeDialog()">Normalize</button>
 </div>
 
+<!-- Filter selectbox -->
 <div class="FilterBox" style="background-color:white;">
+  <mat-form-field appearance="fill">
+  <mat-label>Select Group</mat-label>
+  <mat-select name="customerString" [(value)]="selectedCustomer"  (selectionChange)="onSelectionChange(selectedCustomer)"
+  placeholder="customerGroup">
+    <mat-option *ngFor="let customerGroup of customerGroups" [value]="customerGroup.name">
+      {{customerGroup.name}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<!-- Filter textbox -->
 <mat-form-field>
   <mat-label>Filter</mat-label>
-  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Search..." #input>
+  <mat-icon matSuffix>search</mat-icon>
 </mat-form-field>
 </div>
-
 
 <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
 
@@ -35,7 +49,7 @@
   <!-- SynonymColumn -->
   <ng-container matColumnDef="synonyms">
     <th mat-header-cell *matHeaderCellDef> Synonyms </th>
-    <td mat-cell *matCellDef="let element"> {{element.synonym ? element.synonym.meaning.text : "-"}} </td>
+    <td mat-cell *matCellDef="let element"> {{element.synonyms.length>0 ? element.synonyms[0].meaning.text : "-"}} </td>
   </ng-container>
 
   <!-- Delete columns -->              <!-- Update columns -->

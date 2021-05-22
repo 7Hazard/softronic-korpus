@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { backend } from 'src/backend';
+import { backend, fetchCustomerGroups } from 'src/backend';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogWindowComponent } from '../dialog-window/dialog-window.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -9,6 +9,10 @@ import { MatPaginator } from '@angular/material/paginator';
 import { eraseCookie, getCookie } from 'src/cookies';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import { Action } from 'rxjs/internal/scheduler/Action';
+import { DialogNormalisingComponent } from '../dialog-normalising/dialog-normalising.component';
 import { UpdatePhrasesComponent } from '../update-phrases/update-phrases.component';
 
 export interface PeriodicElement {
@@ -30,36 +34,44 @@ export interface DialogData {
 })
 
 export class ShowingPhrasesComponent {
+  title = 'angular-mat-select-app';
+  customerGroups = [];
+  selectedCustomer: any;
+
   phraseForm = new FormGroup({ phrase: new FormControl() });
   phrase: string; // input from dialog window
 
   phrases = [];
   displayedColumns: string[] = ['id', 'phrase', 'synonyms', 'actions'];
   dataSource: MatTableDataSource<unknown>;
+  phraseFilter: string = '';
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, public normalizeDialog:MatDialog, private snackBar: MatSnackBar) { }
+
+  openNormalizeDialog():void {
+      const dialogRef = this.dialog.open(DialogNormalisingComponent);
+  }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogWindowComponent, {
-      width: '250px',
+      width: '460px', height: '320px',
       data: { phrase: this.phrase }
     });
 
     dialogRef.afterClosed().subscribe(async result => { //called when dialog window closed
       console.log('The dialog was closed');
       this.phrase = result;
-      alert(result)
       try {
         let response = await backend.post("/phrases", { text: this.phrase }, {
           headers: { authorization: `Bearer: ${getCookie("token")}` }
         })
         if (response.status != 200) {
-          alert('Response is not 200');
+          alert(response.data);
         }
       } catch (error) {
         alert(error)
       }
-      location.reload();
+      this.dataSource = new MatTableDataSource(await this.fetchPhrases());
     });
   }
 
@@ -90,9 +102,28 @@ export class ShowingPhrasesComponent {
 
 
   async ngOnInit() {
+
     this.dataSource = new MatTableDataSource(await this.fetchPhrases());
-    
-    //alert(JSON.stringify( this.dataSource));
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.filterPredicate = (data: any, filter) => {
+
+      if (!data.text.toLowerCase().includes(this.phraseFilter)) {
+        return false;
+      }
+      if (this.selectedCustomer == 'All') {
+        return true;
+      }
+      if (this.selectedCustomer && data.synonyms.length > 0) {
+        for (const synonym of data.synonyms) {
+          if (synonym.group && synonym.group.name == this.selectedCustomer) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    this.customerGroups = await fetchCustomerGroups();
+    this.selectedCustomer = this.customerGroups[0].name;
   }
 
   async fetchPhrases() {
@@ -107,15 +138,12 @@ export class ShowingPhrasesComponent {
       alert(error)
     }
   }
-
+  
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
-  ngAfterViewInit() {
-    //this.dataSource.paginator = this.paginator;
-  }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
+    this.phraseFilter = filterValue.trim().toLowerCase();
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
@@ -134,18 +162,21 @@ export class ShowingPhrasesComponent {
   }
 
   async deleteSynonym(id: any) {
-    alert(id);
-    try{
-    let response = await backend.delete("/phrases",
-      {
-        headers: { authorization: `Bearer: ${getCookie("token")}` },
-        data: { ids: [id] }
-      })
-    }catch(error){
+    this.snackBar.open('Item deleted', 'Dismiss');
+    try {
+      let response = await backend.delete("/phrases",
+        {
+          headers: { authorization: `Bearer: ${getCookie("token")}` },
+          data: { ids: [id] }
+        })
+    } catch (error) {
       alert(error)
     }
-      location.reload();
+    this.dataSource = new MatTableDataSource(await this.fetchPhrases());
   }
 
-
+  onSelectionChange(selectedCustomer) {
+    console.log(selectedCustomer);
+    this.dataSource.filter = selectedCustomer;
+  }
 }

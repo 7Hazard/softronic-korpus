@@ -20,6 +20,9 @@ import { DialogWindowComponent } from './dialog-window/dialog-window.component';
 import {MatTableModule} from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator'
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { DialogNormalisingComponent } from './dialog-normalising/dialog-normalising.component';
 import { UpdatePhrasesComponent } from './update-phrases/update-phrases.component';
 
 
@@ -40,14 +43,17 @@ import { UpdatePhrasesComponent } from './update-phrases/update-phrases.componen
     MatDialogModule,
     MatTableModule,
     MatPaginatorModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatSelectModule,
+    MatSnackBarModule
   ],entryComponents:[ DialogWindowComponent],
   providers: [],
   declarations: [
     AppComponent,
     ShowingPhrasesComponent,
     DialogWindowComponent,
-    UpdatePhrasesComponent
+    DialogNormalisingComponent,
+    UpdatePhrasesComponent,
   ],
   bootstrap: [AppComponent],
 })

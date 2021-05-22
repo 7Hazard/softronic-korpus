@@ -1,3 +1,3 @@
 import { start } from "./server";
 
-await start({})
+await start({exampleData: true})

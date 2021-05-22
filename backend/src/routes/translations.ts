@@ -21,7 +21,7 @@ export default new Routes("/translations").post("/", [], async (req, res) => {
     }
 
     // build dictionaries for global synonyms
-    let phrases = await Phrases.getAllWithRelations(["synonyms", "synonyms.meaning"])
+    let phrases = await Phrases.getAll()
     let dictionaries: Dictionary[] = []
     function makeDictionary(groupId?: number) {
         let dictionary = new Dictionary()
@@ -29,7 +29,8 @@ export default new Routes("/translations").post("/", [], async (req, res) => {
             let synonyms = phrase.synonyms as Synonym[]
             if (!synonyms) continue
             for (const synonym of synonyms) {
-                if (groupId && synonym.group != groupId) continue
+                if (!groupId && synonym.group) continue;
+                if (groupId && synonym.group && synonym.group.id != groupId) continue
                 let meaning = synonym.meaning as Phrase
                 dictionary.set(phrase.text, meaning.text)
             }
@@ -40,7 +41,7 @@ export default new Routes("/translations").post("/", [], async (req, res) => {
         // check if all groups exists
         let groups = await Groups.getByIds(groupIds)
         if (groups.length != groupIds.length) {
-            return res.send(400).json({ error: "some groups are invalid" })
+            return res.status(400).json({ error: "some groups are invalid" })
         }
 
         // make a dictionary for each group, in order as specified
@@ -51,8 +52,8 @@ export default new Routes("/translations").post("/", [], async (req, res) => {
     // add global dictionary as last fallback
     dictionaries.push(makeDictionary())
 
-    let text = new Text(req.body.text, dictionaries)
-    let result = text.translation
+    let text = new Text(req.body.text)
+    let result = text.translate(dictionaries)
 
     // send translation
     res.status(200).send({ translation: result })
@@ -62,8 +63,12 @@ class Dictionary extends Map<string, string> { }
 class Text {
     tokens: Token[] = []
     phraseCandidates = new PhraseCandidateSet()
+    private translated = false
 
-    constructor(text: string, dictionaries: Dictionary[]) {
+    constructor(text: string) {
+        // trim and prepare text for tokenization
+        text = text.trim().replace(/\s+/g,' ');
+
         // Split text into tokens
         let tmp = text.split(" ")
         tmp.forEach((element, i) => {
@@ -72,7 +77,6 @@ class Text {
 
         let start = 0
         let end = 0
-        // let lastTokenIndex = this.tokens.length-1;
         let tokensCount = this.tokens.length
         while (start != tokensCount && end != tokensCount) {
             let tokenCandidates: Token[] = []
@@ -89,6 +93,13 @@ class Text {
             start++
             end = start
         }
+    }
+
+    public translate(dictionaries: Dictionary[]) {
+        if (this.translated)
+            return this.tokens.join(" ")
+        
+        this.translated = true
 
         // sort phrase candidates
         this.phraseCandidates.sort()
@@ -122,24 +133,21 @@ class Text {
             this.tokens.splice(candidatePosition, candidate.tokens.length, ...translatedTokens)
 
             // update new positions after candidatePosition+candidate.tokens.length
-            for (let i = candidatePosition + translatedTokens.length; i < this.tokens.length; i++) {
-                const token = this.tokens[i]
-                token.position -= translatedTokens.length
+            if (candidate.tokens.length > 1) {
+                for (let i = candidatePosition + translatedTokens.length; i < this.tokens.length; i++) {
+                    const token = this.tokens[i]
+                    token.position -= translatedTokens.length
+                }
             }
         }
-    }
 
-    public get translation() {
+        // return translation
         return this.tokens.join(" ")
     }
 }
 
 class Token {
-    translated = false
-
-    constructor(public content: string, public position: number) {
-
-    }
+    constructor(public content: string, public position: number) {}
 
     toString() {
         return this.content
