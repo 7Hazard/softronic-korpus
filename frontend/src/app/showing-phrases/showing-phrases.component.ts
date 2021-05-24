@@ -85,7 +85,6 @@ export class ShowingPhrasesComponent {
     });
 
     dialogRef.afterClosed().subscribe(async result => { //called when dialog window closed
-      console.log('The dialog was closed');
       if(!result) return;
       this.phrase = result;
       try {
