@@ -44,5 +44,6 @@ export class DialogNormalisingComponent implements OnInit {
 
   resetTextBox(){
     this.result='';
+    this.value='';
   }
 }

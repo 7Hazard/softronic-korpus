@@ -89,7 +89,7 @@
                 minlength="3"
                 formControlName="repassword">
                 <mat-error
-                  *ngIf="signupForm.get('password').value != signupForm.get('repassword').value">
+                  *ngIf="!validatePassword()">
                   Passwords must match
                 </mat-error>
               <mat-icon matSuffix>lock</mat-icon>
