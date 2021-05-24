@@ -19,8 +19,4 @@ export class UpdatePhrasesComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onNoClick(): void {
-    this.dialogReff.close();
-  }
-
 }

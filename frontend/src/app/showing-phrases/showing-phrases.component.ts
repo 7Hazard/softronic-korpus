@@ -86,6 +86,7 @@ export class ShowingPhrasesComponent {
 
     dialogRef.afterClosed().subscribe(async result => { //called when dialog window closed
       console.log('The dialog was closed');
+      if(!result) return;
       this.phrase = result;
       try {
         let response = await backend.put(`/phrases/${id}`, { text: this.phrase }, {
