@@ -21,7 +21,6 @@ export class DialogSynonymsComponent implements OnInit {
     this.synonyms = []
     for (const synonym of data.synonyms) {
       let group = synonym.group ? synonym.group.name : "All";
-      console.log(JSON.stringify(synonym.meaning))
       this.synonyms.push({ group, text: synonym.meaning.text })
     }
   }
