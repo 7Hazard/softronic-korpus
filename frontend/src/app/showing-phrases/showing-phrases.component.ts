@@ -101,9 +101,12 @@ export class ShowingPhrasesComponent {
     });
   }
 
-  openSynonymsDialog() {
-    this.dialog.open(DialogSynonymsComponent);
+  showSynonyms(synonyms) {
+    this.dialog.open(DialogSynonymsComponent, {
+      data: { synonyms }
+    });
   }
+
   async ngOnInit() {
 
     this.dataSource = new MatTableDataSource(await this.fetchPhrases());
@@ -140,14 +143,6 @@ export class ShowingPhrasesComponent {
     } catch (error) {
       alert(error)
     }
-  }
-
-  getSynonyms(synonyms: any[]){
-    let synonymList = [];
-    for (const synonym of synonyms) {
-      synonymList.push(synonym.meaning.text);
-    }
-    return synonymList.join(", ");
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;

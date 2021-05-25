@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogWindowComponent } from '../dialog-window/dialog-window.component';
 import { DialogData } from '../showing-phrases/showing-phrases.component';
 
@@ -10,11 +10,11 @@ import { DialogData } from '../showing-phrases/showing-phrases.component';
 })
 export class UpdatePhrasesComponent implements OnInit {
 
-  phrase:string;
+  phrase: string;
 
   constructor(
     public dialogReff: MatDialogRef<DialogWindowComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
 
   ngOnInit(): void {
   }
