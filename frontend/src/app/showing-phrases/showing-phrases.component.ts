@@ -10,10 +10,11 @@ import { eraseCookie, getCookie } from 'src/cookies';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Action } from 'rxjs/internal/scheduler/Action';
 import { DialogNormalisingComponent } from '../dialog-normalising/dialog-normalising.component';
 import { UpdatePhrasesComponent } from '../update-phrases/update-phrases.component';
+import { DialogSynonymsComponent } from '../dialog-synonyms/dialog-synonyms.component';
 
 export interface PeriodicElement {
   phrase: string;
@@ -46,10 +47,10 @@ export class ShowingPhrasesComponent {
   dataSource: MatTableDataSource<unknown>;
   phraseFilter: string = '';
 
-  constructor(public dialog: MatDialog, public normalizeDialog:MatDialog, private snackBar: MatSnackBar) { }
+  constructor(public dialog: MatDialog, public normalizeDialog: MatDialog, private snackBar: MatSnackBar) { }
 
-  openNormalizeDialog():void {
-      const dialogRef = this.dialog.open(DialogNormalisingComponent);
+  openNormalizeDialog(): void {
+    const dialogRef = this.dialog.open(DialogNormalisingComponent);
   }
 
   openDialog(): void {
@@ -69,42 +70,43 @@ export class ShowingPhrasesComponent {
           alert(response.data);
         }
       } catch (error) {
-        alert(error)
       }
       this.dataSource = new MatTableDataSource(await this.fetchPhrases());
+      this.dataSource.paginator = this.paginator;
+      
     });
   }
 
   openDialog2(id: any): void {
-    
+
     const dialogRef = this.dialog.open(UpdatePhrasesComponent, {
-      width: '250px',
+      width: '460px', height: '320px',
       data: { phrase: this.phrase }
     });
 
     dialogRef.afterClosed().subscribe(async result => { //called when dialog window closed
-      console.log('The dialog was closed');
+      if(!result) return;
       this.phrase = result;
       try {
         let response = await backend.put(`/phrases/${id}`, { text: this.phrase }, {
           headers: { authorization: `Bearer: ${getCookie("token")}` }
         })
         if (response.status != 200) {
-          
+
         }
       } catch (error) {
-        
       }
-      location.reload();
+      this.dataSource = new MatTableDataSource(await this.fetchPhrases());
+      this.dataSource.paginator = this.paginator;
     });
   }
 
-
-
+  openSynonymsDialog() {
+    this.dialog.open(DialogSynonymsComponent);
+  }
   async ngOnInit() {
 
     this.dataSource = new MatTableDataSource(await this.fetchPhrases());
-    this.dataSource.paginator = this.paginator;
     this.dataSource.filterPredicate = (data: any, filter) => {
 
       if (!data.text.toLowerCase().includes(this.phraseFilter)) {
@@ -124,6 +126,7 @@ export class ShowingPhrasesComponent {
     }
     this.customerGroups = await fetchCustomerGroups();
     this.selectedCustomer = this.customerGroups[0].name;
+    this.dataSource.paginator = this.paginator;
   }
 
   async fetchPhrases() {
@@ -138,8 +141,20 @@ export class ShowingPhrasesComponent {
       alert(error)
     }
   }
-  
+
+  getSynonyms(synonyms: any[]){
+    let synonymList = [];
+    for (const synonym of synonyms) {
+      synonymList.push(synonym.meaning.text);
+    }
+    return synonymList.join(", ");
+  }
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

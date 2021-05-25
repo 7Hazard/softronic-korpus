@@ -24,6 +24,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { DialogNormalisingComponent } from './dialog-normalising/dialog-normalising.component';
 import { UpdatePhrasesComponent } from './update-phrases/update-phrases.component';
+import { DialogSynonymsComponent } from './dialog-synonyms/dialog-synonyms.component';
 
 
 @NgModule({
@@ -54,6 +55,7 @@ import { UpdatePhrasesComponent } from './update-phrases/update-phrases.componen
     DialogWindowComponent,
     DialogNormalisingComponent,
     UpdatePhrasesComponent,
+    DialogSynonymsComponent,
   ],
   bootstrap: [AppComponent],
 })

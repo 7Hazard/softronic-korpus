@@ -41,6 +41,11 @@ export class AppComponent {
         username: this.signupForm.get("username").value,
         password: this.signupForm.get("password").value
       })
+      if(response.status == 200){
+        alert('Successful Sign up');
+      }else if(response.status != 200){
+        alert('Sign up failed');
+      }
     } catch (error) {
       alert(error)
     }
@@ -48,5 +53,9 @@ export class AppComponent {
 
   isSignedIn() {
     return getCookie("token") != null
+  }
+
+  validatePassword(){
+    return this.signupForm.get('password').value === this.signupForm.get('repassword').value;
   }
 }

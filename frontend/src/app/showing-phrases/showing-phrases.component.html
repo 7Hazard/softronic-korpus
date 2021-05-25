@@ -10,6 +10,8 @@
   <button mat-raised-button (click)="openDialog()">Add Phrase</button>
   <span class="normalize-button-span"></span>
   <button mat-raised-button (click)="openNormalizeDialog()">Normalize</button>
+  <span class="normalize-button-span"></span>
+  <button mat-raised-button (click)="openSynonymsDialog()">Synonyms</button>
 </div>
 
 <!-- Filter selectbox -->
@@ -49,7 +51,7 @@
   <!-- SynonymColumn -->
   <ng-container matColumnDef="synonyms">
     <th mat-header-cell *matHeaderCellDef> Synonyms </th>
-    <td mat-cell *matCellDef="let element"> {{element.synonyms.length>0 ? element.synonyms[0].meaning.text : "-"}} </td>
+    <td mat-cell *matCellDef="let element"> {{element.synonyms.length>0 ? getSynonyms(element.synonyms) : "-"}} </td>
   </ng-container>
 
   <!-- Delete columns -->              <!-- Update columns -->
