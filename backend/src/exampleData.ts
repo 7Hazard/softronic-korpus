@@ -33,17 +33,21 @@ export async function insertExampleData() {
     let noccoab = await makeGroup("Nocco AB")
     let koffeindryck = await makePhrase("koffeindryck")
     makeSynonym(kaffe, koffeindryck, noccoab)
+    // let energidryck = await makePhrase("energidryck")
+    // makeSynonym(energidryck, koffeindryck, noccoab)
+    let monster_energy_drink = await makePhrase("monster energy drink")
+    makeSynonym(monster_energy_drink, koffeindryck, noccoab)
 
     // Djur
     let djur = await makePhrase("djur")
 
     let kolmården = await makeGroup("Kolmården")
     let vilda_djur = await makePhrase("vilda djur")
-    makeSynonym(vilda_djur, djur, kolmården)
+    makeSynonym(djur, vilda_djur, kolmården)
 
     let veterinär = await makeGroup("Veterinär")
     let husdjur = await makePhrase("husdjur")
-    makeSynonym(husdjur, djur, veterinär)
+    makeSynonym(djur, husdjur, veterinär)
 
     let arv = await makePhrase("arv")
     let kvarlåtenskap = await makePhrase("kvarlåtenskap")
@@ -71,8 +75,6 @@ export async function insertExampleData() {
     let dejting = await makeGroup("dejting")
     makeSynonym(match, tävlingsomgång)
     makeSynonym(match, paraIhop,dejting)
-
-
 }
 
 async function makePhrase(text) {

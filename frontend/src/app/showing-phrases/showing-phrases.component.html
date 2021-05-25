@@ -17,7 +17,7 @@
 <!-- Filter selectbox -->
 <div class="FilterBox" style="background-color: white">
     <mat-form-field appearance="fill">
-        <mat-label>Select Group</mat-label>
+        <mat-label>Select Customer Group</mat-label>
         <mat-select
             name="customerString"
             [(value)]="selectedCustomer"
@@ -35,7 +35,7 @@
 
     <!-- Filter textbox -->
     <mat-form-field>
-        <mat-label>Filter</mat-label>
+        <mat-label>Filter Phrases</mat-label>
         <input
             matInput
             (keyup)="applyFilter($event)"
