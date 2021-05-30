@@ -21,7 +21,8 @@ API authentication with JSON Web Tokens (JWT)
 ## Frontend
 Tech stack:
 - Angular
-- TBD...
+- TypeScript
+- axios
 
 ## Adding features
 - Make a new branch for the feature
